@@ -1,0 +1,26 @@
+name: chameleon_flutter_toolchain
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+workspace:
+  - packages/chameleon_ui
+  - packages/chameleon_core
+
+dev_dependencies:
+  melos: ^8.7.0
+
+melos:
+  scripts:
+    analyze:
+      run: melos exec -- fvm flutter analyze
+      description: Run flutter analyze in every package.
+
+    test:
+      run: melos exec -- fvm flutter test
+      description: Run flutter test in every package.
+
+    format:
+      run: melos exec -- fvm dart format --set-exit-if-changed .
+      description: Check formatting in every package.

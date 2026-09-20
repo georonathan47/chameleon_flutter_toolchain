@@ -1,0 +1,19 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - lib/src/bundles/**
+
+linter:
+  rules:
+    directives_ordering: false
+    public_member_api_docs: false
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    # Commands take a public `logger`/`runner` named param but store it as
+    # `_logger`/`_runner` — the private field name is deliberately not the
+    # external API name, which this lint doesn't have a way to express.
+    prefer_initializing_formals: false
+
+formatter:
+  trailing_commas: preserve

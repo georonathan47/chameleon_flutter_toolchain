@@ -1,0 +1,23 @@
+import 'package:chameleon_core/chameleon_core.dart';
+import 'package:local_auth/local_auth.dart';
+
+/// Authenticates via Face ID/Touch ID/fingerprint using `local_auth`.
+///
+/// Bound in `core_module.dart` only when `use_biometrics` is on —
+/// `chameleon_core` itself has no `local_auth` dependency, so this four-line
+/// adapter is the only place that import lives.
+class LocalAuthBiometricAuthenticator implements BiometricAuthenticator {
+  const LocalAuthBiometricAuthenticator(this._localAuth);
+
+  final LocalAuthentication _localAuth;
+
+  @override
+  Future<bool> get isAvailable async {
+    final canCheckBiometrics = await _localAuth.canCheckBiometrics;
+    return canCheckBiometrics || await _localAuth.isDeviceSupported();
+  }
+
+  @override
+  Future<bool> authenticate({required String reason}) => _localAuth
+      .authenticate(localizedReason: reason, biometricOnly: true);
+}

@@ -1,0 +1,24 @@
+name: chameleon_bloc
+description: >-
+  A bloc/cubit + sealed states + tests, nested inside an existing feature of
+  a Chameleon app.
+version: 1.0.0
+
+environment:
+  mason: ">=0.1.0 <0.2.0"
+
+vars:
+  feature_name:
+    type: string
+    description: >-
+      The existing feature (under lib/features/) this bloc/cubit nests
+      inside. Must already exist — this brick does not create a feature.
+    prompt: Which feature does this belong to?
+  bloc_name:
+    type: string
+    description: The bloc/cubit name, in snake_case (e.g. filters).
+    prompt: Bloc/cubit name?
+  cubit:
+    type: boolean
+    description: Generate a Cubit instead of a Bloc.
+    default: false

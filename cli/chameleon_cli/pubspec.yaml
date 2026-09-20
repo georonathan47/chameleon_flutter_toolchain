@@ -1,0 +1,32 @@
+name: chameleon_cli
+description: Scaffold Chameleon Flutter apps, features, and blocs from the command line, verified with flutter analyze/test before it reports success.
+version: 0.1.0
+publish_to: none
+homepage: https://github.com/georonathan47/chameleon_flutter_toolchain/tree/main/cli/chameleon_cli
+repository: https://github.com/georonathan47/chameleon_flutter_toolchain
+issue_tracker: https://github.com/georonathan47/chameleon_flutter_toolchain/issues
+topics:
+  - cli
+  - flutter
+  - scaffolding
+  - code-generation
+
+environment:
+  sdk: ^3.12.0
+
+executables:
+  chameleon: chameleon
+
+dependencies:
+  args: ^2.7.0
+  image: ^4.10.0
+  mason: ^0.1.0
+  mason_logger: ^0.3.0
+  path: ^1.9.0
+  pub_semver: ^2.2.0
+  yaml: ^3.1.2
+
+dev_dependencies:
+  mocktail: ^1.0.5
+  test: ^1.25.0
+  very_good_analysis: ^10.3.0

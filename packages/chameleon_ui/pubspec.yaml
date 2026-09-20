@@ -1,0 +1,28 @@
+name: chameleon_ui
+description: Flavor-aware design tokens, theme, and components for the Chameleon Flutter toolchain — no brand assets required.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.44.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  flutter_svg: ^2.3.0
+  google_fonts: ^8.2.0
+
+dev_dependencies:
+  alchemist: ^0.12.0
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.3.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/svg/toast/

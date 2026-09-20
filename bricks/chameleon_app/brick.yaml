@@ -1,0 +1,65 @@
+name: chameleon_app
+description: A Chameleon Flutter application — VGV bootstrap, clean architecture, Chameleon design language.
+version: 1.0.0
+
+environment:
+  mason: ">=0.1.0 <0.2.0"
+
+vars:
+  project_name:
+    type: string
+    description: The project name, in snake_case.
+    prompt: Project name?
+  org_name:
+    type: string
+    description: Reverse-domain organization identifier.
+    default: com.example
+  description:
+    type: string
+    description: One-line app description.
+    default: A Chameleon Flutter application.
+
+  state_management:
+    type: enum
+    description: Bloc vs Cubit as the project's default state-management shape.
+    values:
+      - bloc
+      - cubit
+    default: bloc
+
+  use_biometrics:
+    type: boolean
+    description: >-
+      Wire BiometricAuthenticator to local_auth (Face ID/Touch ID/
+      fingerprint). Adds local_auth as a dependency and requires manually
+      adding NSFaceIDUsageDescription (Info.plist) and the Android
+      biometric permission — tool/checks.sh verifies both are present.
+    default: false
+
+  permissions:
+    type: array
+    description: Runtime permissions this app requests.
+    values:
+      - camera
+      - microphone
+      - photos
+      - location
+      - notification
+      - contacts
+    default: []
+
+  chameleon_ui_ref:
+    type: string
+    description: >-
+      Pinned git ref of chameleon_ui to depend on, from the toolchain repo
+      (https://github.com/georonathan47/chameleon_flutter_toolchain).
+      TODO(chameleon): bump to a real tag (e.g. chameleon_ui-v0.1.0) once
+      this repo cuts its first release — no tags exist yet.
+    default: main
+  chameleon_core_ref:
+    type: string
+    description: >-
+      Same as chameleon_ui_ref, for chameleon_core. TODO(chameleon): bump to
+      a real tag (e.g. chameleon_core-v0.1.0) once this repo cuts its first
+      release — no tags exist yet.
+    default: main

@@ -1,0 +1,7 @@
+bricks:
+  chameleon_app:
+    path: bricks/chameleon_app
+  chameleon_feature:
+    path: bricks/chameleon_feature
+  chameleon_bloc:
+    path: bricks/chameleon_bloc

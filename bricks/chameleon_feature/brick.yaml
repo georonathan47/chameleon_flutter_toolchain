@@ -1,0 +1,22 @@
+name: chameleon_feature
+description: >-
+  One clean-architecture feature (data/domain/presentation) for a Chameleon
+  app — generated into an existing chameleon_app project, not a standalone
+  app.
+version: 1.0.0
+
+environment:
+  mason: ">=0.1.0 <0.2.0"
+
+vars:
+  feature_name:
+    type: string
+    description: The feature name, in snake_case (e.g. beneficiaries).
+    prompt: Feature name?
+  project_name:
+    type: string
+    description: >-
+      The target app's own package name (its pubspec.yaml `name:` field) —
+      test files import the app's lib code via `package:<project_name>/...`.
+      Supplied by the CLI, not prompted for.
+    default: ""

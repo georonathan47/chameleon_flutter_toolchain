@@ -1,0 +1,22 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.config.dart"
+    - "**/*.module.dart"
+
+linter:
+  rules:
+    directives_ordering: false
+    public_member_api_docs: false
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    # SessionCache and ChameleonCrashReporter are deliberate one-method seams
+    # (a single swappable dependency, like a strategy interface) — the
+    # "make it a top-level function" suggestion doesn't apply to something
+    # meant to have multiple interchangeable implementations.
+    one_member_abstracts: false
+
+formatter:
+  trailing_commas: preserve

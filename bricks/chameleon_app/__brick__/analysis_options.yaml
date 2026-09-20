@@ -1,0 +1,34 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "build/**"
+    - "lib/l10n/gen/**"
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.chopper.dart"
+    - "**/*.config.dart"
+
+linter:
+  rules:
+    directives_ordering: false
+    use_build_context_synchronously: false
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    public_member_api_docs: false
+    # The brick's `permissions`/`use_*` variables interleave conditional
+    # blocks through pubspec.yaml, so a strict alphabetical order would
+    # fight the mustache conditionals rather than help readability.
+    sort_pub_dependencies: false
+    # very_good_analysis's TODO format check rejects `TODO(chameleon):` — kept
+    # as-is since it's this template's own established convention (see
+    # tasks/lessons.md) and tool/checks.sh already greps for it directly.
+    flutter_style_todos: false
+    # chameleon_feature generates one-method repository/datasource interfaces
+    # by clean-architecture convention (a single swappable dependency, like
+    # a strategy interface) — same reasoning chameleon_core disables this for
+    # SessionCache/ChameleonCrashReporter.
+    one_member_abstracts: false
+
+formatter:
+  trailing_commas: preserve

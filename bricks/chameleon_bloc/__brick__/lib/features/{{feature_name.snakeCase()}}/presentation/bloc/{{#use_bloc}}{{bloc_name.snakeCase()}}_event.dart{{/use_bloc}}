@@ -1,0 +1,12 @@
+import 'package:equatable/equatable.dart';
+
+sealed class {{bloc_name.pascalCase()}}Event extends Equatable {
+  const {{bloc_name.pascalCase()}}Event();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class {{bloc_name.pascalCase()}}Started extends {{bloc_name.pascalCase()}}Event {
+  const {{bloc_name.pascalCase()}}Started();
+}

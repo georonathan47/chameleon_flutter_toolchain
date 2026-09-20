@@ -1,0 +1,123 @@
+import 'package:alchemist/alchemist.dart';
+import 'package:chameleon_ui/chameleon_ui.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  goldenTest(
+    'ChameleonTheme renders the component gallery',
+    fileName: 'chameleon_theme_gallery',
+    builder: () => Theme(
+      data: ChameleonTheme.light,
+      child: Material(
+        color: Colors.transparent,
+        child: GoldenTestGroup(
+          columns: 2,
+          children: [
+            GoldenTestScenario(
+              name: 'elevated button',
+              child: const _Padded(child: _ElevatedButtonSample()),
+            ),
+            GoldenTestScenario(
+              name: 'text field',
+              child: const _Padded(child: _TextFieldSample()),
+            ),
+            GoldenTestScenario(
+              name: 'toast — error',
+              child: const _Padded(
+                child: _ToastSample(ChameleonToastType.error),
+              ),
+            ),
+            GoldenTestScenario(
+              name: 'toast — success',
+              child: const _Padded(
+                child: _ToastSample(ChameleonToastType.success),
+              ),
+            ),
+            GoldenTestScenario(
+              name: 'type ramp',
+              child: const _Padded(child: _TypeRampSample()),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _Padded extends StatelessWidget {
+  const _Padded({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(ChameleonSpacing.base),
+    child: SizedBox(width: 320, child: child),
+  );
+}
+
+class _ElevatedButtonSample extends StatelessWidget {
+  const _ElevatedButtonSample();
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(onPressed: () {}, child: const Text('Continue'));
+  }
+}
+
+class _TextFieldSample extends StatelessWidget {
+  const _TextFieldSample();
+
+  @override
+  Widget build(BuildContext context) {
+    return const TextField(
+      decoration: InputDecoration(labelText: 'Phone number'),
+    );
+  }
+}
+
+class _ToastSample extends StatelessWidget {
+  const _ToastSample(this.type);
+
+  final ChameleonToastType type;
+
+  @override
+  Widget build(BuildContext context) {
+    return ChameleonToast(
+      title: type == ChameleonToastType.error ? 'Something went wrong' : 'Done',
+      description: type == ChameleonToastType.error
+          ? 'Incorrect password.'
+          : 'Your payment was sent.',
+      type: type,
+      onDismiss: () {},
+    );
+  }
+}
+
+class _TypeRampSample extends StatelessWidget {
+  const _TypeRampSample();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _Style('Heading 1', ChameleonTypography.heading1),
+        _Style('Subheading 2', ChameleonTypography.subheading2),
+        _Style('Body 1', ChameleonTypography.body1),
+        _Style('Label 1', ChameleonTypography.label1),
+      ],
+    );
+  }
+}
+
+class _Style extends StatelessWidget {
+  const _Style(this.label, this.style);
+
+  final String label;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) => Text(label, style: style);
+}

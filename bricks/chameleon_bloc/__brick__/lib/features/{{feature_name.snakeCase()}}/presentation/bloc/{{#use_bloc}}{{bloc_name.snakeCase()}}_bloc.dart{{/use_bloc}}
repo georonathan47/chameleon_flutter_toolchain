@@ -1,0 +1,25 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+
+import '{{bloc_name.snakeCase()}}_event.dart';
+import '{{bloc_name.snakeCase()}}_state.dart';
+
+// Scaffolded, not wired to a repository — chameleon_bloc doesn't know one.
+// Replace the body of _onStarted with the real work this bloc/cubit
+// should do; the Initial/InProgress/Success/Failure shape is the part
+// worth keeping (guardrail #14: sealed states, fully exhausted by callers).
+@injectable
+class {{bloc_name.pascalCase()}}Bloc
+    extends Bloc<{{bloc_name.pascalCase()}}Event, {{bloc_name.pascalCase()}}State> {
+  {{bloc_name.pascalCase()}}Bloc() : super(const {{bloc_name.pascalCase()}}Initial()) {
+    on<{{bloc_name.pascalCase()}}Started>(_onStarted);
+  }
+
+  Future<void> _onStarted(
+    {{bloc_name.pascalCase()}}Started event,
+    Emitter<{{bloc_name.pascalCase()}}State> emit,
+  ) async {
+    emit(const {{bloc_name.pascalCase()}}InProgress());
+    emit(const {{bloc_name.pascalCase()}}Success());
+  }
+}

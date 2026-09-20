@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  packages:
+    name: Analyze + test packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .fvmrc
+
+      - run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+      - run: dart pub global activate melos
+      - run: melos bootstrap
+      - run: melos run analyze
+      - run: melos run test
+
+      - name: chameleon_cli — pub get, analyze, test
+        working-directory: cli/chameleon_cli
+        run: |
+          dart pub get
+          dart analyze
+          dart test

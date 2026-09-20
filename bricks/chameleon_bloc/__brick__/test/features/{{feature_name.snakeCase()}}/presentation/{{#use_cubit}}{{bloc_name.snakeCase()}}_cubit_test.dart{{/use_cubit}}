@@ -1,0 +1,16 @@
+import 'package:bloc_test/bloc_test.dart';
+
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/bloc/{{bloc_name.snakeCase()}}_cubit.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/bloc/{{bloc_name.snakeCase()}}_state.dart';
+
+void main() {
+  blocTest<{{bloc_name.pascalCase()}}Cubit, {{bloc_name.pascalCase()}}State>(
+    'emits [InProgress, Success] when started',
+    build: {{bloc_name.pascalCase()}}Cubit.new,
+    act: (cubit) => cubit.start(),
+    expect: () => const [
+      {{bloc_name.pascalCase()}}InProgress(),
+      {{bloc_name.pascalCase()}}Success(),
+    ],
+  );
+}

@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .fvmrc
+
+      - run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+      # TODO(chameleon): this app depends on chameleon_ui/chameleon_core via
+      # `git:` refs against a PRIVATE repo (chameleon_flutter_toolchain) that
+      # ISN'T this one — GITHUB_TOKEN only grants read access to the repo a
+      # workflow runs in, not other private repos, even ones the same account
+      # owns. Add a secret named TOOLCHAIN_REPO_TOKEN to this repo (Settings
+      # -> Secrets and variables -> Actions): a GitHub PAT (fine-grained,
+      # "Contents: read-only" on chameleon_flutter_toolchain) or a deploy key
+      # on that repo. Without it, `flutter pub get` below fails with a
+      # 404/403 that doesn't mention auth at all.
+      - name: Authorise git for the toolchain repo
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.TOOLCHAIN_REPO_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: ./tool/checks.sh
+      - run: flutter analyze
+      - run: flutter test

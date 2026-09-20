@@ -1,0 +1,6 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Close--outline">
+<rect width="24" height="24" fill="white" fill-opacity="0.01"/>
+<path id="Vector" d="M12 2C17.5739 2 22 6.42614 22 12C22 17.5739 17.5739 22 12 22C6.42614 22 2 17.5739 2 12C2 6.42614 6.42614 2 12 2ZM12 2.5C6.77386 2.5 2.5 6.77386 2.5 12C2.5 17.2261 6.77386 21.5 12 21.5C17.2261 21.5 21.5 17.2261 21.5 12C21.5 6.77386 17.2261 2.5 12 2.5ZM16.543 7.9502L12.4932 12L16.543 16.0498L16.0498 16.543L12 12.4932L7.9502 16.543L7.45703 16.0498L11.5068 12L7.45703 7.9502L7.9502 7.45703L12 11.5068L16.0498 7.45703L16.543 7.9502Z" fill="#FF5662" stroke="#FF5662"/>
+</g>
+</svg>
