@@ -51,15 +51,10 @@ vars:
   chameleon_ui_ref:
     type: string
     description: >-
-      Pinned git ref of chameleon_ui to depend on, from the toolchain repo
+      Pinned git tag of chameleon_ui to depend on, from the toolchain repo
       (https://github.com/georonathan47/chameleon_flutter_toolchain).
-      TODO(chameleon): bump to a real tag (e.g. chameleon_ui-v0.1.0) once
-      this repo cuts its first release — no tags exist yet.
-    default: main
+    default: chameleon_ui-v0.1.0
   chameleon_core_ref:
     type: string
-    description: >-
-      Same as chameleon_ui_ref, for chameleon_core. TODO(chameleon): bump to
-      a real tag (e.g. chameleon_core-v0.1.0) once this repo cuts its first
-      release — no tags exist yet.
-    default: main
+    description: Same as chameleon_ui_ref, for chameleon_core.
+    default: chameleon_core-v0.1.0

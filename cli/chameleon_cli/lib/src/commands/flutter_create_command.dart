@@ -174,11 +174,8 @@ class FlutterCreateCommand extends Command<int> with PipelineSteps {
       // bundled generator does raw mustache substitution with no fallback
       // to a brick.yaml default for a var it isn't given, so these must be
       // supplied explicitly rather than left for the brick to default.
-      // TODO(chameleon): bump to real version tags (e.g.
-      // chameleon_ui-v0.1.0 / chameleon_core-v0.1.0) once this repo cuts
-      // its first tagged release — no tags exist yet.
-      'chameleon_ui_ref': 'main',
-      'chameleon_core_ref': 'main',
+      'chameleon_ui_ref': 'chameleon_ui-v0.1.0',
+      'chameleon_core_ref': 'chameleon_core-v0.1.0',
     };
 
     final overlaid = await step('Applying Chameleon template', () async {
