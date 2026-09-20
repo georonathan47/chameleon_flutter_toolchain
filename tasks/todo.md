@@ -6,8 +6,8 @@ Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in th
 - [x] Pre-flight: confirm flutter/dart/mason/melos/gh available (Flutter 3.44.0, Dart 3.12.0 — matches reference repo)
 - [x] Create root directory structure (packages/, bricks/, cli/, tasks/, .github/workflows/)
 - [x] melos.yaml, mason.yaml, .fvmrc, .gitignore, LICENSE (MIT), root README.md
-- [ ] git init + initial commit
-- [ ] gh repo create --public + push
+- [x] git init + initial commit
+- [x] gh repo create --public + push (https://github.com/georonathan47/chameleon_flutter_toolchain)
 
 ## Phase 1 — `packages/chameleon_ui`
 - [x] Port tokens (colors, typography, spacing, motion) from calbank_ui, renamed Cal*→Chameleon*
@@ -39,11 +39,11 @@ Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in th
 - [x] Bundle all 3 bricks into lib/src/bundles/
 
 ## Verification
-- [ ] melos bootstrap && melos run analyze && melos run test
-- [ ] chameleon doctor
-- [ ] chameleon flutter create demo_app (scratch dir) — analyze/test clean, verify flavor colors + icon
-- [ ] chameleon flutter feature sample / chameleon flutter bloc filters --feature sample
-- [ ] Visual check via iOS Simulator if available
+- [x] melos bootstrap && melos run analyze && melos run test (had to migrate melos.yaml → melos 8's pubspec.yaml-based workspace config — see Review)
+- [x] chameleon doctor
+- [x] chameleon flutter create demo_app (scratch dir) — analyze/test clean, verify flavor colors + icon
+- [x] chameleon flutter feature sample / chameleon flutter bloc filters --feature sample (done during Phase 4's own verification)
+- [ ] Visual check via iOS Simulator (not done — no simulator session requested; the generated app's `flutter analyze`/`flutter test` pass is the verification on record)
 
 ## Deferred to a follow-up phase
 - chameleon_lints package
@@ -53,6 +53,38 @@ Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in th
 - auto_route support in the app brick
 
 ## Review
+
+### Publishing (complete)
+
+- Fixed a melos-version mismatch: `melos.yaml` (the format the private
+  reference repo uses) is silently ignored by melos 8.7.0, the version
+  `dart pub global activate melos` installs today — melos 8 moved to
+  Dart-native pub workspaces, config lives in the root `pubspec.yaml`
+  under `workspace:`/`resolution: workspace` per member package, and
+  scripts live under a `melos:` key in that same root `pubspec.yaml`.
+  Added a root `pubspec.yaml` with both, deleted the now-dead
+  `melos.yaml`. `melos bootstrap`, `melos run analyze` (0 issues, both
+  packages), and `melos run test` (all passing; `chameleon_ui`'s
+  google_fonts network-fetch warnings in this sandbox are expected, see
+  its own Phase 1 review note) all work from a clean clone now.
+- Repo-wide grep for leftover `calbank`/`CalBank` found only legitimate
+  lineage references (a CHANGELOG "forked from" note, a code comment
+  naming the source CLI, and this file's own build log) — zero actual
+  leftover branding.
+- Pushed to `https://github.com/georonathan47/chameleon_flutter_toolchain`
+  (public), then tagged `chameleon_ui-v0.1.0`/`chameleon_core-v0.1.0` and
+  updated `chameleon_app/brick.yaml`'s ref-var defaults plus the CLI's
+  hardcoded copy (`flutter_create_command.dart`) to point at those real
+  tags instead of `main`, re-bundled, re-verified (28/28 CLI tests still
+  passing), committed and pushed as a follow-up commit.
+- **Final proof**: activated `chameleon_cli` globally from this checkout,
+  then ran `chameleon doctor` and `chameleon flutter create` in a scratch
+  directory with **no local path override** — `chameleon_ui`/
+  `chameleon_core` resolved via their real `git:` tag refs against the
+  now-public, now-tagged GitHub repo, with no manual workaround needed.
+  The generated app's `flutter analyze` (0 issues) and `flutter test`
+  (9/9 passing) confirm the whole pipeline works end-to-end for a
+  genuinely fresh user, not just inside this development checkout.
 
 ### Phase 1 — `packages/chameleon_ui` (complete)
 
