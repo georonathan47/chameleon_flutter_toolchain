@@ -1,0 +1,18 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  errors:
+    # custom_lint_core 0.8.1's own DartLintRule.run() abstract signature
+    # still takes an ErrorReporter, and LintCode's constructor still takes
+    # errorSeverity: ErrorSeverity — both deprecated in analyzer 8.x in
+    # favor of DiagnosticReporter/DiagnosticSeverity, but not yet migrated
+    # on custom_lint_core's side. Can't fix from here without breaking the
+    # override or passing a nonexistent constructor param; revisit once
+    # custom_lint_core migrates. This is a core-diagnostic toggle
+    # (analyzer.errors), not a linter rule — deprecated_member_use isn't
+    # one.
+    deprecated_member_use: ignore
+
+linter:
+  rules:
+    public_member_api_docs: false
