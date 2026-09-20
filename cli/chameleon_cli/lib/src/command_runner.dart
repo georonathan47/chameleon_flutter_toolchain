@@ -3,6 +3,7 @@ import 'package:mason_logger/mason_logger.dart';
 
 import 'commands/doctor_command.dart';
 import 'commands/flutter_command.dart';
+import 'commands/update_command.dart';
 import 'process_runner.dart';
 
 /// Top-level `chameleon` command tree — `chameleon <category> <command>`, so
@@ -14,6 +15,7 @@ class ChameleonCommandRunner extends CommandRunner<int> {
       super('chameleon', 'Chameleon project scaffolding.') {
     addCommand(DoctorCommand(logger: _logger, runner: runner));
     addCommand(FlutterCommand(logger: _logger, runner: runner));
+    addCommand(UpdateCommand(logger: _logger, runner: runner));
   }
 
   final Logger _logger;
