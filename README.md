@@ -127,7 +127,11 @@ every generated app is verified with `flutter analyze` + `flutter test` +
 on `@injectable` constructors) before `create`/`feature`/`bloc` report
 success.
 
-Deferred to a follow-up: the generate-and-verify e2e matrix.
+A generate-and-verify e2e matrix (`e2e/run_matrix.sh`, see `e2e/README.md`)
+generates a real app for each of four flag combinations (defaults,
+cubit+auto_route, biometrics, with-permissions) and gates on
+`flutter analyze` + `flutter test` + `dart run custom_lint` for each; it
+runs in CI as the `e2e` job in `.github/workflows/ci.yml`.
 
 No Firebase (or any other vendor) dependency is required anywhere in this
 toolchain by default — crash reporting, analytics, feature flags, and

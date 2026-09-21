@@ -40,3 +40,23 @@ jobs:
           dart pub get
           dart analyze
           dart test
+
+  e2e:
+    name: Generate-and-verify matrix
+    needs: packages
+    # The biometrics and with-permissions variants run a real `pod
+    # install`, which needs CocoaPods — only macOS agents have it.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .fvmrc
+
+      - run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+      - run: dart pub global activate mason_cli
+      - run: dart pub global activate very_good_cli
+
+      - run: bash e2e/run_matrix.sh

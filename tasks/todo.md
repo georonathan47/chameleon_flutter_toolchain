@@ -45,9 +45,6 @@ Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in th
 - [x] chameleon flutter feature sample / chameleon flutter bloc filters --feature sample (done during Phase 4's own verification)
 - [ ] Visual check via iOS Simulator (not done — no simulator session requested; the generated app's `flutter analyze`/`flutter test` pass is the verification on record)
 
-## Deferred to a follow-up phase
-- e2e verification matrix
-
 ## Phase 6 — v1.2: `chameleon firebase verify`
 - [x] `doctor.dart`: added `hasFirebaseTools` + warning-only `firebase-tools` check (not `hasFlutterfire` — that was only for the `--firebase-project-*` `flutter create` flow, which this toolchain doesn't have)
 - [x] `firebase_command.dart`/`firebase_verify_command.dart`: ported verbatim in logic, renamed, registered in `command_runner.dart`
@@ -71,7 +68,80 @@ Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in th
 - [x] README/CI updated: `chameleon_lints` gets its own CI step (not covered by `melos run` — see above), CLI test step uses `dart test -j 1` (a `dart test` default-concurrency quirk in this sandbox was found to silently drop suites)
 - [x] Tagged `chameleon_lints-v0.1.0`, repinned the ref from `main`, re-bundled, re-verified, pushed
 
+## Phase 8 — v1.4: generate-and-verify e2e matrix
+- [x] `e2e/run_matrix.sh`: bundles `chameleon_app`, activates `chameleon_cli` from source, runs `chameleon flutter create` across 4 named flag combinations (defaults, cubit+auto_route, biometrics, with-permissions), shows `tool/checks.sh` informationally, gates on `flutter analyze && flutter test && dart run custom_lint`, deletes scratch dir on pass / leaves it on fail
+- [x] `e2e/README.md`: usage + why `tool/checks.sh` isn't part of the gate; no private-repo/GITHUB_TOKEN language since this repo is public
+- [x] `.github/workflows/ci.yml`: new `e2e` job, `needs: packages`, `runs-on: macos-latest` (so the biometrics/with-permissions variants' real `pod install` actually runs), no git-auth step
+- [x] README Status section reworded — nothing left listed as deferred
+- [x] Ran the real matrix end-to-end (see Review) — all 4 variants passed
+
 ## Review
+
+### Phase 8 — v1.4: generate-and-verify e2e matrix (complete)
+
+- Ported `run_matrix.sh`/`README.md` structure from the private reference
+  toolchain's `e2e/`, retargeted to this toolchain's real flag surface
+  (`--state bloc|cubit`, `--router go_router|auto_route`, `--biometrics`,
+  `--permissions <list>` — confirmed by reading
+  `cli/chameleon_cli/lib/src/commands/flutter_create_command.dart` directly
+  rather than trusting the task's summary). No Firebase/crashlytics/
+  security/inactivity concept exists in this toolchain, so none of the
+  reference's flags for those carried over.
+- **4 variants, matching the suggested shape exactly** (no deviation):
+  `e2e_defaults` (no flags), `e2e_cubit_auto_route` (`--state cubit --router
+  auto_route`, both non-default choices at once), `e2e_biometrics`
+  (`--biometrics`), `e2e_with_permissions` (`--permissions
+  camera,notification`).
+- Header comment rewritten: dropped the reference's Firebase/security
+  rationale for why `tool/checks.sh` isn't part of the gate, replaced with
+  the real reason here — `core_module.dart`'s own
+  `TODO(chameleon): AuthInterceptor.configureNoAuthPaths...` placeholder,
+  documented in `docs/guardrails.md`/`tasks/lessons.md` as intentional
+  until a real backend exists.
+- `e2e/README.md`: dropped the reference's "private repo, needs read
+  access" paragraph and its CI `GITHUB_TOKEN` git-auth mention entirely
+  (this repo is public) — replaced with a short note that generated apps
+  resolve `chameleon_ui`/`chameleon_core`/`chameleon_lints` via real public
+  `git:` tag refs, no auth needed by anyone.
+- `.github/workflows/ci.yml`: new `e2e` job, `needs: packages`, `runs-on:
+  macos-latest` (free for a public repo, and lets the with-permissions
+  variant's real `pod install` — guarded on `Platform.isMacOS` in
+  `flutter_create_command.dart` — actually run instead of silently
+  skipping). Same `subosito/flutter-action@v2` + `flutter-version-file:
+  .fvmrc` pattern as the existing `packages` job. No git-auth step added —
+  unlike the reference, this repo needs none.
+- **Real matrix run** (not simulated): `bash e2e/run_matrix.sh` against the
+  actual public, already-tagged repo (`chameleon_ui-v0.1.0`/
+  `chameleon_core-v0.1.0`/`chameleon_lints-v0.1.0`), no local path
+  overrides. All 4 variants generated cleanly, and all 4 passed the real
+  gate (`flutter analyze`: 0 issues each; `flutter test`: 9/9 each; `dart
+  run custom_lint`: 0 issues each). Final line: `All 4 e2e variants
+  passed.`, exit code 0. `tool/checks.sh`'s informational output matched
+  the documented, non-gating expectations exactly for every variant: the
+  `TODO(chameleon)` leftover-TODO failure (present in all 4, since it's
+  unconditional), the unconditional deep-link checks (`CFBundleURLTypes`/
+  `autoVerify` — no app wires these until it actually needs a URL scheme),
+  and, for `e2e_biometrics` only, the two biometrics-conditional failures
+  (`NSFaceIDUsageDescription`/`USE_BIOMETRIC`) — both explicitly documented
+  as manual developer follow-up steps in the `--biometrics` flag's own
+  help text in `flutter_create_command.dart`, not something the CLI
+  auto-wires. **No real regression surfaced and no bug was found in the
+  brick or CLI** — nothing under `packages/`, `bricks/`, or
+  `cli/chameleon_cli/lib/` needed touching.
+- Confirmed the real `pod install` step ran (not skipped) for
+  `e2e_with_permissions` by grepping the run's own output for it, proving
+  the `macos-latest` CI runner choice is actually exercising that code
+  path rather than the `Platform.isMacOS` guard silently no-op'ing.
+- Confirmed no scratch directories were left behind in
+  `/Users/gosafo-osei/Desktop/builds/` (the script's own
+  `SCRATCH_ROOT="$(dirname "$TOOLCHAIN_ROOT")"`) after the run — all 4
+  passed, so the script's own delete-on-pass path deleted each one; `ls`
+  confirmed directly rather than assumed.
+- `git status` after the run showed the `mason bundle` step in
+  `run_matrix.sh` (which re-bundles `chameleon_app` into
+  `cli/chameleon_cli/lib/src/bundles/` before activating the CLI) produced
+  byte-identical output to what's already committed — no incidental diff
+  under `cli/chameleon_cli/lib/`.
 
 ### Publishing (complete)
 
