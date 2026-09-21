@@ -20,6 +20,7 @@ same way for every app this toolchain generates:
 packages/
   chameleon_ui/     design tokens, theme, shared components
   chameleon_core/    failures, logging, network layer, feature flags, DI
+  chameleon_lints/    custom_lint rules enforced in every generated app
 bricks/
   chameleon_app/     Mason brick — the app skeleton
   chameleon_feature/  Mason brick — a feature slice
@@ -60,12 +61,13 @@ public repo, so there's no sibling-directory requirement and no private-repo
 authentication to set up.
 
 `chameleon flutter create --help` lists every flag (state management,
-biometrics, permissions, fvm override, and the install/codegen/verify/git
-steps, each individually skippable). The command runs `very_good create` (or
-plain `flutter create` if `very_good_cli` isn't installed), overlays the
-brick, resolves dependencies, and — unless `--no-verify` is passed — refuses
-to call the project done until `flutter analyze` and `flutter test` are
-clean.
+router (`go_router`/`auto_route`), biometrics, permissions, fvm override, and
+the install/codegen/verify/git steps, each individually skippable). The
+command runs `very_good create` (or plain `flutter create` if
+`very_good_cli` isn't installed), overlays the brick, resolves dependencies,
+and — unless `--no-verify` is passed — refuses to call the project done
+until `flutter analyze`, `flutter test`, and `dart run custom_lint`
+(`chameleon_lints`' rules) are all clean.
 
 ## Adding a feature to a Chameleon app
 
@@ -88,13 +90,29 @@ chameleon flutter bloc filters --feature beneficiaries
 chameleon flutter bloc search --feature beneficiaries --cubit
 ```
 
+## Keeping the CLI up to date
+
+```bash
+chameleon update
+```
+
+Checks this repo's git tags for a `chameleon_cli-vX.Y.Z` newer than the
+running CLI and reactivates from it if one exists (`--dry-run` to just
+report). Defaults to this repo — pass `--repo-url` for a fork.
+
 ## Status
 
-This is v1, deliberately scoped lean: `chameleon_core`, `chameleon_ui`, the
-three Mason bricks, and a CLI with `doctor` / `flutter create` /
-`flutter feature` / `flutter bloc`. Deferred to a follow-up: a custom-lint
-package, CLI self-update, a `firebase verify` command, the generate-and-verify
-e2e matrix, and `auto_route` support (`go_router` only for now).
+`chameleon_core`, `chameleon_ui`, `chameleon_lints`, the three Mason bricks,
+and a CLI with `doctor` / `flutter create` / `flutter feature` /
+`flutter bloc` / `update` all ship today. `chameleon flutter create` supports
+both `go_router` and `auto_route`, and every generated app is verified with
+`flutter analyze` + `flutter test` + `dart run custom_lint`
+(`chameleon_lints`' three rules: no `setState`, `BlocProvider.value` for
+DI-registered singletons, no function-typed params on `@injectable`
+constructors) before `create`/`feature`/`bloc` report success.
+
+Deferred to a follow-up: a `firebase verify` command and the
+generate-and-verify e2e matrix.
 
 No Firebase (or any other vendor) dependency is required anywhere in this
 toolchain by default — crash reporting, analytics, feature flags, and

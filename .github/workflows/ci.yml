@@ -29,4 +29,14 @@ jobs:
         run: |
           dart pub get
           dart analyze
+          dart test -j 1
+
+      # Not part of the melos/pub workspace: custom_lint's cli_util
+      # constraint (^0.4.2) conflicts with melos's own (>=0.5.0 <0.7.0),
+      # so this package resolves and runs standalone.
+      - name: chameleon_lints — pub get, analyze, test
+        working-directory: packages/chameleon_lints
+        run: |
+          dart pub get
+          dart analyze
           dart test
