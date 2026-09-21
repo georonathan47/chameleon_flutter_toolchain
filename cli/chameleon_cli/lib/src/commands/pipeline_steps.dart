@@ -89,6 +89,28 @@ mixin PipelineSteps {
       return false;
     }
     testProgress.complete();
+
+    // Same fvm-or-not executable as flutterExecutable/flutterPrefix, just
+    // for `dart` instead of `flutter` — custom_lint runs via `dart run`.
+    final useFvm = flutterExecutable == 'fvm';
+    final dartExecutable = useFvm ? 'fvm' : 'dart';
+    final dartPrefix = useFvm ? const ['dart'] : const <String>[];
+
+    final lintProgress = logger.progress('Running dart run custom_lint');
+    final lint = await processRunner.run(
+      dartExecutable,
+      [...dartPrefix, 'run', 'custom_lint'],
+      workingDirectory: projectDir,
+    );
+    if (lint.exitCode != 0) {
+      lintProgress.fail();
+      logger
+        ..err('chameleon_lints found an issue in the generated project.')
+        ..err('This is a bug in the Chameleon template, not in your project.')
+        ..info('${lint.stdout}\n${lint.stderr}');
+      return false;
+    }
+    lintProgress.complete();
     return true;
   }
 }

@@ -21,6 +21,9 @@ ${FLUTTER/flutter/dart} format --output=none --set-exit-if-changed lib test
 echo "==> flutter test"
 $FLUTTER test
 
+echo "==> dart run custom_lint"
+${FLUTTER/flutter/dart} run custom_lint
+
 echo "==> tool/checks.sh"
 ./tool/checks.sh
 

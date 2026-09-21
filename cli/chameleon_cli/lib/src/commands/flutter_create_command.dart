@@ -25,7 +25,7 @@ const _allowedPermissions = [
 /// bundled `chameleon_app` brick, resolving dependencies, generating code,
 /// and verifying the result, adapted to the brick's actual variable surface
 /// (no flavorizr/shorebird/liveness/messaging vars exist in this brick
-/// version, and go_router is unconditional — there is no `--router` flag).
+/// version).
 class FlutterCreateCommand extends Command<int> with PipelineSteps {
   FlutterCreateCommand({
     required this.logger,
@@ -48,6 +48,12 @@ class FlutterCreateCommand extends Command<int> with PipelineSteps {
         help: 'Directory the project is created in.',
       )
       ..addOption('state', allowed: ['bloc', 'cubit'], defaultsTo: 'bloc')
+      ..addOption(
+        'router',
+        allowed: ['go_router', 'auto_route'],
+        defaultsTo: 'go_router',
+        help: 'Router package.',
+      )
       ..addMultiOption('permissions', allowed: _allowedPermissions)
       ..addFlag(
         'biometrics',
@@ -168,6 +174,7 @@ class FlutterCreateCommand extends Command<int> with PipelineSteps {
       'org_name': results['org'] as String,
       'description': results['desc'] as String,
       'state_management': results['state'] as String,
+      'router': results['router'] as String,
       'use_biometrics': results['biometrics'] as bool,
       'permissions': permissions,
       // Kept in sync by hand with brick.yaml's own declared defaults — the
@@ -176,6 +183,7 @@ class FlutterCreateCommand extends Command<int> with PipelineSteps {
       // supplied explicitly rather than left for the brick to default.
       'chameleon_ui_ref': 'chameleon_ui-v0.1.0',
       'chameleon_core_ref': 'chameleon_core-v0.1.0',
+      'chameleon_lints_ref': 'main',
     };
 
     final overlaid = await step('Applying Chameleon template', () async {

@@ -65,6 +65,9 @@ void run(HookContext context) {
   // Derived vars so templates stay free of logic.
   context.vars['is_bloc'] = context.vars['state_management'] == 'bloc';
 
+  final router = context.vars['router'] as String;
+  context.vars['use_go_router'] = router == 'go_router';
+
   final permissions = (context.vars['permissions'] as List).cast<String>();
   context.vars['has_permissions'] = permissions.isNotEmpty;
   context.vars['permission_macros'] = permissions.map(_permissionMacro).toList();

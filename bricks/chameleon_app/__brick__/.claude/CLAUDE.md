@@ -11,7 +11,7 @@ root-level CLAUDE.md instructions.
 - **Flutter / Dart versions:** 3.44.0 / 3.12.0 (pinned via `.fvmrc`)
 - **Platforms:** iOS / Android
 - **State management:** {{#is_bloc}}Bloc (`flutter_bloc`){{/is_bloc}}{{^is_bloc}}Cubit (`flutter_bloc`){{/is_bloc}} — one bloc/cubit per feature; states are immutable
-- **Router:** go_router
+- **Router:** {{#use_go_router}}go_router{{/use_go_router}}{{^use_go_router}}auto_route{{/use_go_router}}
 - **Design system / shared infra:** `chameleon_ui` (tokens, theme, shared
   components) and `chameleon_core` (failures, logging, network layer,
   isolate helpers, feature flags) — see `docs/architecture.md`. Changes that

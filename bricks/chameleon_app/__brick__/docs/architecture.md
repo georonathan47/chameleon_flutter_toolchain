@@ -15,7 +15,7 @@ lib/
     di/                 injection_container.dart (getIt), core_module.dart (@module)
     errors/              app_failures.dart — app-specific Failure subclasses
     network/             envelope factories for chopper
-    router/              app_router.dart (go_router), route_guard.dart (tri-state auth)
+    router/              app_router.dart ({{#use_go_router}}go_router{{/use_go_router}}{{^use_go_router}}auto_route{{/use_go_router}}), route_guard.dart (tri-state auth)
     auth/                 local_auth-backed BiometricAuthenticator (only when use_biometrics is on)
   features/
     <feature>/
