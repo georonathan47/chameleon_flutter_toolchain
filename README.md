@@ -11,7 +11,7 @@ Flavor is signalled the same way for every app this toolchain generates:
 | Flavor      | Color                     |
 | ----------- | ------------------------- |
 | development | red                       |
-| staging     | blue                      |
+| staging     | gold                      |
 | production  | transparent (no banner)   |
 
 ## Layout
