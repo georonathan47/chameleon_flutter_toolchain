@@ -28,6 +28,7 @@ class DoctorReport {
     required this.useFvm,
     required this.hasVeryGoodCli,
     required this.hasFirebaseTools,
+    required this.hasXcode,
   });
 
   final List<ToolCheck> checks;
@@ -43,6 +44,14 @@ class DoctorReport {
   /// not a Dart pub package, and needs `firebase login` regardless of how
   /// it's installed.
   final bool hasFirebaseTools;
+
+  /// Whether `xcodebuild` (Xcode) is installed — macOS/iOS builds resolve
+  /// their native dependencies through it via Swift Package Manager
+  /// (Flutter's default since 3.44, this toolchain's pinned version), so an
+  /// Xcode-version mismatch is now a first-class build concern distinct
+  /// from CocoaPods itself. Warning-only: irrelevant to Android-only
+  /// development, and not installable by this CLI either way.
+  final bool hasXcode;
 
   /// False if any non-warning check failed — `create` refuses to start.
   bool get isUsable =>
@@ -89,6 +98,12 @@ class Doctor {
       ['--version'],
       isWarningOnly: true,
     );
+    final xcode = await _versionCheck(
+      'Xcode',
+      'xcodebuild',
+      ['-version'],
+      isWarningOnly: true,
+    );
     final firebaseTools = await _versionCheck(
       'firebase-tools',
       'firebase',
@@ -97,10 +112,11 @@ class Doctor {
     );
 
     return DoctorReport(
-      checks: [flutter, dart, git, veryGood, cocoapods, firebaseTools],
+      checks: [flutter, dart, git, veryGood, cocoapods, xcode, firebaseTools],
       useFvm: useFvm,
       hasVeryGoodCli: veryGood.installed,
       hasFirebaseTools: firebaseTools.installed,
+      hasXcode: xcode.installed,
     );
   }
 

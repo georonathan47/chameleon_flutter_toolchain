@@ -12,6 +12,7 @@ root-level CLAUDE.md instructions.
 - **Platforms:** iOS / Android
 - **State management:** {{#is_bloc}}Bloc (`flutter_bloc`){{/is_bloc}}{{^is_bloc}}Cubit (`flutter_bloc`){{/is_bloc}} — one bloc/cubit per feature; states are immutable
 - **Router:** {{#use_go_router}}go_router{{/use_go_router}}{{^use_go_router}}auto_route{{/use_go_router}}
+- **iOS/macOS dependencies:** Swift Package Manager (Flutter 3.44+ default), CocoaPods as automatic fallback for any plugin that hasn't adopted SPM yet — see `docs/architecture.md`
 - **Design system / shared infra:** `chameleon_ui` (tokens, theme, shared
   components) and `chameleon_core` (failures, logging, network layer,
   isolate helpers, feature flags) — see `docs/architecture.md`. Changes that

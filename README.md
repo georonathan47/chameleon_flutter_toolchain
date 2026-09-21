@@ -73,6 +73,12 @@ and — unless `--no-verify` is passed — refuses to call the project done
 until `flutter analyze`, `flutter test`, and `dart run custom_lint`
 (`chameleon_lints`' rules) are all clean.
 
+Generated apps resolve iOS/macOS dependencies via **Swift Package Manager**
+(Flutter 3.44's default) with CocoaPods as an automatic fallback for any
+plugin that hasn't adopted SPM yet — nothing to configure either way,
+including for `--permissions`: `permission_handler`'s SPM package
+auto-detects enabled permissions straight from `Info.plist`.
+
 ## Adding a feature to a Chameleon app
 
 From that app's own root (detected via the `.chameleon/template.yaml` marker
