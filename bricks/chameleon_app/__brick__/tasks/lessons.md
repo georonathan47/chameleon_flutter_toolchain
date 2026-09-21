@@ -67,8 +67,15 @@ Patterns worth not relearning. Reviewed at session start.
     `grep -rn "setState" lib --include="*.dart"` returns nothing.
 15. **A permission that's always "permanently denied" is a build-config
     bug, not app logic.** `permission_handler` compiles every permission
-    handler out by default; the `ios/Podfile` `post_install` block must set
-    the matching `PERMISSION_*` macro, and every macro needs a matching
+    handler out by default. This app's iOS/macOS dependencies resolve via
+    **Swift Package Manager** (Flutter 3.44+'s default — see
+    `docs/architecture.md`'s "Swift Package Manager" section), and under
+    SPM `permission_handler` auto-enables each permission define straight
+    from `Info.plist`: no macro, no `pod install`, nothing else to
+    configure. The `ios/Podfile` `post_install` block still sets the
+    matching `PERMISSION_*` macro too — harmless redundancy, kept only as
+    the fallback path for the rare case Flutter falls back to CocoaPods for
+    a plugin. Either way, every macro/permission needs a matching
     `NS*UsageDescription` in `Info.plist` (App Store rejection ITMS-90683
     otherwise). Check: `./tool/checks.sh`.
 16. **Toasts, never SnackBars.** `ScaffoldMessenger`/`SnackBar` are banned;

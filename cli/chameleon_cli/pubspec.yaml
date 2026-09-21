@@ -1,6 +1,6 @@
 name: chameleon_cli
 description: Scaffold Chameleon Flutter apps, features, and blocs from the command line, verified with flutter analyze/test before it reports success.
-version: 0.2.0
+version: 0.3.0
 publish_to: none
 homepage: https://github.com/georonathan47/chameleon_flutter_toolchain/tree/main/cli/chameleon_cli
 repository: https://github.com/georonathan47/chameleon_flutter_toolchain

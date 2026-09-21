@@ -11,7 +11,7 @@ behind each.
 | No `dartz` (use `fpdart`) | `tool/checks.sh` |
 | No raw hex colors (use `ChameleonColors`/`ChameleonSemanticColors`) | `tool/checks.sh` |
 | No leftover `TODO(chameleon)` placeholders | `tool/checks.sh` |
-| permission_handler macros ↔ Info.plist usage descriptions stay in step | `tool/checks.sh`; both derived from the same `permissions` brick variable |
+| permission_handler macros ↔ Info.plist usage descriptions stay in step | `tool/checks.sh`; both derived from the same `permissions` brick variable. Under Swift Package Manager (this app's default — see `docs/architecture.md`), the Info.plist entries alone are what actually activates each permission; the Podfile macros are CocoaPods-fallback redundancy, not the primary mechanism. |
 | `AuthInterceptor`/`IdempotencyInterceptor` ship with empty path lists | `core_module.dart` has a `// TODO(chameleon):` until you configure them — `tool/checks.sh`'s leftover-TODO check fails until you do |
 | Deep links need a registered URL scheme/App Link before the OS ever hands one to GoRouter | `tool/checks.sh` checks for `CFBundleURLTypes` (Info.plist) and an `autoVerify` intent-filter (AndroidManifest.xml) — unconditional, not gated by a flag |
 | `use_biometrics` needs `NSFaceIDUsageDescription`/`USE_BIOMETRIC` declared | `tool/checks.sh`, only when `use_biometrics` is on |

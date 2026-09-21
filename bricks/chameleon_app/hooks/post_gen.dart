@@ -33,6 +33,31 @@ Future<void> run(HookContext context) async {
     );
   }
 
+  // `--permissions` sets the ios/Podfile PERMISSION_* macros (via the
+  // brick's own mustache templating) and derives usage_descriptions/
+  // android_permissions in pre_gen.dart, but neither Info.plist nor
+  // AndroidManifest.xml are brick-templated files — `very_good create`
+  // owns them, generated before this brick ever overlays anything — so
+  // the actual keys/permissions have to be patched in here, post-generation,
+  // or a requested permission silently never reaches either native project
+  // (an ITMS-90683 App Store rejection on iOS; a permission_handler request
+  // that resolves "denied" with no OS prompt at all on Android, since the
+  // platform itself gates on the manifest before permission_handler is
+  // ever called). `tool/checks.sh`'s permission-macro-drift check is what
+  // originally caught this being missing.
+  final usageDescriptions = (context.vars['usage_descriptions'] as List)
+      .cast<Map<dynamic, dynamic>>();
+  _insertPlistEntries(
+    File('${root.path}/ios/Runner/Info.plist'),
+    usageDescriptions,
+  );
+  final androidPermissions = (context.vars['android_permissions'] as List)
+      .cast<String>();
+  _insertManifestPermissions(
+    File('${root.path}/android/app/src/main/AndroidManifest.xml'),
+    androidPermissions,
+  );
+
   for (final scriptName in ['checks.sh', 'verify.sh']) {
     final script = File('${root.path}/tool/$scriptName');
     if (!script.existsSync()) continue;
@@ -75,3 +100,67 @@ generated_with:
 
   context.logger.success('chameleon_app template applied.');
 }
+
+/// Inserts each `{key, value}` usage-description pair as a
+/// `<key>...</key><string>...</string>` entry into `Info.plist`'s outer
+/// `<dict>`, right before its closing tag. No-op if there's nothing to add
+/// or the file doesn't exist (Android-only project, unlikely but cheap to
+/// guard).
+void _insertPlistEntries(
+  File infoPlist,
+  List<Map<dynamic, dynamic>> usageDescriptions,
+) {
+  if (usageDescriptions.isEmpty || !infoPlist.existsSync()) return;
+
+  final entries = StringBuffer();
+  for (final entry in usageDescriptions) {
+    final key = entry['key'] as String;
+    final value = entry['value'] as String;
+    if (key.isEmpty) continue;
+    entries
+      ..writeln('\t<key>$key</key>')
+      ..writeln('\t<string>${_escapeXml(value)}</string>');
+  }
+  if (entries.isEmpty) return;
+
+  final content = infoPlist.readAsStringSync();
+  final closing = RegExp(r'</dict>\s*</plist>\s*$');
+  if (!closing.hasMatch(content)) {
+    throw StateError(
+      'ios/Runner/Info.plist does not end with the expected </dict>\n'
+      '</plist> — very_good_cli/flutter create may have changed its '
+      'template shape.',
+    );
+  }
+  infoPlist.writeAsStringSync(
+    content.replaceFirst(closing, '$entries</dict>\n</plist>\n'),
+  );
+}
+
+/// Inserts each Android permission as a `<uses-permission>` element right
+/// before `AndroidManifest.xml`'s `<application` tag. No-op if there's
+/// nothing to add or the file doesn't exist.
+void _insertManifestPermissions(File manifest, List<String> permissions) {
+  if (permissions.isEmpty || !manifest.existsSync()) return;
+
+  final content = manifest.readAsStringSync();
+  final marker = content.indexOf('<application');
+  if (marker == -1) {
+    throw StateError(
+      'android/app/src/main/AndroidManifest.xml has no <application> tag — '
+      'very_good_cli/flutter create may have changed its template shape.',
+    );
+  }
+  final lines = permissions
+      .map((permission) => '    <uses-permission android:name="$permission" />\n')
+      .join();
+  manifest.writeAsStringSync(
+    '${content.substring(0, marker)}$lines\n    ${content.substring(marker)}',
+  );
+}
+
+String _escapeXml(String value) => value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');

@@ -45,6 +45,30 @@ String _permissionMacro(String permission) =>
   };
 }
 
+/// Maps a requested permission to the Android manifest permission(s)
+/// `permission_handler` needs declared in `AndroidManifest.xml` — without
+/// these, the OS rejects the runtime request before permission_handler ever
+/// gets to show a prompt, the same silent-failure shape `_usageDescription`
+/// exists to prevent on iOS. See permission_handler's own README for this
+/// exact mapping.
+List<String> _androidPermissions(String permission) {
+  return switch (permission) {
+    'camera' => const ['android.permission.CAMERA'],
+    'microphone' => const ['android.permission.RECORD_AUDIO'],
+    'photos' => const ['android.permission.READ_MEDIA_IMAGES'],
+    'location' => const [
+      'android.permission.ACCESS_FINE_LOCATION',
+      'android.permission.ACCESS_COARSE_LOCATION',
+    ],
+    'notification' => const ['android.permission.POST_NOTIFICATIONS'],
+    'contacts' => const [
+      'android.permission.READ_CONTACTS',
+      'android.permission.WRITE_CONTACTS',
+    ],
+    _ => throw ArgumentError('Unknown permission: $permission'),
+  };
+}
+
 void run(HookContext context) {
   final name = context.vars['project_name'] as String;
 
@@ -78,5 +102,8 @@ void run(HookContext context) {
           'key': _usageDescription(permission).key,
           'value': _usageDescription(permission).value,
         },
+  ];
+  context.vars['android_permissions'] = [
+    for (final permission in permissions) ..._androidPermissions(permission),
   ];
 }
