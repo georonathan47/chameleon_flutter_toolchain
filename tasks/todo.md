@@ -2,6 +2,12 @@
 
 Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in this session's Claude plan history). Summary here for in-repo tracking.
 
+## Phase 9 — v1.5: README logo + staging color reconciled to gold
+- [x] Added the production icon (`.github/assets/icon.png`) to the top of README.md, per user request.
+- [x] While pushing, found the user had pushed a direct commit (`147895f`) editing README's flavor table from "staging: blue" to "staging: gold" — doc-only, not a code change. Merged that commit, then closed the resulting doc/behavior gap: the *actual* runtime staging banner color (`bricks/chameleon_app/__brick__/lib/main_staging.dart`) was still `0xFF1E88E5` (blue), disagreeing with both the README and the STG icon artwork's gold ribbon.
+- [x] Sampled the STG icon's actual ribbon color directly from the source PNG (`rgb(239,191,4)` = `0xFFEFBF04`) rather than guessing a "gold", and set `main_staging.dart`'s `bannerColor` to that exact value — the in-app banner and the launcher icon ribbon now use the identical color.
+- [x] Re-bundled `chameleon_app`, verified with a real `chameleon flutter create` against the live repo: `flutter analyze`/`flutter test`/`dart run custom_lint` all clean, confirmed the generated `main_staging.dart` carries the new color.
+
 ## Phase 0 — Repo scaffolding
 - [x] Pre-flight: confirm flutter/dart/mason/melos/gh available (Flutter 3.44.0, Dart 3.12.0 — matches reference repo)
 - [x] Create root directory structure (packages/, bricks/, cli/, tasks/, .github/workflows/)

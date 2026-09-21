@@ -9,7 +9,9 @@ void main() {
   FlavorConfig.initialize(
     flavor: Flavor.stg,
     name: 'STG',
-    bannerColor: 0xFF1E88E5,
+    // Matches the gold "STG" ribbon in the default staging app icon
+    // (cli/chameleon_cli/lib/src/icons/flavor_icon_sources.dart).
+    bannerColor: 0xFFEFBF04,
   );
 
   unawaited(bootstrap(() => const App()));
