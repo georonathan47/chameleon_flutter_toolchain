@@ -27,7 +27,7 @@ dependencies:
   # Unconditional: Cubit is part of the same `bloc`/`flutter_bloc` package as
   # Bloc (`state_management: cubit` only changes which base class this
   # app's own templates use, not which package that needs), and
-  # `chameleon flutter feature` always generates a Bloc regardless of this
+  # `chameleon feature` always generates a Bloc regardless of this
   # app's state_management choice — see that generator's own note.
   bloc: ^9.2.1
   flutter_bloc: ^9.1.1

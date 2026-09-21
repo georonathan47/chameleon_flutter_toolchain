@@ -2,7 +2,7 @@
 # Generates a Chameleon app with each brick-flag combination that matters
 # and verifies it for real.
 #
-# Pass/fail gate is `chameleon flutter create`'s own verification step
+# Pass/fail gate is `chameleon create`'s own verification step
 # (flutter analyze + flutter test + dart run custom_lint), re-checked
 # explicitly below. `tool/checks.sh` is run too and its output is shown,
 # but it is NOT part of the gate: every freshly generated app fails its
@@ -40,12 +40,12 @@ for i in "${!NAMES[@]}"; do
   project_dir="$SCRATCH_ROOT/$name"
 
   echo ""
-  echo "=== $name (chameleon flutter create $name $flags) ==="
+  echo "=== $name (chameleon create $name $flags) ==="
   rm -rf "$project_dir"
 
   # shellcheck disable=SC2086
-  if ! chameleon flutter create "$name" -o "$SCRATCH_ROOT" --no-git $flags; then
-    echo "✗ $name: chameleon flutter create failed"
+  if ! chameleon create "$name" -o "$SCRATCH_ROOT" --no-git $flags; then
+    echo "✗ $name: chameleon create failed"
     fail_count=$((fail_count + 1))
     continue
   fi

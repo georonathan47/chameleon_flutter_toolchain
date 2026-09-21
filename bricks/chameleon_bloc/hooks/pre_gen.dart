@@ -31,7 +31,7 @@ void run(HookContext context) {
   if (!featureDir.existsSync()) {
     context.logger.err(
       'lib/features/$featureName does not exist. Run '
-      '`chameleon flutter feature $featureName` first, or pass an existing '
+      '`chameleon feature $featureName` first, or pass an existing '
       'feature name.',
     );
     throw Exception('feature does not exist');

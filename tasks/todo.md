@@ -2,6 +2,12 @@
 
 Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in this session's Claude plan history). Summary here for in-repo tracking.
 
+## Phase 10 — v1.6: flatten the CLI command tree (`chameleon flutter create` → `chameleon create`)
+- [x] Per user request, confirmed via AskUserQuestion that `feature`/`bloc` should move to the top level too, not just `create` — the `flutter` category (originally reserved for a future `chameleon spring`/`chameleon nest` split) is gone entirely.
+- [x] Renamed `flutter_create_command.dart`/`flutter_feature_command.dart`/`flutter_bloc_command.dart` → `create_command.dart`/`feature_command.dart`/`bloc_command.dart`, classes `FlutterCreateCommand`/`FlutterFeatureCommand`/`FlutterBlocCommand` → `CreateCommand`/`FeatureCommand`/`BlocCommand`; deleted `flutter_command.dart` (the now-unneeded parent category).
+- [x] `command_runner.dart` registers all three directly; every usage/error string across the CLI, both bricks (`chameleon_app`'s `core_module.dart`/`pubspec.yaml` comments, `chameleon_bloc`'s `pre_gen.dart` hook validation message), `chameleon_lints`' README, `e2e/run_matrix.sh`, and the root README updated from `chameleon flutter <cmd>` to `chameleon <cmd>`.
+- [x] Re-bundled `chameleon_app`/`chameleon_bloc`, re-verified: `dart analyze`/`dart test -j 1` clean (38/38), then a real `chameleon create` → `chameleon feature` → `chameleon bloc` chain against the live repo — full pipeline (pub get, build_runner, analyze, test, custom_lint) clean throughout, confirmed `chameleon --help` lists the flat command set.
+
 ## Phase 9 — v1.5: README logo + staging color reconciled to gold
 - [x] Added the production icon (`.github/assets/icon.png`) to the top of README.md, per user request.
 - [x] While pushing, found the user had pushed a direct commit (`147895f`) editing README's flavor table from "staging: blue" to "staging: gold" — doc-only, not a code change. Merged that commit, then closed the resulting doc/behavior gap: the *actual* runtime staging banner color (`bricks/chameleon_app/__brick__/lib/main_staging.dart`) was still `0xFF1E88E5` (blue), disagreeing with both the README and the STG icon artwork's gold ribbon.

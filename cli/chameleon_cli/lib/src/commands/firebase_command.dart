@@ -4,8 +4,9 @@ import 'package:mason_logger/mason_logger.dart';
 import '../process_runner.dart';
 import 'firebase_verify_command.dart';
 
-/// Parent for every `chameleon firebase <...>` subcommand — same "its own
-/// category" reasoning as `FlutterCommand`.
+/// Parent for every `chameleon firebase <...>` subcommand — `verify` is the
+/// only one today, but a category keeps room for more without a breaking
+/// rename (unlike `create`/`feature`/`bloc`, which are top-level commands).
 class FirebaseCommand extends Command<int> {
   FirebaseCommand({required Logger logger, ProcessRunner? runner}) {
     addSubcommand(FirebaseVerifyCommand(logger: logger, runner: runner));

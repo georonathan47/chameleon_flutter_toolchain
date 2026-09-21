@@ -4,7 +4,7 @@
 static analysis instead of tribal knowledge — three real bugs found once,
 each turned into a rule so it can't recur.
 
-Every app `chameleon flutter create` generates wires this in as a
+Every app `chameleon create` generates wires this in as a
 `custom_lint` plugin automatically, gated in `tool/verify.sh` alongside
 `flutter analyze` and `flutter test`.
 
@@ -39,7 +39,7 @@ analyzer:
     - custom_lint
 ```
 
-`chameleon flutter create` writes both for you — see
+`chameleon create` writes both for you — see
 [`bricks/chameleon_app/brick.yaml`](../../bricks/chameleon_app/brick.yaml)'s
 `chameleon_lints_ref` var if you need to point an existing app at a newer
 tag.

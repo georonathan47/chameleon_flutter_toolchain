@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:chameleon_cli/src/commands/flutter_bloc_command.dart';
+import 'package:chameleon_cli/src/commands/bloc_command.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
@@ -13,10 +13,10 @@ import '../support/fake_process_runner.dart';
 /// pre-check — all of which fail before mason ever runs. The real pipeline
 /// (mason generate -> build_runner -> analyze -> test, for both the Bloc
 /// and Cubit code paths) is verified by actually running
-/// `chameleon flutter bloc` against a real generated app and feature — see
+/// `chameleon bloc` against a real generated app and feature — see
 /// the toolchain repo's tasks/todo.md.
 void main() {
-  group('FlutterBlocCommand', () {
+  group('BlocCommand', () {
     late Directory appRoot;
 
     setUp(() {
@@ -46,7 +46,7 @@ void main() {
     }) {
       final commandRunner = CommandRunner<int>('chameleon', 'test')
         ..addCommand(
-          FlutterBlocCommand(
+          BlocCommand(
             logger: Logger(level: Level.quiet),
             runner: runner ?? FakeProcessRunner(),
           ),

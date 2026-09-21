@@ -56,7 +56,7 @@ dart pub global activate --source path cli/chameleon_cli
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 chameleon doctor
-chameleon flutter create my_app
+chameleon create my_app
 ```
 
 Run this from wherever you want the app created. The generated project
@@ -64,7 +64,7 @@ depends on `chameleon_ui`/`chameleon_core` by pinned `git:` ref against this
 public repo, so there's no sibling-directory requirement and no private-repo
 authentication to set up.
 
-`chameleon flutter create --help` lists every flag (state management,
+`chameleon create --help` lists every flag (state management,
 router (`go_router`/`auto_route`), biometrics, permissions, fvm override, and
 the install/codegen/verify/git steps, each individually skippable). The
 command runs `very_good create` (or plain `flutter create` if
@@ -79,7 +79,7 @@ From that app's own root (detected via the `.chameleon/template.yaml` marker
 `create` leaves behind):
 
 ```bash
-chameleon flutter feature beneficiaries
+chameleon feature beneficiaries
 ```
 
 Generates `lib/features/beneficiaries/` (entity, model, chopper api client,
@@ -90,8 +90,8 @@ To add a second piece of state management inside a feature that already
 exists (a filter, a form, a toggle — not a new repository call):
 
 ```bash
-chameleon flutter bloc filters --feature beneficiaries
-chameleon flutter bloc search --feature beneficiaries --cubit
+chameleon bloc filters --feature beneficiaries
+chameleon bloc search --feature beneficiaries --cubit
 ```
 
 ## Keeping the CLI up to date
@@ -122,10 +122,10 @@ regardless of how it's installed.
 ## Status
 
 `chameleon_core`, `chameleon_ui`, `chameleon_lints`, the three Mason bricks,
-and a CLI with `doctor` / `flutter create` / `flutter feature` /
-`flutter bloc` / `update` / `firebase verify` all ship today.
-`chameleon flutter create` supports both `go_router` and `auto_route`, and
-every generated app is verified with `flutter analyze` + `flutter test` +
+and a CLI with `doctor` / `create` / `feature` / `bloc` / `update` /
+`firebase verify` all ship today. `chameleon create` supports both
+`go_router` and `auto_route`, and every generated app is verified with
+`flutter analyze` + `flutter test` +
 `dart run custom_lint` (`chameleon_lints`' three rules: no `setState`,
 `BlocProvider.value` for DI-registered singletons, no function-typed params
 on `@injectable` constructors) before `create`/`feature`/`bloc` report

@@ -30,7 +30,7 @@ import '../auth/local_auth_biometric_authenticator.dart';
 /// this app's actual unauthenticated/idempotent endpoints once a real
 /// backend contract exists (tasks/lessons.md #4 and #11) — both default to
 /// empty, so nothing is exempted or tagged until you do. The `ChopperClient`
-/// each feature needs is NOT provided here: `chameleon flutter feature`
+/// each feature needs is NOT provided here: `chameleon feature`
 /// generates one per feature (see `lib/features/<name>/di/`), deliberately
 /// not a single shared client — see that generator's own module doc comment
 /// for why.

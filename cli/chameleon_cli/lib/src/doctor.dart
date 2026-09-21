@@ -49,7 +49,7 @@ class DoctorReport {
       checks.where((check) => !check.isWarningOnly).every((c) => c.installed);
 }
 
-/// Verifies the tools `chameleon flutter create` shells out to are present,
+/// Verifies the tools `chameleon create` shells out to are present,
 /// so a missing tool fails here with a plain message instead of surfacing
 /// as an opaque error partway through generation.
 ///

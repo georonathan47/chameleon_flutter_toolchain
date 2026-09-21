@@ -8,7 +8,7 @@ import 'package:path/path.dart' as p;
 /// one full-bleed source image — the legacy density set, a raster
 /// adaptive-icon foreground (replacing `very_good_cli`'s default vector
 /// one, which can't represent a flat branded PNG), and the Play Store
-/// listing icon. Runs once per flavor at `chameleon flutter create` time,
+/// listing icon. Runs once per flavor at `chameleon create` time,
 /// writing straight into the generated app's native `android/` tree — no
 /// dependency is added to the generated app itself.
 class AndroidIconGenerator {
