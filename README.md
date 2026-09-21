@@ -1,3 +1,7 @@
+<p align="center">
+  <img src=".github/assets/icon.png" alt="Chameleon" width="160" />
+</p>
+
 # Chameleon Flutter Toolchain
 
 A melos-managed monorepo that scaffolds production-ready Flutter apps: a
