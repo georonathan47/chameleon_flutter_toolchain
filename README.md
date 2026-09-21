@@ -100,19 +100,34 @@ Checks this repo's git tags for a `chameleon_cli-vX.Y.Z` newer than the
 running CLI and reactivates from it if one exists (`--dry-run` to just
 report). Defaults to this repo — pass `--repo-url` for a fork.
 
+## Verifying a Firebase project
+
+```bash
+chameleon firebase verify my-project-id [another-project-id ...]
+```
+
+This toolchain has no Firebase dependency of its own — wiring one into a
+generated app is a manual, opt-in step. Before you do, this command confirms
+a project ID is real and accessible under whoever is logged in
+(`firebase login`), with no side effects (`firebase apps:list --project=<id>`
+— read-only, registers nothing). Requires `firebase-tools`
+(`npm install -g firebase-tools`), reported by `chameleon doctor`; not
+auto-installed, since it's an npm package that needs `firebase login`
+regardless of how it's installed.
+
 ## Status
 
 `chameleon_core`, `chameleon_ui`, `chameleon_lints`, the three Mason bricks,
 and a CLI with `doctor` / `flutter create` / `flutter feature` /
-`flutter bloc` / `update` all ship today. `chameleon flutter create` supports
-both `go_router` and `auto_route`, and every generated app is verified with
-`flutter analyze` + `flutter test` + `dart run custom_lint`
-(`chameleon_lints`' three rules: no `setState`, `BlocProvider.value` for
-DI-registered singletons, no function-typed params on `@injectable`
-constructors) before `create`/`feature`/`bloc` report success.
+`flutter bloc` / `update` / `firebase verify` all ship today.
+`chameleon flutter create` supports both `go_router` and `auto_route`, and
+every generated app is verified with `flutter analyze` + `flutter test` +
+`dart run custom_lint` (`chameleon_lints`' three rules: no `setState`,
+`BlocProvider.value` for DI-registered singletons, no function-typed params
+on `@injectable` constructors) before `create`/`feature`/`bloc` report
+success.
 
-Deferred to a follow-up: a `firebase verify` command and the
-generate-and-verify e2e matrix.
+Deferred to a follow-up: the generate-and-verify e2e matrix.
 
 No Firebase (or any other vendor) dependency is required anywhere in this
 toolchain by default — crash reporting, analytics, feature flags, and

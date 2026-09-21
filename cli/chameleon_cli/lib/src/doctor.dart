@@ -27,6 +27,7 @@ class DoctorReport {
     required this.checks,
     required this.useFvm,
     required this.hasVeryGoodCli,
+    required this.hasFirebaseTools,
   });
 
   final List<ToolCheck> checks;
@@ -36,6 +37,12 @@ class DoctorReport {
   /// when this is true.
   final bool useFvm;
   final bool hasVeryGoodCli;
+
+  /// Whether `firebase` (firebase-tools) is installed — required by
+  /// `chameleon firebase verify`. Not auto-installed: it's an npm package,
+  /// not a Dart pub package, and needs `firebase login` regardless of how
+  /// it's installed.
+  final bool hasFirebaseTools;
 
   /// False if any non-warning check failed — `create` refuses to start.
   bool get isUsable =>
@@ -82,11 +89,18 @@ class Doctor {
       ['--version'],
       isWarningOnly: true,
     );
+    final firebaseTools = await _versionCheck(
+      'firebase-tools',
+      'firebase',
+      ['--version'],
+      isWarningOnly: true,
+    );
 
     return DoctorReport(
-      checks: [flutter, dart, git, veryGood, cocoapods],
+      checks: [flutter, dart, git, veryGood, cocoapods, firebaseTools],
       useFvm: useFvm,
       hasVeryGoodCli: veryGood.installed,
+      hasFirebaseTools: firebaseTools.installed,
     );
   }
 

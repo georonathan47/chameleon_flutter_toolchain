@@ -46,8 +46,14 @@ Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in th
 - [ ] Visual check via iOS Simulator (not done — no simulator session requested; the generated app's `flutter analyze`/`flutter test` pass is the verification on record)
 
 ## Deferred to a follow-up phase
-- CLI `firebase verify` command
 - e2e verification matrix
+
+## Phase 6 — v1.2: `chameleon firebase verify`
+- [x] `doctor.dart`: added `hasFirebaseTools` + warning-only `firebase-tools` check (not `hasFlutterfire` — that was only for the `--firebase-project-*` `flutter create` flow, which this toolchain doesn't have)
+- [x] `firebase_command.dart`/`firebase_verify_command.dart`: ported verbatim in logic, renamed, registered in `command_runner.dart`
+- [x] `firebase_verify_command_test.dart` ported (5 tests); `doctor_test.dart` updated for the new check
+- [x] Real (unmocked) smoke test on this machine: `chameleon doctor` correctly detects real `firebase-tools 15.14.0`; `chameleon firebase verify some-test-project` correctly runs the real `firebase apps:list` command and correctly fails on a nonexistent project — no real Firebase project touched
+- [x] README updated (new "Verifying a Firebase project" section, Status list)
 
 ## Phase 5 — v1.1: chameleon_lints, chameleon update, auto_route support
 - [x] `packages/chameleon_lints`: port 3 rules (no_set_state, bloc_provider_value_for_di, no_function_type_in_injectable_ctor), lint codes renamed `chameleon_*`, standalone (not in melos/pub workspace — real `cli_util` version conflict with melos)

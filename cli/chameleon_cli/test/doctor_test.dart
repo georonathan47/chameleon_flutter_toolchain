@@ -26,16 +26,18 @@ void main() {
       expect(report.isUsable, isTrue);
       expect(report.useFvm, isFalse);
       expect(report.hasVeryGoodCli, isTrue);
+      expect(report.hasFirebaseTools, isTrue);
     });
 
     test('stays usable when only warning-only tools are missing', () async {
       final doctor = Doctor(
-        runner: FakeProcessRunner(missing: {'very_good', 'pod'}),
+        runner: FakeProcessRunner(missing: {'very_good', 'pod', 'firebase'}),
       );
       final report = await doctor.check(directory: tempDir.path);
 
       expect(report.isUsable, isTrue);
       expect(report.hasVeryGoodCli, isFalse);
+      expect(report.hasFirebaseTools, isFalse);
     });
 
     test('is not usable when a required tool is missing', () async {

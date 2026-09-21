@@ -2,6 +2,7 @@ import 'package:args/command_runner.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import 'commands/doctor_command.dart';
+import 'commands/firebase_command.dart';
 import 'commands/flutter_command.dart';
 import 'commands/update_command.dart';
 import 'process_runner.dart';
@@ -14,6 +15,7 @@ class ChameleonCommandRunner extends CommandRunner<int> {
     : _logger = logger ?? Logger(),
       super('chameleon', 'Chameleon project scaffolding.') {
     addCommand(DoctorCommand(logger: _logger, runner: runner));
+    addCommand(FirebaseCommand(logger: _logger, runner: runner));
     addCommand(FlutterCommand(logger: _logger, runner: runner));
     addCommand(UpdateCommand(logger: _logger, runner: runner));
   }
