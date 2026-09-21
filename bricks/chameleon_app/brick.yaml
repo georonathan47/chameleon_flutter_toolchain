@@ -70,4 +70,4 @@ vars:
   chameleon_lints_ref:
     type: string
     description: Same as chameleon_ui_ref, for chameleon_lints.
-    default: main
+    default: chameleon_lints-v0.1.0

@@ -46,11 +46,17 @@ Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in th
 - [ ] Visual check via iOS Simulator (not done — no simulator session requested; the generated app's `flutter analyze`/`flutter test` pass is the verification on record)
 
 ## Deferred to a follow-up phase
-- chameleon_lints package
-- CLI `update` (self-update) command
 - CLI `firebase verify` command
 - e2e verification matrix
-- auto_route support in the app brick
+
+## Phase 5 — v1.1: chameleon_lints, chameleon update, auto_route support
+- [x] `packages/chameleon_lints`: port 3 rules (no_set_state, bloc_provider_value_for_di, no_function_type_in_injectable_ctor), lint codes renamed `chameleon_*`, standalone (not in melos/pub workspace — real `cli_util` version conflict with melos)
+- [x] `chameleon update` CLI command: ported `Updater`/`UpdateCommand`, retargeted to the real public repo/ref-prefix/git-path, registered in `command_runner.dart`
+- [x] `auto_route` support in `chameleon_app` brick: restored `router` var, whole-file mustache branch in `core/router/app_router.dart`, `auto_route: ^11.0.0`/`auto_route_generator: ^10.4.0` (pinned for analyzer-constraint compatibility with `chameleon_lints`)
+- [x] `chameleon_lints` re-wired into the brick (`chameleon_lints_ref` var, pubspec dev dependency, `analysis_options.yaml` plugin, `tool/verify.sh`) and into the CLI's `verify()` gate (`dart run custom_lint`)
+- [x] Re-bundled `chameleon_app`, verified both `go_router` (regression) and `auto_route` (new) paths end-to-end including the new custom_lint gate
+- [x] README/CI updated: `chameleon_lints` gets its own CI step (not covered by `melos run` — see above), CLI test step uses `dart test -j 1` (a `dart test` default-concurrency quirk in this sandbox was found to silently drop suites)
+- [x] Tagged `chameleon_lints-v0.1.0`, repinned the ref from `main`, re-bundled, re-verified, pushed
 
 ## Review
 

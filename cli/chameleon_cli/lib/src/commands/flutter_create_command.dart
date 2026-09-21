@@ -183,7 +183,7 @@ class FlutterCreateCommand extends Command<int> with PipelineSteps {
       // supplied explicitly rather than left for the brick to default.
       'chameleon_ui_ref': 'chameleon_ui-v0.1.0',
       'chameleon_core_ref': 'chameleon_core-v0.1.0',
-      'chameleon_lints_ref': 'main',
+      'chameleon_lints_ref': 'chameleon_lints-v0.1.0',
     };
 
     final overlaid = await step('Applying Chameleon template', () async {
