@@ -1,12 +1,12 @@
 # Chameleon Flutter Toolchain
 
-A melos-managed monorepo that scaffolds production-ready Flutter apps with zero
-brand assets: a design-system package, cross-cutting infrastructure, a Mason
-brick that overlays clean architecture onto a fresh `very_good create`
-project, and a `chameleon` CLI that drives the whole pipeline end to end.
+A melos-managed monorepo that scaffolds production-ready Flutter apps: a
+design-system package, cross-cutting infrastructure, a Mason brick that
+overlays clean architecture onto a fresh `very_good create` project, and a
+`chameleon` CLI that drives the whole pipeline end to end.
 
-No logos, no custom fonts, no brand color palette. Flavor is signalled the
-same way for every app this toolchain generates:
+No custom fonts, no brand color palette beyond the flavor accent below.
+Flavor is signalled the same way for every app this toolchain generates:
 
 | Flavor      | Color                     |
 | ----------- | ------------------------- |
@@ -135,7 +135,9 @@ biometrics all ship with safe no-op defaults in `chameleon_core`; wiring a
 real vendor is an opt-in step for a consuming app, not something this
 toolchain assumes.
 
-Every generated app's launcher icon and in-app loading indicator use one
-original, procedurally-drawn chameleon glyph (no binary brand assets checked
-in anywhere in this repo) — colored per flavor using the same red/blue/none
-convention as the debug banner.
+Every generated app's launcher icon defaults to a chameleon mascot
+illustration, baked into the CLI per flavor (`cli/chameleon_cli/lib/src/icons/flavor_icon_sources.dart`):
+a red "DEV" corner ribbon, a gold "STG" ribbon, and a plain icon for
+production. The in-app loading indicator (`ChameleonMark`/`ChameleonSpinner`
+in `chameleon_ui`) is a separate, still fully procedural `CustomPainter` —
+no brand asset, unaffected by the icon artwork above.

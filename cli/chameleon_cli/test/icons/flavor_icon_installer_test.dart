@@ -1,22 +1,23 @@
 import 'dart:io';
 
-import 'package:chameleon_cli/src/icons/chameleon_icon_painter.dart';
 import 'package:chameleon_cli/src/icons/flavor_icon_installer.dart';
+import 'package:chameleon_cli/src/icons/flavor_icon_sources.dart';
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 void main() {
-  group('ChameleonIconPainter', () {
-    test('every flavor icon decodes as a square PNG', () {
+  group('FlavorIconSources', () {
+    test('every flavor icon decodes as a square 512x512 PNG', () {
       for (final bytes in [
-        ChameleonIconPainter.development(),
-        ChameleonIconPainter.staging(),
-        ChameleonIconPainter.production(),
+        FlavorIconSources.development(),
+        FlavorIconSources.staging(),
+        FlavorIconSources.production(),
       ]) {
         final decoded = img.decodePng(bytes);
         expect(decoded, isNotNull);
         expect(decoded!.width, equals(decoded.height));
+        expect(decoded.width, equals(512));
       }
     });
   });
@@ -56,21 +57,25 @@ void main() {
         'AppIcon.icon',
       };
       for (final bundle in iosBundles) {
-        expect(
-          File(
-            p.join(
-              projectDir.path,
-              'ios',
-              'Runner',
-              'AppIcons',
-              bundle,
-              'Assets',
-              'Icon.png',
-            ),
-          ).existsSync(),
-          isTrue,
-          reason: bundle,
+        final iconFile = File(
+          p.join(
+            projectDir.path,
+            'ios',
+            'Runner',
+            'AppIcons',
+            bundle,
+            'Assets',
+            'Icon.png',
+          ),
         );
+        expect(iconFile.existsSync(), isTrue, reason: bundle);
+
+        // The 512x512 source is upscaled for iOS — confirm the installed
+        // file actually is 1024x1024, not the raw un-upscaled source.
+        final decoded = img.decodePng(iconFile.readAsBytesSync());
+        expect(decoded, isNotNull, reason: bundle);
+        expect(decoded!.width, equals(1024), reason: bundle);
+        expect(decoded.height, equals(1024), reason: bundle);
       }
     });
   });

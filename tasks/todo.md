@@ -55,6 +55,13 @@ Full design rationale: see the approved plan (`dazzling-wiggling-tower.md` in th
 - [x] Real (unmocked) smoke test on this machine: `chameleon doctor` correctly detects real `firebase-tools 15.14.0`; `chameleon firebase verify some-test-project` correctly runs the real `firebase apps:list` command and correctly fails on a nonexistent project — no real Firebase project touched
 - [x] README updated (new "Verifying a Firebase project" section, Status list)
 
+## Phase 7 — v1.3: baked default app icons (user-supplied artwork)
+- [x] User supplied three 512x512 PNGs (chameleon mascot + colored corner ribbon: red "DEV", gold "STG", plain for production) and asked for them to replace the procedural icon generator as the default app icon — a deliberate reversal of the earlier "no baked binary assets" design principle for icons specifically (the in-app `ChameleonMark`/`ChameleonSpinner` loading indicator is untouched and stays procedural).
+- [x] New `lib/src/icons/flavor_icon_sources.dart` (generated via a one-off script, not hand-written): the three PNGs embedded as base64 constants, `// ignore_for_file: lines_longer_than_80_chars` since this is data not code. `FlavorIconInstaller.installAll` now sources from this instead of the deleted `ChameleonIconPainter`; added a `_upscaledForIos` step (512→1024, cubic) since iOS's Icon Composer layer wants 1024 and the source art is 512 — Android's legacy/adaptive/Play Store outputs already only ever downscale, so they take the raw 512 source unchanged.
+- [x] Deleted `chameleon_icon_painter.dart` + its test (dead code); `flavor_icon_installer_test.dart` updated to assert against `FlavorIconSources` (512x512 sources, 1024x1024 installed iOS icon).
+- [x] Verified: `dart analyze` clean (38/38 tests, matches `test(` count), plus a real `chameleon flutter create` generating the actual artwork into `android/`/`ios/` (confirmed by viewing an installed icon file directly, not just checking dimensions/file size).
+- [x] README updated: dropped the now-false "no logos"/"zero brand assets" claims, documented the real icon source location and the STG ribbon being gold in the icon art (a cosmetic mismatch with the blue in-app banner color — noted, not treated as a bug, since it's the artwork as supplied).
+
 ## Phase 5 — v1.1: chameleon_lints, chameleon update, auto_route support
 - [x] `packages/chameleon_lints`: port 3 rules (no_set_state, bloc_provider_value_for_di, no_function_type_in_injectable_ctor), lint codes renamed `chameleon_*`, standalone (not in melos/pub workspace — real `cli_util` version conflict with melos)
 - [x] `chameleon update` CLI command: ported `Updater`/`UpdateCommand`, retargeted to the real public repo/ref-prefix/git-path, registered in `command_runner.dart`
