@@ -68,7 +68,12 @@ for i in "${!NAMES[@]}"; do
   # didn't compile. A real Gradle build is the only way to prove it does.
   if [ "$name" = "e2e_home_widget" ]; then
     echo "--- extra gate: flutter build apk --debug (native Kotlin isn't caught above) ---"
-    if ! (cd "$project_dir" && flutter build apk --debug); then
+    # This brick only ships flavored entrypoints (main_development.dart et
+    # al.) — there is no plain lib/main.dart — so a bare `flutter build apk
+    # --debug` fails with "Target file lib/main.dart not found" regardless
+    # of whether the generated app is otherwise correct. Found by actually
+    # running this gate, not assumed.
+    if ! (cd "$project_dir" && flutter build apk --debug --flavor development -t lib/main_development.dart); then
       echo "✗ $name failed flutter build apk — left at $project_dir for inspection"
       fail_count=$((fail_count + 1))
       continue
