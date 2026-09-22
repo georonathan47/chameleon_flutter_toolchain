@@ -16,6 +16,10 @@ behind each.
 | Deep links need a registered URL scheme/App Link before the OS ever hands one to GoRouter | `tool/checks.sh` checks for `CFBundleURLTypes` (Info.plist) and an `autoVerify` intent-filter (AndroidManifest.xml) — unconditional, not gated by a flag |
 | `use_biometrics` needs `NSFaceIDUsageDescription`/`USE_BIOMETRIC` declared | `tool/checks.sh`, only when `use_biometrics` is on |
 | A debug hook needed in production isn't `@visibleForTesting` | Convention — see `tasks/lessons.md` #10 |
+| Prefer dot shorthands (`.member`) once the target type is already known | `chameleon_lints` (`dart run custom_lint`) — `chameleon_prefer_dot_shorthands` |
+| Prefer a feature's barrel file over reaching into its internal `data`/`domain`/`presentation`/`di` layers from outside that feature | `chameleon_lints` (`dart run custom_lint`) — `chameleon_prefer_barrel_imports` |
+| Prefer `sealed class` for a hierarchy whose subtypes are all declared in the same file | `chameleon_lints` (`dart run custom_lint`) — `chameleon_prefer_sealed_class`; suppress a deliberately open hierarchy with `// ignore: chameleon_prefer_sealed_class` |
+| A `TaskEither<Failure, ...>` method must be built from a safe `TaskEither` constructor, never a raw `async`/`await` block that can throw past its own contract | `chameleon_lints` (`dart run custom_lint`) — `chameleon_task_either_requires_safe_construction` |
 
 ## `@visibleForTesting` vs. a debug hook
 

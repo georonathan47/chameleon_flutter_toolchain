@@ -132,10 +132,9 @@ and a CLI with `doctor` / `create` / `feature` / `bloc` / `update` /
 `firebase verify` all ship today. `chameleon create` supports both
 `go_router` and `auto_route`, and every generated app is verified with
 `flutter analyze` + `flutter test` +
-`dart run custom_lint` (`chameleon_lints`' three rules: no `setState`,
-`BlocProvider.value` for DI-registered singletons, no function-typed params
-on `@injectable` constructors) before `create`/`feature`/`bloc` report
-success.
+`dart run custom_lint` (`chameleon_lints`' seven rules — see
+[`packages/chameleon_lints/README.md`](packages/chameleon_lints/README.md)
+for the full list) before `create`/`feature`/`bloc` report success.
 
 A generate-and-verify e2e matrix (`e2e/run_matrix.sh`, see `e2e/README.md`)
 generates a real app for each of four flag combinations (defaults,
