@@ -13,6 +13,7 @@ export 'src/components/loader/loader.dart';
 export 'src/components/toast/toast.dart';
 export 'src/gestures/activity_detector.dart';
 export 'src/theme/chameleon_theme.dart';
+export 'src/tokens/chameleon_breakpoints.dart';
 export 'src/tokens/chameleon_colors.dart';
 export 'src/tokens/chameleon_motion.dart';
 export 'src/tokens/chameleon_spacing.dart';

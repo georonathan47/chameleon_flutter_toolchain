@@ -30,7 +30,9 @@ package ships with zero logos, brand fonts, or brand colors baked in.
   (raw palette) and `ChameleonSemanticColors` (role-based: `primary`,
   `textPrimary`, …), [`ChameleonSpacing`](lib/src/tokens/chameleon_spacing.dart)
   / `ChameleonRadius`, `ChameleonTypography` (the full text-style ramp,
-  fixed to Inter), and `ChameleonMotion` (durations and curves).
+  fixed to Inter), `ChameleonMotion` (durations and curves), and
+  [`ChameleonBreakpoints`](lib/src/tokens/chameleon_breakpoints.dart) /
+  `ChameleonWindowSizeClass` (phone/tablet/foldable responsive tiers).
 - **Theme** — `ChameleonTheme.light` builds a `ThemeData` from the semantic
   color tokens, so widgets never hardcode a `Color` or `TextStyle` directly.
 - **Components** — `ChameleonToastMessenger`/`ChameleonToastHost` (5 toast
@@ -107,6 +109,19 @@ FlavorBanner(
   shown: !isProduction,
   child: const AppShell(),
 );
+```
+
+Branch a layout on the current window size class — phone, tablet, or
+foldable (a folded foldable's cover screen reads as `phone`; an unfolded
+inner display reads as `tablet`/`foldable` depending on orientation, no
+special-casing needed):
+
+```dart
+switch (ChameleonBreakpoints.of(context)) {
+  ChameleonWindowSizeClass.phone => const SingleColumnLayout(),
+  ChameleonWindowSizeClass.tablet => const TwoColumnLayout(),
+  ChameleonWindowSizeClass.foldable => const ThreeColumnLayout(),
+}
 ```
 
 ## Requirements

@@ -1,3 +1,11 @@
+## 0.3.0
+
+- Added `ChameleonBreakpoints`/`ChameleonWindowSizeClass`: a three-tier
+  responsive breakpoint system (phone/tablet/foldable) with a
+  `ChameleonBreakpoints.of(context)` helper. Foldables aren't a separate
+  tier — a folded cover screen lands in `phone`, an unfolded inner display
+  lands in `tablet`/`foldable` by orientation, purely from measured width.
+
 ## 0.2.0
 
 - `ChameleonToast`/`ChameleonToastMessenger.show`/`error`/`success` gained
