@@ -51,6 +51,9 @@ dependencies:
   {{#has_permissions}}
   permission_handler: ^12.0.3
   {{/has_permissions}}
+  {{#use_home_widget}}
+  home_widget: ^0.10.0
+  {{/use_home_widget}}
   {{#use_go_router}}
   go_router: ^17.3.0
   {{/use_go_router}}

@@ -1,3 +1,11 @@
+## 0.2.0
+
+- Added `HomeWidgetUpdater`: a vendor-neutral interface for pushing data to
+  a home-screen widget, with a `NoopHomeWidgetUpdater` default — same
+  no-hard-dependency shape as `BiometricAuthenticator`/`FeatureFlags`. No
+  `home_widget` dependency here; a consuming app supplies the real
+  implementation only when it opts in.
+
 ## 0.1.0
 
 - Initial release, forked from a private `calbank_core` package.

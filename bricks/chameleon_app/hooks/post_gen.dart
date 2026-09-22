@@ -58,12 +58,39 @@ Future<void> run(HookContext context) async {
     androidPermissions,
   );
 
+  // Same reasoning as the permissions block above — AndroidManifest.xml
+  // isn't brick-templated, so the <receiver> that registers
+  // ChameleonHomeWidgetProvider has to be patched in here. Unlike
+  // <uses-permission>, a <receiver> has to land *inside*
+  // <application>...</application>, not before it — a different insertion
+  // point from _insertManifestPermissions.
+  if (context.vars['use_home_widget'] == true) {
+    _insertManifestReceiver(
+      File('${root.path}/android/app/src/main/AndroidManifest.xml'),
+    );
+    // home_widget's SPM package requires iOS 14+ (confirmed by actually
+    // building: `flutter build ios` fails with "requires minimum platform
+    // version 14.0... but this target supports 13.0" otherwise).
+    // project.pbxproj isn't brick-templated either, so this has to be a
+    // post-gen patch too, same reasoning as Info.plist/AndroidManifest.xml
+    // above — raising a version-number string is a narrow, low-risk edit,
+    // not structural project-file surgery (no target/file-graph changes).
+    // The Podfile's matching `platform :ios, 14.0` bump is a normal
+    // brick-templated mustache conditional, not a post-gen patch, since
+    // the Podfile (unlike project.pbxproj) already lives under __brick__.
+    _bumpIosDeploymentTarget(
+      File('${root.path}/ios/Runner.xcodeproj/project.pbxproj'),
+    );
+  }
+
   for (final scriptName in ['checks.sh', 'verify.sh']) {
     final script = File('${root.path}/tool/$scriptName');
     if (!script.existsSync()) continue;
     final result = await Process.run('chmod', ['+x', script.path]);
     if (result.exitCode != 0) {
-      context.logger.warn('Could not chmod +x tool/$scriptName: ${result.stderr}');
+      context.logger.warn(
+        'Could not chmod +x tool/$scriptName: ${result.stderr}',
+      );
     }
   }
 
@@ -152,11 +179,65 @@ void _insertManifestPermissions(File manifest, List<String> permissions) {
     );
   }
   final lines = permissions
-      .map((permission) => '    <uses-permission android:name="$permission" />\n')
+      .map(
+        (permission) => '    <uses-permission android:name="$permission" />\n',
+      )
       .join();
   manifest.writeAsStringSync(
     '${content.substring(0, marker)}$lines\n    ${content.substring(marker)}',
   );
+}
+
+/// Inserts the `<receiver>` that registers `ChameleonHomeWidgetProvider`
+/// right before `AndroidManifest.xml`'s closing `</application>` tag — a
+/// `<receiver>`, unlike a `<uses-permission>`, has to be a child of
+/// `<application>`, not a sibling before it. No-op if the file doesn't
+/// exist.
+void _insertManifestReceiver(File manifest) {
+  if (!manifest.existsSync()) return;
+
+  final content = manifest.readAsStringSync();
+  final marker = content.lastIndexOf('</application>');
+  if (marker == -1) {
+    throw StateError(
+      'android/app/src/main/AndroidManifest.xml has no </application> tag '
+      '— very_good_cli/flutter create may have changed its template shape.',
+    );
+  }
+
+  const receiver = '''
+    <receiver
+        android:name="dev.chameleon.homewidget.ChameleonHomeWidgetProvider"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+            android:name="android.appwidget.provider"
+            android:resource="@xml/chameleon_home_widget_info" />
+    </receiver>
+
+''';
+
+  manifest.writeAsStringSync(
+    '${content.substring(0, marker)}$receiver${content.substring(marker)}',
+  );
+}
+
+/// Raises every `IPHONEOS_DEPLOYMENT_TARGET = 13.0;` (Debug/Release/Profile
+/// × Runner/RunnerTests, `very_good_cli`'s default) to `14.0` —
+/// `home_widget`'s SPM package won't resolve below that. No-op if the file
+/// doesn't exist or nothing matches (e.g. `very_good_cli` already defaults
+/// to 14.0+ in a future version).
+void _bumpIosDeploymentTarget(File pbxproj) {
+  if (!pbxproj.existsSync()) return;
+
+  final content = pbxproj.readAsStringSync();
+  final updated = content.replaceAll(
+    'IPHONEOS_DEPLOYMENT_TARGET = 13.0;',
+    'IPHONEOS_DEPLOYMENT_TARGET = 14.0;',
+  );
+  if (updated != content) pbxproj.writeAsStringSync(updated);
 }
 
 String _escapeXml(String value) => value

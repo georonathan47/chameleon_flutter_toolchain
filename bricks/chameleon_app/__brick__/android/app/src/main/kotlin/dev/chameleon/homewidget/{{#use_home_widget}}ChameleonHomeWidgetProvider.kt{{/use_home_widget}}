@@ -1,0 +1,48 @@
+package dev.chameleon.homewidget
+
+import android.appwidget.AppWidgetManager
+import android.content.Context
+import android.content.SharedPreferences
+import android.widget.RemoteViews
+import es.antonborri.home_widget.HomeWidgetLaunchIntent
+import es.antonborri.home_widget.HomeWidgetProvider
+import {{org_name}}.{{project_name.snakeCase()}}.MainActivity
+import {{org_name}}.{{project_name.snakeCase()}}.R
+
+/**
+ * Renders the home-screen widget from whatever HomeWidgetUpdater.saveData
+ * last wrote — see docs/architecture.md's "Home screen widgets" section.
+ *
+ * Lives in its own package rather than [MainActivity]'s, so this file's
+ * location never has to track org_name/project_name — it only needs their
+ * generated package as an import, for [MainActivity] and the app's own
+ * generated `R` class.
+ */
+class ChameleonHomeWidgetProvider : HomeWidgetProvider() {
+  override fun onUpdate(
+      context: Context,
+      appWidgetManager: AppWidgetManager,
+      appWidgetIds: IntArray,
+      widgetData: SharedPreferences,
+  ) {
+    appWidgetIds.forEach { widgetId ->
+      val views =
+          RemoteViews(context.packageName, R.layout.chameleon_home_widget).apply {
+            val pendingIntent =
+                HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java)
+            setOnClickPendingIntent(R.id.chameleon_home_widget_container, pendingIntent)
+
+            setTextViewText(
+                R.id.chameleon_home_widget_title,
+                widgetData.getString("title", null) ?: "No title set",
+            )
+            setTextViewText(
+                R.id.chameleon_home_widget_value,
+                widgetData.getString("value", null) ?: "No value set",
+            )
+          }
+
+      appWidgetManager.updateAppWidget(widgetId, views)
+    }
+  }
+}

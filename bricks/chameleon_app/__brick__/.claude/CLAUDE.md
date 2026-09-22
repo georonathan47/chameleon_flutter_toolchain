@@ -13,6 +13,9 @@ root-level CLAUDE.md instructions.
 - **State management:** {{#is_bloc}}Bloc (`flutter_bloc`){{/is_bloc}}{{^is_bloc}}Cubit (`flutter_bloc`){{/is_bloc}} — one bloc/cubit per feature; states are immutable
 - **Router:** {{#use_go_router}}go_router{{/use_go_router}}{{^use_go_router}}auto_route{{/use_go_router}}
 - **iOS/macOS dependencies:** Swift Package Manager (Flutter 3.44+ default), CocoaPods as automatic fallback for any plugin that hasn't adopted SPM yet — see `docs/architecture.md`
+{{#use_home_widget}}
+- **Home screen widget:** `HomeWidgetUpdater` (`chameleon_core`) wraps the `home_widget` plugin. Android is fully generated and working; the iOS Widget Extension target still needs the one-time manual Xcode step in `ios/HomeWidgetExtension/README.md` before the iOS widget exists at all — see `docs/architecture.md`
+{{/use_home_widget}}
 - **Design system / shared infra:** `chameleon_ui` (tokens, theme, shared
   components) and `chameleon_core` (failures, logging, network layer,
   isolate helpers, feature flags) — see `docs/architecture.md`. Changes that

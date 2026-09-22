@@ -27,6 +27,7 @@ export 'src/errors/exceptions.dart';
 export 'src/errors/failures.dart';
 export 'src/feature_flags/feature_flags.dart';
 export 'src/feature_flags/noop_feature_flags.dart';
+export 'src/home_widget/home_widget_updater.dart';
 export 'src/network/auth_interceptor.dart';
 export 'src/network/chopper_client_factory.dart';
 export 'src/network/device_identity.dart';

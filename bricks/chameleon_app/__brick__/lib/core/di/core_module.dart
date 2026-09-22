@@ -10,6 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 {{#use_biometrics}}
 import '../auth/local_auth_biometric_authenticator.dart';
 {{/use_biometrics}}
+{{#use_home_widget}}
+import '../home_widget/home_widget_updater_impl.dart';
+{{/use_home_widget}}
 
 /// Provides the platform-level dependencies `chameleon_core`'s
 /// `@lazySingleton`/`@injectable` classes need but cannot construct
@@ -23,7 +26,7 @@ import '../auth/local_auth_biometric_authenticator.dart';
 /// `Connectivity`, `SharedPreferences`, `FlutterSecureStorage` (which
 /// `SecureStorageImpl` itself needs), `TokenStorage` (built from
 /// `SecureStorage` + `SharedPreferences`), `SessionCache`, `FeatureFlags`,
-/// and `BiometricAuthenticator`.
+/// `BiometricAuthenticator`, and `HomeWidgetUpdater`.
 ///
 /// TODO(chameleon): `AuthInterceptor.configureNoAuthPaths` and
 /// `IdempotencyInterceptor.configureRequiredPaths` still need calling with
@@ -84,4 +87,17 @@ abstract class CoreModule {
   BiometricAuthenticator get biometricAuthenticator =>
       const NoopBiometricAuthenticator();
   {{/use_biometrics}}
+
+  {{#use_home_widget}}
+  @lazySingleton
+  HomeWidgetUpdater get homeWidgetUpdater => HomeWidgetUpdaterImpl();
+  {{/use_home_widget}}
+  {{^use_home_widget}}
+  /// `use_home_widget` is off — nothing pushes data to a widget, but
+  /// binding a real singleton either way (same pattern as `sessionCache`
+  /// above) keeps a feature's constructor-injected dependency the same
+  /// shape regardless of the flag.
+  @lazySingleton
+  HomeWidgetUpdater get homeWidgetUpdater => const NoopHomeWidgetUpdater();
+  {{/use_home_widget}}
 }
