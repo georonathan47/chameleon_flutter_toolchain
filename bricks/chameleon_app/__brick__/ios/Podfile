@@ -1,5 +1,14 @@
 # Uncomment this line to define a global platform for your project.
+{{#use_home_widget}}
+# home_widget's SPM package requires iOS 14+ — see
+# docs/architecture.md's "Home screen widgets" section. Must match
+# project.pbxproj's IPHONEOS_DEPLOYMENT_TARGET, which post_gen.dart bumps
+# to the same value only when use_home_widget is on.
+platform :ios, 14.0
+{{/use_home_widget}}
+{{^use_home_widget}}
 platform :ios, 13.0
+{{/use_home_widget}}
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'

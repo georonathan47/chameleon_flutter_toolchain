@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chameleon_home_widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FF181A1B"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/chameleon_home_widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFF8F9FA"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="Title" />
+
+    <TextView
+        android:id="@+id/chameleon_home_widget_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="#FFADB5BD"
+        android:textSize="13sp"
+        tools:text="Value" />
+</LinearLayout>

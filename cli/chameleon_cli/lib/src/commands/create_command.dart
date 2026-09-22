@@ -63,6 +63,15 @@ class CreateCommand extends Command<int> with PipelineSteps {
             'NSFaceIDUsageDescription and the Android biometric '
             'permission — tool/checks.sh verifies both.',
       )
+      ..addFlag(
+        'home-widget',
+        help:
+            'Wire HomeWidgetUpdater to the home_widget plugin. Generates a '
+            'working Android AppWidgetProvider automatically; the iOS '
+            'Widget Extension target has to be added manually in Xcode — '
+            'Swift starter source and setup steps ship under '
+            'ios/HomeWidgetExtension/.',
+      )
       ..addFlag('install', defaultsTo: true, help: 'Run flutter pub get.')
       ..addFlag('codegen', defaultsTo: true, help: 'Run build_runner.')
       ..addFlag(
@@ -177,12 +186,15 @@ class CreateCommand extends Command<int> with PipelineSteps {
       'router': results['router'] as String,
       'use_biometrics': results['biometrics'] as bool,
       'permissions': permissions,
+      'use_home_widget': results['home-widget'] as bool,
       // Kept in sync by hand with brick.yaml's own declared defaults — the
       // bundled generator does raw mustache substitution with no fallback
       // to a brick.yaml default for a var it isn't given, so these must be
       // supplied explicitly rather than left for the brick to default.
       'chameleon_ui_ref': 'chameleon_ui-v0.1.0',
-      'chameleon_core_ref': 'chameleon_core-v0.1.0',
+      // v0.2.0, not v0.1.0: HomeWidgetUpdater only exists from
+      // chameleon_core-v0.2.0 on.
+      'chameleon_core_ref': 'chameleon_core-v0.2.0',
       'chameleon_lints_ref': 'chameleon_lints-v0.1.0',
     };
 

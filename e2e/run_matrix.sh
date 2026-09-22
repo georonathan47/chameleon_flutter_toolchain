@@ -31,6 +31,7 @@ NAMES+=("e2e_defaults"); FLAGS+=("")
 NAMES+=("e2e_cubit_auto_route"); FLAGS+=("--state cubit --router auto_route")
 NAMES+=("e2e_biometrics"); FLAGS+=("--biometrics")
 NAMES+=("e2e_with_permissions"); FLAGS+=("--permissions camera,notification")
+NAMES+=("e2e_home_widget"); FLAGS+=("--home-widget")
 
 fail_count=0
 
@@ -54,13 +55,27 @@ for i in "${!NAMES[@]}"; do
   (cd "$project_dir" && ./tool/checks.sh) || true
 
   echo "--- gate: flutter analyze && flutter test && dart run custom_lint ---"
-  if (cd "$project_dir" && flutter analyze && flutter test && dart run custom_lint); then
-    echo "✓ $name passed analyze + test + custom_lint"
-    rm -rf "$project_dir"
-  else
+  if ! (cd "$project_dir" && flutter analyze && flutter test && dart run custom_lint); then
     echo "✗ $name failed analyze/test/custom_lint — left at $project_dir for inspection"
     fail_count=$((fail_count + 1))
+    continue
   fi
+
+  # flutter analyze/test only ever touch Dart — the home-widget variant is
+  # the only one that also generates a native Kotlin file
+  # (ChameleonHomeWidgetProvider.kt), and nothing above would notice if it
+  # didn't compile. A real Gradle build is the only way to prove it does.
+  if [ "$name" = "e2e_home_widget" ]; then
+    echo "--- extra gate: flutter build apk --debug (native Kotlin isn't caught above) ---"
+    if ! (cd "$project_dir" && flutter build apk --debug); then
+      echo "✗ $name failed flutter build apk — left at $project_dir for inspection"
+      fail_count=$((fail_count + 1))
+      continue
+    fi
+  fi
+
+  echo "✓ $name passed"
+  rm -rf "$project_dir"
 done
 
 echo ""

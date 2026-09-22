@@ -1,0 +1,92 @@
+//
+//  ChameleonHomeWidget.swift
+//
+//  Starter source for this app's Widget Extension — NOT wired into the
+//  Xcode project yet. See README.md in this same folder for the manual
+//  setup steps (Apple gives no scriptable way to create a Widget
+//  Extension target, so `chameleon create` can't do this part for you).
+//
+//  Reads whatever HomeWidgetUpdater.saveData last wrote under "title"/
+//  "value", via the same App Group as home_widget_updater_impl.dart's
+//  _appGroupId — keep the two in sync if you ever rename either.
+//
+
+import SwiftUI
+import WidgetKit
+
+private let appGroupId = "group.{{org_name}}.{{project_name.snakeCase()}}.homewidget"
+
+struct ChameleonHomeWidgetEntry: TimelineEntry {
+  let date: Date
+  let title: String
+  let value: String
+}
+
+struct ChameleonHomeWidgetProvider: TimelineProvider {
+  func placeholder(in context: Context) -> ChameleonHomeWidgetEntry {
+    ChameleonHomeWidgetEntry(date: Date(), title: "Placeholder title", value: "Placeholder value")
+  }
+
+  func getSnapshot(
+    in context: Context, completion: @escaping (ChameleonHomeWidgetEntry) -> Void
+  ) {
+    completion(currentEntry(isPreview: context.isPreview))
+  }
+
+  func getTimeline(
+    in context: Context, completion: @escaping (Timeline<ChameleonHomeWidgetEntry>) -> Void
+  ) {
+    let timeline = Timeline(entries: [currentEntry(isPreview: context.isPreview)], policy: .atEnd)
+    completion(timeline)
+  }
+
+  private func currentEntry(isPreview: Bool) -> ChameleonHomeWidgetEntry {
+    let defaults = UserDefaults(suiteName: appGroupId)
+    let title = defaults?.string(forKey: "title")
+    let value = defaults?.string(forKey: "value")
+    return ChameleonHomeWidgetEntry(
+      date: Date(),
+      title: title ?? (isPreview ? "Hello" : "No title set"),
+      value: value ?? (isPreview ? "Preview data" : "No value set")
+    )
+  }
+}
+
+struct ChameleonHomeWidgetEntryView: View {
+  var entry: ChameleonHomeWidgetProvider.Entry
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(entry.title).bold().font(.headline)
+      Text(entry.value).font(.subheadline)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding()
+  }
+}
+
+@main
+struct ChameleonHomeWidget: Widget {
+  // Must match HomeWidgetUpdaterImpl.widgetName and
+  // ChameleonHomeWidgetProvider.kt's class name (see updateWidget's own
+  // doc comment in home_widget's HomeWidget.dart for why the two
+  // platforms use the same identifier differently).
+  let kind: String = "ChameleonHomeWidgetProvider"
+
+  var body: some WidgetConfiguration {
+    StaticConfiguration(kind: kind, provider: ChameleonHomeWidgetProvider()) { entry in
+      ChameleonHomeWidgetEntryView(entry: entry)
+    }
+    .configurationDisplayName("{{project_name.titleCase()}}")
+    .description("Shows the latest data saved via HomeWidgetUpdater.")
+  }
+}
+
+struct ChameleonHomeWidget_Previews: PreviewProvider {
+  static var previews: some View {
+    ChameleonHomeWidgetEntryView(
+      entry: ChameleonHomeWidgetEntry(date: Date(), title: "Example title", value: "Example value")
+    )
+    .previewContext(WidgetPreviewContext(family: .systemSmall))
+  }
+}

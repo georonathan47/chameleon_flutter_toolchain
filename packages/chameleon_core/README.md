@@ -18,6 +18,7 @@ implementation is opt-in from the consuming app:
 | Product analytics | `AnalyticsReporter` | `NoopAnalyticsReporter` | e.g. Firebase Analytics, Mixpanel — wired via `ChameleonLogger.useAnalyticsReporter` |
 | Biometric auth | `BiometricAuthenticator` | `NoopBiometricAuthenticator` | e.g. `local_auth` — bound in the app's own DI setup |
 | Feature flags | `FeatureFlags` | `NoopFeatureFlags` | e.g. Firebase Remote Config, LaunchDarkly — bound in the app's own DI setup |
+| Home-screen widget | `HomeWidgetUpdater` | `NoopHomeWidgetUpdater` | e.g. `home_widget` — bound in the app's own DI setup |
 
 This is why `chameleon_core` has **zero** dependency on any specific crash
 reporting, analytics, biometrics, or feature-flag vendor SDK — including

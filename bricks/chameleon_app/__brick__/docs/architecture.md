@@ -60,6 +60,37 @@ flutter:
     enable-swift-package-manager: false
 ```
 
+## Home screen widgets
+
+`use_home_widget` wires `HomeWidgetUpdater` (`chameleon_core`) to the
+`home_widget` plugin. Turning it on also raises this app's iOS deployment
+target from 13.0 to 14.0 (`project.pbxproj` and `ios/Podfile`, both) —
+`home_widget`'s SPM package won't resolve below iOS 14, confirmed by
+actually building. The two platforms aren't symmetric otherwise:
+
+- **Android** is fully generated and works immediately:
+  `ChameleonHomeWidgetProvider.kt`, its layout, its `appwidget-provider`
+  XML, and the `AndroidManifest.xml` `<receiver>` entry are all written for
+  you.
+- **iOS** ships Swift starter source under `ios/HomeWidgetExtension/`, but
+  the Widget Extension target itself has to be created by hand in Xcode —
+  Apple gives no scriptable path for this, confirmed against Flutter's own
+  docs. See `ios/HomeWidgetExtension/README.md` for the exact steps
+  (target creation, App Group registration).
+
+Push data to the widget from anywhere in the app via DI:
+
+```dart
+final updater = getIt<HomeWidgetUpdater>();
+await updater.saveData('title', 'Balance');
+await updater.saveData('value', '\$1,234.56');
+await updater.updateWidget();
+```
+
+When `use_home_widget` is off, `HomeWidgetUpdater` resolves to
+`NoopHomeWidgetUpdater` — the call site above compiles and runs either way,
+it just does nothing until the flag is on.
+
 ## Data flow
 
 `Page` → `BlocBuilder`/`BlocSelector` reads a `Bloc`/`Cubit` → dispatches an

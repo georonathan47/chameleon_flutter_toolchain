@@ -1,0 +1,53 @@
+import 'dart:async';
+
+import 'package:chameleon_core/chameleon_core.dart';
+import 'package:home_widget/home_widget.dart';
+
+/// Pushes data to the home-screen widget via the `home_widget` plugin.
+///
+/// Bound in `core_module.dart` only when `use_home_widget` is on —
+/// `chameleon_core` itself has no `home_widget` dependency, so this adapter
+/// is the only place that import lives. [widgetName] must match the
+/// Android `AppWidgetProvider`'s manifest name and the iOS widget's `kind`
+/// — see docs/architecture.md's "Home screen widgets" section.
+class HomeWidgetUpdaterImpl implements HomeWidgetUpdater {
+  HomeWidgetUpdaterImpl() {
+    // Required once, before any saveWidgetData/updateWidget call reaches
+    // the iOS side — see home_widget's own docs. Android ignores this
+    // entirely (App Groups are an iOS-only concept), so it's harmless
+    // there. Fire-and-forget: nothing here needs to block DI setup on a
+    // platform-channel round trip.
+    unawaited(HomeWidget.setAppGroupId(_appGroupId));
+  }
+
+  /// Matches `ChameleonHomeWidgetProvider`'s class name on Android and the
+  /// `kind` declared in `ios/HomeWidgetExtension/ChameleonHomeWidget.swift`.
+  static const widgetName = 'ChameleonHomeWidgetProvider';
+
+  /// The iOS App Group the Flutter side and the Widget Extension share —
+  /// must match `UserDefaults(suiteName:)` in
+  /// `ios/HomeWidgetExtension/ChameleonHomeWidget.swift` exactly. Baked in
+  /// here rather than left for the developer to hand-sync across Dart and
+  /// Swift.
+  static const _appGroupId =
+      'group.{{org_name}}.{{project_name.snakeCase()}}.homewidget';
+
+  @override
+  Future<bool> saveData(String key, Object? value) async {
+    final saved = await HomeWidget.saveWidgetData(
+      key,
+      value,
+      appGroupId: _appGroupId,
+    );
+    return saved ?? false;
+  }
+
+  @override
+  Future<bool> updateWidget() async {
+    final updated = await HomeWidget.updateWidget(
+      androidName: widgetName,
+      iOSName: widgetName,
+    );
+    return updated ?? false;
+  }
+}

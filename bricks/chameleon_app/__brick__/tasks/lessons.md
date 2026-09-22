@@ -82,5 +82,21 @@ Patterns worth not relearning. Reviewed at session start.
     use `ChameleonToastMessenger` from `chameleon_ui`. Check:
     `grep -rn "showSnackBar\|ScaffoldMessenger" lib --include="*.dart"`
     returns nothing outside comments.
+17. **A home-screen widget's native half can't be fully generated.**
+    Android is: `ChameleonHomeWidgetProvider.kt`, its layout, its
+    `appwidget-provider` XML, and the `AndroidManifest.xml` receiver entry
+    are all written for you when `use_home_widget` is on. iOS isn't —
+    creating a Widget Extension target is an Xcode-UI-only operation with
+    no scriptable path (confirmed against Flutter's own "Adding iOS app
+    extensions" doc), so `ios/HomeWidgetExtension/` ships Swift starter
+    source plus a README covering the manual target-creation and App Group
+    steps instead of pretending they can be automated. See
+    `docs/architecture.md`'s "Home screen widgets" section.
+18. **A plugin's SPM package can require a higher iOS floor than this
+    template ships with.** `home_widget` needs iOS 14+; `very_good_cli`'s
+    default `project.pbxproj`/`Podfile` are 13.0. `flutter build ios`
+    fails outright, not just the Widget Extension — found by actually
+    building, not assumed. `use_home_widget` bumps both files' deployment
+    target to 14.0 for exactly this reason.
 
 ## Project-specific

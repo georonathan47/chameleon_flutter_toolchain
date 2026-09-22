@@ -1,0 +1,41 @@
+# Home screen widget — iOS setup
+
+`chameleon create --home-widget` generated the Android widget fully
+working out of the box. iOS can't be automated the same way — Apple gives
+no scriptable path for creating a Widget Extension target, only Xcode's
+own UI (confirmed against Flutter's own
+["Adding iOS app extensions"](https://docs.flutter.dev/platform-integration/ios/app-extensions)
+doc and `home_widget`'s setup docs). This folder holds the Swift source
+ready to drop into that target once you create it — do the following once,
+by hand:
+
+1. Open `ios/Runner.xcworkspace` in Xcode.
+2. **File > New > Target… > Widget Extension.** Name it
+   `ChameleonHomeWidget`. Uncheck "Include Configuration App Intent" (this
+   widget isn't user-configurable). Uncheck "Include Live Activity" too.
+3. Xcode generates its own starter Swift file for the new target — delete
+   it, then drag `ChameleonHomeWidget.swift` from this folder into the new
+   target (make sure "Copy items if needed" and the `ChameleonHomeWidget`
+   target membership are both checked).
+4. **App Groups**, needed so the main app and the widget can share data:
+   - In your [Apple Developer Account](https://developer.account.apple.com),
+     under Certificates, Identifiers & Profiles > Identifiers > App Groups,
+     register a new group with the identifier
+     `group.{{org_name}}.{{project_name.snakeCase()}}.homewidget` — this
+     exact string, since it's already baked into both
+     `ChameleonHomeWidget.swift` (this folder) and
+     `lib/core/home_widget/home_widget_updater_impl.dart`.
+   - Back in Xcode, select the **Runner** target > Signing & Capabilities >
+     **+ Capability** > App Groups, add the group above, and repeat for the
+     **ChameleonHomeWidget** target (the target dropdown at the top of the
+     editor switches between them).
+5. Build and run. The widget starts showing "No title set"/"No value set"
+   until something in the app calls
+   `getIt<HomeWidgetUpdater>().saveData('title', ...)` /
+   `.saveData('value', ...)` followed by `.updateWidget()`.
+
+Nothing above is checked by `tool/checks.sh` — there's no reliable
+text-based way to verify "a Widget Extension target exists," unlike a
+missing `Info.plist` key. Long-press the home screen and confirm
+`ChameleonHomeWidget` appears in the widget gallery as your own
+verification.

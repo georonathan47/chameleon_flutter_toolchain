@@ -65,8 +65,9 @@ public repo, so there's no sibling-directory requirement and no private-repo
 authentication to set up.
 
 `chameleon create --help` lists every flag (state management,
-router (`go_router`/`auto_route`), biometrics, permissions, fvm override, and
-the install/codegen/verify/git steps, each individually skippable). The
+router (`go_router`/`auto_route`), biometrics, permissions, a home screen
+widget, fvm override, and the install/codegen/verify/git steps, each
+individually skippable). The
 command runs `very_good create` (or plain `flutter create` if
 `very_good_cli` isn't installed), overlays the brick, resolves dependencies,
 and — unless `--no-verify` is passed — refuses to call the project done
@@ -130,7 +131,11 @@ regardless of how it's installed.
 `chameleon_core`, `chameleon_ui`, `chameleon_lints`, the three Mason bricks,
 and a CLI with `doctor` / `create` / `feature` / `bloc` / `update` /
 `firebase verify` all ship today. `chameleon create` supports both
-`go_router` and `auto_route`, and every generated app is verified with
+`go_router` and `auto_route`, and `--home-widget` generates a fully working
+Android home-screen widget plus iOS Swift starter source (the Widget
+Extension target itself needs one manual Xcode step — see
+`ios/HomeWidgetExtension/README.md` in a generated app). Every generated
+app is verified with
 `flutter analyze` + `flutter test` +
 `dart run custom_lint` (`chameleon_lints`' seven rules — see
 [`packages/chameleon_lints/README.md`](packages/chameleon_lints/README.md)

@@ -15,6 +15,8 @@ behind each.
 | `AuthInterceptor`/`IdempotencyInterceptor` ship with empty path lists | `core_module.dart` has a `// TODO(chameleon):` until you configure them — `tool/checks.sh`'s leftover-TODO check fails until you do |
 | Deep links need a registered URL scheme/App Link before the OS ever hands one to GoRouter | `tool/checks.sh` checks for `CFBundleURLTypes` (Info.plist) and an `autoVerify` intent-filter (AndroidManifest.xml) — unconditional, not gated by a flag |
 | `use_biometrics` needs `NSFaceIDUsageDescription`/`USE_BIOMETRIC` declared | `tool/checks.sh`, only when `use_biometrics` is on |
+| `HomeWidgetUpdater` binding matches `use_home_widget` | `core_module.dart`'s mustache split — the real, `home_widget`-backed impl only compiles in when the flag is on |
+| The iOS Widget Extension target itself exists | Not automated — see `ios/HomeWidgetExtension/README.md`; nothing text-greppable proves a Widget Extension target was created in Xcode |
 | A debug hook needed in production isn't `@visibleForTesting` | Convention — see `tasks/lessons.md` #10 |
 | Prefer dot shorthands (`.member`) once the target type is already known | `chameleon_lints` (`dart run custom_lint`) — `chameleon_prefer_dot_shorthands` |
 | Prefer a feature's barrel file over reaching into its internal `data`/`domain`/`presentation`/`di` layers from outside that feature | `chameleon_lints` (`dart run custom_lint`) — `chameleon_prefer_barrel_imports` |
