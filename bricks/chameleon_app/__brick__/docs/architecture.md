@@ -91,6 +91,24 @@ When `use_home_widget` is off, `HomeWidgetUpdater` resolves to
 `NoopHomeWidgetUpdater` — the call site above compiles and runs either way,
 it just does nothing until the flag is on.
 
+## Responsive breakpoints
+
+`chameleon_ui` ships `ChameleonBreakpoints`/`ChameleonWindowSizeClass` — a
+three-tier responsive system: `phone` (`<600dp`), `tablet`
+(`600–839dp`), `foldable` (`≥840dp`, uncapped). A window size class comes
+purely from measured width, not device type, so a foldable isn't a fourth
+tier of its own: a folded cover screen is narrow enough to land in `phone`
+like any phone, and an unfolded inner display lands in `tablet` (portrait)
+or `foldable` (landscape) from its real width alone.
+
+```dart
+switch (ChameleonBreakpoints.of(context)) {
+  ChameleonWindowSizeClass.phone => const SingleColumnLayout(),
+  ChameleonWindowSizeClass.tablet => const TwoColumnLayout(),
+  ChameleonWindowSizeClass.foldable => const ThreeColumnLayout(),
+}
+```
+
 ## Data flow
 
 `Page` → `BlocBuilder`/`BlocSelector` reads a `Bloc`/`Cubit` → dispatches an
