@@ -1,0 +1,53 @@
+import 'package:chameleon_core/chameleon_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+/// `firebase_messaging`-backed [PushNotificationService]. Talks to
+/// `FirebaseMessaging.instance` directly — a plugin-level singleton, not a
+/// constructor-injected platform object — so binding this in
+/// `core_module.dart` needs no extra provider, same as
+/// `HomeWidgetUpdaterImpl`.
+class FirebaseMessagingPushNotificationService
+    implements PushNotificationService {
+  const FirebaseMessagingPushNotificationService();
+
+  @override
+  Future<String?> getToken() => FirebaseMessaging.instance.getToken();
+
+  @override
+  Future<bool> requestPermission() async {
+    final settings = await FirebaseMessaging.instance.requestPermission();
+    return switch (settings.authorizationStatus) {
+      AuthorizationStatus.authorized => true,
+      AuthorizationStatus.provisional => true,
+      AuthorizationStatus.denied => false,
+      AuthorizationStatus.notDetermined => false,
+      AuthorizationStatus.deniedPermanently => false,
+    };
+  }
+
+  @override
+  Stream<Map<String, dynamic>> get onMessage =>
+      FirebaseMessaging.onMessage.map(
+        (message) => {
+          'title': message.notification?.title,
+          'body': message.notification?.body,
+          'data': message.data,
+        },
+      );
+}
+
+/// Handles a message that arrives while the app is backgrounded or
+/// terminated. Must be a top-level function, not a method — FCM runs it in
+/// its own isolate, separate from the app's main isolate, and
+/// `@pragma('vm:entry-point')` keeps the release-mode tree shaker from
+/// stripping it (it has no call site the compiler can see; FCM invokes it
+/// by name from native code). Registered once, in `bootstrap.dart`, via
+/// `FirebaseMessaging.onBackgroundMessage`.
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Statics don't cross isolates (see tasks/lessons.md #13) — ChameleonLogger
+  // starts back at its Noop defaults here, so this stays a no-op body rather
+  // than assuming a crash/analytics reporter is wired. Extend this once a
+  // feature needs real background-message handling (e.g. updating a
+  // HomeWidgetUpdater-backed home screen widget from push data).
+}

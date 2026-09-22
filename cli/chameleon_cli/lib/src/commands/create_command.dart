@@ -72,6 +72,16 @@ class CreateCommand extends Command<int> with PipelineSteps {
             'Swift starter source and setup steps ship under '
             'ios/HomeWidgetExtension/.',
       )
+      ..addFlag(
+        'push-notifications',
+        help:
+            'Wire PushNotificationService to firebase_messaging. Declares '
+            'the Android 13+ POST_NOTIFICATIONS permission automatically; '
+            'everything else — a real Firebase project '
+            '(`flutterfire configure`) and the iOS Push Notifications + '
+            'Background Modes capabilities in Xcode — is a one-time manual '
+            'step. See docs/architecture.md.',
+      )
       ..addFlag('install', defaultsTo: true, help: 'Run flutter pub get.')
       ..addFlag('codegen', defaultsTo: true, help: 'Run build_runner.')
       ..addFlag(
@@ -187,14 +197,15 @@ class CreateCommand extends Command<int> with PipelineSteps {
       'use_biometrics': results['biometrics'] as bool,
       'permissions': permissions,
       'use_home_widget': results['home-widget'] as bool,
+      'use_push_notifications': results['push-notifications'] as bool,
       // Kept in sync by hand with brick.yaml's own declared defaults — the
       // bundled generator does raw mustache substitution with no fallback
       // to a brick.yaml default for a var it isn't given, so these must be
       // supplied explicitly rather than left for the brick to default.
       'chameleon_ui_ref': 'chameleon_ui-v0.1.0',
-      // v0.2.0, not v0.1.0: HomeWidgetUpdater only exists from
-      // chameleon_core-v0.2.0 on.
-      'chameleon_core_ref': 'chameleon_core-v0.2.0',
+      // v0.3.0, not v0.2.0: PushNotificationService only exists from
+      // chameleon_core-v0.3.0 on.
+      'chameleon_core_ref': 'chameleon_core-v0.3.0',
       'chameleon_lints_ref': 'chameleon_lints-v0.1.0',
     };
 

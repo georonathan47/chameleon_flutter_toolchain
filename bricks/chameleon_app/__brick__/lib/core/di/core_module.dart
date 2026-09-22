@@ -13,6 +13,9 @@ import '../auth/local_auth_biometric_authenticator.dart';
 {{#use_home_widget}}
 import '../home_widget/home_widget_updater_impl.dart';
 {{/use_home_widget}}
+{{#use_push_notifications}}
+import '../push_notifications/firebase_push_notification_service.dart';
+{{/use_push_notifications}}
 
 /// Provides the platform-level dependencies `chameleon_core`'s
 /// `@lazySingleton`/`@injectable` classes need but cannot construct
@@ -26,7 +29,8 @@ import '../home_widget/home_widget_updater_impl.dart';
 /// `Connectivity`, `SharedPreferences`, `FlutterSecureStorage` (which
 /// `SecureStorageImpl` itself needs), `TokenStorage` (built from
 /// `SecureStorage` + `SharedPreferences`), `SessionCache`, `FeatureFlags`,
-/// `BiometricAuthenticator`, and `HomeWidgetUpdater`.
+/// `BiometricAuthenticator`, `HomeWidgetUpdater`, and
+/// `PushNotificationService`.
 ///
 /// TODO(chameleon): `AuthInterceptor.configureNoAuthPaths` and
 /// `IdempotencyInterceptor.configureRequiredPaths` still need calling with
@@ -100,4 +104,19 @@ abstract class CoreModule {
   @lazySingleton
   HomeWidgetUpdater get homeWidgetUpdater => const NoopHomeWidgetUpdater();
   {{/use_home_widget}}
+
+  {{#use_push_notifications}}
+  @lazySingleton
+  PushNotificationService get pushNotificationService =>
+      const FirebaseMessagingPushNotificationService();
+  {{/use_push_notifications}}
+  {{^use_push_notifications}}
+  /// `use_push_notifications` is off — no notification UI calls this, but
+  /// binding a real singleton either way (same pattern as `sessionCache`
+  /// above) keeps a feature's constructor-injected dependency the same
+  /// shape regardless of the flag.
+  @lazySingleton
+  PushNotificationService get pushNotificationService =>
+      const NoopPushNotificationService();
+  {{/use_push_notifications}}
 }

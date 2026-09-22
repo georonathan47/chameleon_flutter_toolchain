@@ -1,3 +1,12 @@
+## 0.3.0
+
+- Added `PushNotificationService`: a vendor-neutral interface for push
+  token retrieval, permission requests, and foreground message receipt,
+  with a `NoopPushNotificationService` default — same no-hard-dependency
+  shape as `BiometricAuthenticator`/`HomeWidgetUpdater`. No
+  `firebase_messaging` dependency here; a consuming app supplies the real
+  implementation only when it opts in.
+
 ## 0.2.0
 
 - Added `HomeWidgetUpdater`: a vendor-neutral interface for pushing data to

@@ -16,6 +16,9 @@ root-level CLAUDE.md instructions.
 {{#use_home_widget}}
 - **Home screen widget:** `HomeWidgetUpdater` (`chameleon_core`) wraps the `home_widget` plugin. Android is fully generated and working; the iOS Widget Extension target still needs the one-time manual Xcode step in `ios/HomeWidgetExtension/README.md` before the iOS widget exists at all — see `docs/architecture.md`
 {{/use_home_widget}}
+{{#use_push_notifications}}
+- **Push notifications:** `PushNotificationService` (`chameleon_core`) wraps `firebase_messaging`. Dart-side wiring is generated; a real Firebase project (`flutterfire configure`) and the iOS Push Notifications/Background Modes capabilities are one-time manual steps — see `docs/architecture.md`
+{{/use_push_notifications}}
 - **Design system / shared infra:** `chameleon_ui` (tokens, theme, shared
   components) and `chameleon_core` (failures, logging, network layer,
   isolate helpers, feature flags) — see `docs/architecture.md`. Changes that

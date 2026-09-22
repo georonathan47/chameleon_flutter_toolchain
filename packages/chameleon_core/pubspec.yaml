@@ -1,6 +1,6 @@
 name: chameleon_core
 description: Vendor-agnostic Flutter infrastructure — errors, networking, logging, feature flags, and DI — for the Chameleon toolchain.
-version: 0.2.0
+version: 0.3.0
 publish_to: none
 
 environment:

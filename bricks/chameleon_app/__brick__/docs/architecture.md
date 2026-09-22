@@ -91,6 +91,84 @@ When `use_home_widget` is off, `HomeWidgetUpdater` resolves to
 `NoopHomeWidgetUpdater` — the call site above compiles and runs either way,
 it just does nothing until the flag is on.
 
+## Deep linking
+
+Unconditional — every generated app gets this, no flag required, because
+`tool/checks.sh` already has a standing check for it (see
+`docs/guardrails.md`) and every real Chameleon app eventually needs at
+least a password-reset/magic-link deep link. Nothing here needs
+`chameleon_core`-level handling: this app already uses `MaterialApp.router`
+(see `lib/app/view/app.dart`), so Flutter's own
+`PlatformRouteInformationProvider` hands GoRouter/auto_route both the
+cold-start link and every subsequent one automatically — declare the real
+route (`GoRoute`/`AutoRoute`) and that's the whole app-side job. What
+`post_gen.dart` generates is the *native registration* that lets the OS
+hand the app a link in the first place:
+
+- **A custom URL scheme** (`{{project_name.snakeCase()}}` with underscores
+  stripped, e.g. `myapp://reset-password`) — `CFBundleURLTypes` in
+  `ios/Runner/Info.plist` and a plain intent-filter in
+  `AndroidManifest.xml`. Works immediately, no server required — this is
+  what a password-reset email can use right away.
+- **An HTTPS App Link / Universal Link** intent-filter
+  (`android:autoVerify="true"`) pointed at a **placeholder** host derived
+  by reversing `org_name` (e.g. `com.example` → `example.com`). This
+  satisfies `tool/checks.sh`'s check, but it's a placeholder: it will not
+  actually verify until you own that domain, replace the placeholder in
+  `AndroidManifest.xml`, and host `/.well-known/assetlinks.json` there
+  (Android) and `/.well-known/apple-app-site-association` there (iOS).
+  Completing the iOS half of Universal Links additionally needs the
+  Associated Domains capability added in Xcode (Signing & Capabilities > +
+  Capability > Associated Domains > `applinks:<your-real-host>`) — a
+  one-time manual step, same "can't be scripted" reasoning as the Widget
+  Extension target in "Home screen widgets" below, just a capability
+  toggle rather than a whole new target.
+
+## Push notifications
+
+`use_push_notifications` wires `PushNotificationService` (`chameleon_core`)
+to `firebase_messaging`. Unlike the flags above, this one needs manual
+setup on **both** platforms before it does anything at all — none of it is
+optional, and none of it can be scripted:
+
+1. Give the app a real Firebase project: run `flutterfire configure` from
+   the project root (recommended — it also places
+   `google-services.json`/`GoogleService-Info.plist` and matches bundle/
+   application IDs for you), or add those two files manually. This
+   toolchain deliberately does not script the Android Gradle wiring
+   Firebase needs (the Google Services Gradle plugin) — `flutterfire
+   configure` is Firebase's own, safer tool for that exact job, and this
+   toolchain has never hand-patched `build.gradle.kts` for the same reason
+   documented in the home-widget work (avoiding Glance/Compose wiring).
+2. **iOS**: add the Push Notifications and Background Modes (Remote
+   notifications) capabilities in Xcode (Signing & Capabilities), and
+   upload an APNs authentication key in the Firebase console.
+3. **Android**: nothing further — `firebase_messaging` needs no manifest
+   wiring beyond the `POST_NOTIFICATIONS` permission, which
+   `post_gen.dart` already declared for you.
+
+Until step 1 is done, the generated `Firebase.initializeApp()` call in
+`bootstrap.dart` compiles and analyzes cleanly (it passes no
+`FirebaseOptions`, reading native config files directly) but fails at
+runtime — same "compiles now, needs a manual step to actually work" bar as
+every other opt-in flag in this brick.
+
+Use it from anywhere in the app via DI:
+
+```dart
+final pushNotifications = getIt<PushNotificationService>();
+final granted = await pushNotifications.requestPermission();
+final token = await pushNotifications.getToken();
+pushNotifications.onMessage.listen((message) {
+  // message['title'], message['body'], message['data']
+});
+```
+
+When `use_push_notifications` is off, `PushNotificationService` resolves to
+`NoopPushNotificationService` — the call site above compiles and runs
+either way, it just never grants permission or emits a message until the
+flag is on.
+
 ## Responsive breakpoints
 
 `chameleon_ui` ships `ChameleonBreakpoints`/`ChameleonWindowSizeClass` — a

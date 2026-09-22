@@ -83,6 +83,44 @@ Future<void> run(HookContext context) async {
     );
   }
 
+  // Unconditional, not gated by a flag: `tool/checks.sh` already has a
+  // standing check for CFBundleURLTypes (Info.plist) and an autoVerify
+  // intent-filter (AndroidManifest.xml) — see that script's own comment —
+  // because every real Chameleon app eventually needs at least a
+  // password-reset/magic-link deep link, and the router itself
+  // (app_router.dart) already receives whatever the OS hands it with zero
+  // extra code once MaterialApp.router is wired (already true). What was
+  // missing until now is the native registration that lets the OS hand the
+  // app a link in the first place — this app's own `tool/checks.sh` was
+  // failing on every single generated app because nothing wrote either
+  // entry.
+  final projectName = context.vars['project_name'] as String;
+  final orgName = context.vars['org_name'] as String;
+  final deepLinkScheme = projectName.replaceAll('_', '');
+  final deepLinkHost = orgName.split('.').reversed.join('.');
+  _insertIosUrlScheme(
+    File('${root.path}/ios/Runner/Info.plist'),
+    scheme: deepLinkScheme,
+    bundleName: '$orgName.$projectName',
+  );
+  _insertAndroidDeepLinkIntentFilters(
+    File('${root.path}/android/app/src/main/AndroidManifest.xml'),
+    scheme: deepLinkScheme,
+    host: deepLinkHost,
+  );
+
+  // Android 13+ (API 33) gates any notification on the app holding
+  // POST_NOTIFICATIONS — without this declared, FirebaseMessaging's
+  // requestPermission() has nothing to grant, and the runtime prompt never
+  // appears at all. Reuses the existing permission-insertion helper rather
+  // than adding a new one, same mechanism as the --permissions flag.
+  if (context.vars['use_push_notifications'] == true) {
+    _insertManifestPermissions(
+      File('${root.path}/android/app/src/main/AndroidManifest.xml'),
+      const ['android.permission.POST_NOTIFICATIONS'],
+    );
+  }
+
   for (final scriptName in ['checks.sh', 'verify.sh']) {
     final script = File('${root.path}/tool/$scriptName');
     if (!script.existsSync()) continue;
@@ -221,6 +259,106 @@ void _insertManifestReceiver(File manifest) {
 
   manifest.writeAsStringSync(
     '${content.substring(0, marker)}$receiver${content.substring(marker)}',
+  );
+}
+
+/// Inserts a `CFBundleURLTypes` array registering [scheme] as a custom URL
+/// scheme, right before `Info.plist`'s closing `</dict></plist>` — the same
+/// insertion point `_insertPlistEntries` uses. Unconditional: every real
+/// Chameleon app eventually needs at least one deep link (password reset,
+/// magic link), and `tool/checks.sh` already has a standing, unconditional
+/// check for this key. No-op if the file doesn't exist.
+void _insertIosUrlScheme(
+  File infoPlist, {
+  required String scheme,
+  required String bundleName,
+}) {
+  if (!infoPlist.existsSync()) return;
+
+  final content = infoPlist.readAsStringSync();
+  final closing = RegExp(r'</dict>\s*</plist>\s*$');
+  if (!closing.hasMatch(content)) {
+    throw StateError(
+      'ios/Runner/Info.plist does not end with the expected </dict>\n'
+      '</plist> — very_good_cli/flutter create may have changed its '
+      'template shape.',
+    );
+  }
+
+  final entry =
+      '\t<key>CFBundleURLTypes</key>\n'
+      '\t<array>\n'
+      '\t\t<dict>\n'
+      '\t\t\t<key>CFBundleURLName</key>\n'
+      '\t\t\t<string>${_escapeXml(bundleName)}</string>\n'
+      '\t\t\t<key>CFBundleURLSchemes</key>\n'
+      '\t\t\t<array>\n'
+      '\t\t\t\t<string>${_escapeXml(scheme)}</string>\n'
+      '\t\t\t</array>\n'
+      '\t\t</dict>\n'
+      '\t</array>\n';
+
+  infoPlist.writeAsStringSync(
+    content.replaceFirst(closing, '$entry</dict>\n</plist>\n'),
+  );
+}
+
+/// Inserts two deep-link `<intent-filter>` blocks as children of the
+/// generated `MainActivity`'s `<activity>` element, right before its
+/// closing `</activity>` (the default `flutter create`/`very_good create`
+/// manifest has exactly one activity, so the first occurrence is always
+/// the right one) — never combined into a single filter, per standard
+/// Android guidance: an `autoVerify` App Link filter should carry only
+/// `http`/`https` data elements, kept separate from a custom-scheme filter.
+///
+/// - A plain `scheme` filter works immediately, no server required — this
+///   is what a password-reset/magic-link email can use right away.
+/// - An `autoVerify="true"` `https` + [host] filter satisfies
+///   `tool/checks.sh`'s standing check, but [host] is a placeholder derived
+///   from `org_name` reversed — it won't actually verify until the
+///   developer owns that domain and hosts the required Digital Asset Links
+///   file there. See `docs/architecture.md`'s "Deep linking" section.
+///
+/// No-op if the file doesn't exist.
+void _insertAndroidDeepLinkIntentFilters(
+  File manifest, {
+  required String scheme,
+  required String host,
+}) {
+  if (!manifest.existsSync()) return;
+
+  final content = manifest.readAsStringSync();
+  final marker = content.indexOf('</activity>');
+  if (marker == -1) {
+    throw StateError(
+      'android/app/src/main/AndroidManifest.xml has no </activity> tag — '
+      'very_good_cli/flutter create may have changed its template shape.',
+    );
+  }
+
+  final filters =
+      '''
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="$scheme" />
+        </intent-filter>
+        <!-- TODO(chameleon): $host is a placeholder derived from org_name.
+             Replace it with a domain you actually own, and host
+             /.well-known/assetlinks.json there, before this filter can
+             actually verify. See docs/architecture.md's "Deep linking"
+             section. -->
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" android:host="$host" />
+        </intent-filter>
+''';
+
+  manifest.writeAsStringSync(
+    '${content.substring(0, marker)}$filters    ${content.substring(marker)}',
   );
 }
 
