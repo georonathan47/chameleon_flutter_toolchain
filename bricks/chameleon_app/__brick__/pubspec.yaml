@@ -54,6 +54,10 @@ dependencies:
   {{#use_home_widget}}
   home_widget: ^0.10.0
   {{/use_home_widget}}
+  {{#use_push_notifications}}
+  firebase_core: ^4.15.0
+  firebase_messaging: ^16.7.0
+  {{/use_push_notifications}}
   {{#use_go_router}}
   go_router: ^17.3.0
   {{/use_go_router}}

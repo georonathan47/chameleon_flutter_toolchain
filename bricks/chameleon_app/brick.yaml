@@ -69,6 +69,19 @@ vars:
       section.
     default: false
 
+  use_push_notifications:
+    type: boolean
+    description: >-
+      Wire PushNotificationService to firebase_messaging. Adds firebase_core
+      and firebase_messaging as dependencies and declares the Android 13+
+      POST_NOTIFICATIONS permission automatically. Everything else needs a
+      one-time manual step: run `flutterfire configure` (or manually add
+      google-services.json/GoogleService-Info.plist) to give the app a real
+      Firebase project, and add the Push Notifications + Background Modes
+      (remote notifications) capabilities in Xcode — none of that can be
+      scripted. See docs/architecture.md's "Push notifications" section.
+    default: false
+
   chameleon_ui_ref:
     type: string
     description: >-
@@ -78,10 +91,10 @@ vars:
   chameleon_core_ref:
     type: string
     description: >-
-      Same as chameleon_ui_ref, for chameleon_core. v0.2.0, not v0.1.0:
-      HomeWidgetUpdater (this brick's use_home_widget support) only exists
-      from chameleon_core-v0.2.0 on.
-    default: chameleon_core-v0.2.0
+      Same as chameleon_ui_ref, for chameleon_core. v0.3.0, not v0.2.0:
+      PushNotificationService (this brick's use_push_notifications support)
+      only exists from chameleon_core-v0.3.0 on.
+    default: chameleon_core-v0.3.0
   chameleon_lints_ref:
     type: string
     description: Same as chameleon_ui_ref, for chameleon_lints.

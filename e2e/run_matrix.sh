@@ -32,6 +32,7 @@ NAMES+=("e2e_cubit_auto_route"); FLAGS+=("--state cubit --router auto_route")
 NAMES+=("e2e_biometrics"); FLAGS+=("--biometrics")
 NAMES+=("e2e_with_permissions"); FLAGS+=("--permissions camera,notification")
 NAMES+=("e2e_home_widget"); FLAGS+=("--home-widget")
+NAMES+=("e2e_push_notifications"); FLAGS+=("--push-notifications")
 
 fail_count=0
 

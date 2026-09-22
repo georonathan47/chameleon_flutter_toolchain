@@ -98,5 +98,22 @@ Patterns worth not relearning. Reviewed at session start.
     fails outright, not just the Widget Extension — found by actually
     building, not assumed. `use_home_widget` bumps both files' deployment
     target to 14.0 for exactly this reason.
+19. **A standing `tool/checks.sh` check can exist for longer than anything
+    that satisfies it.** The deep-link check (`CFBundleURLTypes`/
+    `autoVerify`) was already unconditional in `checks.sh` and already
+    documented in `docs/guardrails.md` before `post_gen.dart` generated
+    either entry — every app this brick produced was silently failing its
+    own guardrail script. A guardrail existing is not evidence the thing it
+    checks for was ever actually built; verify both sides.
+20. **A Firebase-backed feature needs `flutterfire configure`, not
+    brick-generated Gradle/plist files.** `firebase_core` on Android
+    normally means adding the Google Services Gradle plugin plus
+    `google-services.json` — this toolchain has deliberately never
+    hand-patched `build.gradle.kts` (same reasoning that kept home-screen
+    widgets off Jetpack Glance/Compose). `flutterfire configure` is
+    Firebase's own tool for exactly that wiring, safer than reimplementing
+    it here. `use_push_notifications` ships the Dart-side interface/impl
+    and documents that command as the one required setup step, rather than
+    scripting around it.
 
 ## Project-specific

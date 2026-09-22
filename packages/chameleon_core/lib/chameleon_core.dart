@@ -38,6 +38,7 @@ export 'src/network/retry_interceptor.dart';
 export 'src/network/session_cache.dart';
 export 'src/network/session_event_bus.dart';
 export 'src/network/token_storage.dart';
+export 'src/push_notifications/push_notification_service.dart';
 export 'src/services/device_service.dart';
 export 'src/storage/secure_storage.dart';
 export 'src/utils/debouncer.dart';

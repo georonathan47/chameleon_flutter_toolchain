@@ -15,17 +15,18 @@ abstract final class AppRoutes {
 /// rationale, and `tasks/lessons.md` #5). Left unwired for now — there is no
 /// session state to guard yet.
 ///
-/// TODO(chameleon): deep links (password reset, magic link, etc.) need no
-/// special handling here beyond declaring the real `GoRoute` — this app
-/// already uses `MaterialApp.router` (see `lib/app/view/app.dart`), so
-/// Flutter's own `PlatformRouteInformationProvider` hands GoRouter both the
-/// cold-start link and every subsequent one automatically. What's still
-/// missing is the native registration that lets the OS ever hand the app a
-/// link in the first place: `CFBundleURLTypes` in `ios/Runner/Info.plist`
-/// and an `autoVerify` intent-filter in `AndroidManifest.xml` —
-/// `tool/checks.sh` fails until both exist. Once a deep-linked route needs
-/// to be auth-gated, route it through the `redirect` above rather than a
-/// one-off check.
+/// Deep links (password reset, magic link, etc.) need no special handling
+/// here beyond declaring the real `GoRoute` — this app already uses
+/// `MaterialApp.router` (see `lib/app/view/app.dart`), so Flutter's own
+/// `PlatformRouteInformationProvider` hands GoRouter both the cold-start
+/// link and every subsequent one automatically. The native registration
+/// that lets the OS hand the app a link in the first place
+/// (`CFBundleURLTypes` in `ios/Runner/Info.plist`, an `autoVerify`
+/// intent-filter in `AndroidManifest.xml`) is generated automatically —
+/// see `docs/architecture.md`'s "Deep linking" section for the custom
+/// scheme vs. placeholder App Link host distinction. Once a deep-linked
+/// route needs to be auth-gated, route it through the `redirect` above
+/// rather than a one-off check.
 final GoRouter appRouter = GoRouter(
   initialLocation: AppRoutes.home,
   routes: [
@@ -72,16 +73,18 @@ abstract final class AppRoutes {
 /// `tasks/lessons.md` #5). Left unwired for now — there is no session state
 /// to guard yet.
 ///
-/// TODO(chameleon): deep links (password reset, magic link, etc.) need no
-/// special handling here beyond declaring the real `AutoRoute` — this app
-/// already uses `MaterialApp.router` (see `lib/app/view/app.dart`), so
-/// Flutter's own `PlatformRouteInformationProvider` hands auto_route both
-/// the cold-start link and every subsequent one automatically. What's still
-/// missing is the native registration that lets the OS ever hand the app a
-/// link in the first place: `CFBundleURLTypes` in `ios/Runner/Info.plist`
-/// and an `autoVerify` intent-filter in `AndroidManifest.xml` —
-/// `tool/checks.sh` fails until both exist. Once a deep-linked route needs
-/// to be auth-gated, route it through a guard rather than a one-off check.
+/// Deep links (password reset, magic link, etc.) need no special handling
+/// here beyond declaring the real `AutoRoute` — this app already uses
+/// `MaterialApp.router` (see `lib/app/view/app.dart`), so Flutter's own
+/// `PlatformRouteInformationProvider` hands auto_route both the cold-start
+/// link and every subsequent one automatically. The native registration
+/// that lets the OS hand the app a link in the first place
+/// (`CFBundleURLTypes` in `ios/Runner/Info.plist`, an `autoVerify`
+/// intent-filter in `AndroidManifest.xml`) is generated automatically —
+/// see `docs/architecture.md`'s "Deep linking" section for the custom
+/// scheme vs. placeholder App Link host distinction. Once a deep-linked
+/// route needs to be auth-gated, route it through a guard rather than a
+/// one-off check.
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
   @override
