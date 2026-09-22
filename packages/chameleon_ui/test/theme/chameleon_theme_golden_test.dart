@@ -34,6 +34,16 @@ void main() {
               ),
             ),
             GoldenTestScenario(
+              name: 'toast — custom colors',
+              child: const _Padded(
+                child: _ToastSample(
+                  ChameleonToastType.announcement,
+                  backgroundColor: ChameleonColors.blue900,
+                  foregroundColor: ChameleonColors.blue100,
+                ),
+              ),
+            ),
+            GoldenTestScenario(
               name: 'type ramp',
               child: const _Padded(child: _TypeRampSample()),
             ),
@@ -77,9 +87,11 @@ class _TextFieldSample extends StatelessWidget {
 }
 
 class _ToastSample extends StatelessWidget {
-  const _ToastSample(this.type);
+  const _ToastSample(this.type, {this.backgroundColor, this.foregroundColor});
 
   final ChameleonToastType type;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +101,8 @@ class _ToastSample extends StatelessWidget {
           ? 'Incorrect password.'
           : 'Your payment was sent.',
       type: type,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
       onDismiss: () {},
     );
   }

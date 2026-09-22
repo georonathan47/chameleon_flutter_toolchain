@@ -78,6 +78,25 @@ ChameleonToastMessenger.success('Transfer complete.');
 ChameleonToastMessenger.error('Check your connection.');
 ```
 
+`show`/`error`/`success` also take optional `duration` (how long the toast
+stays up — already existed), `backgroundColor`/`foregroundColor` (override
+the surface and text colors; the description uses `foregroundColor` at 70%
+opacity), and `transitionDuration`/`transitionCurve` (override the
+entrance/exit animation's speed and easing, otherwise
+`ChameleonMotion.fast`/`emphasizedDecelerate`). All default to today's
+fixed look, so existing calls are unaffected:
+
+```dart
+ChameleonToastMessenger.show(
+  title: 'Reward unlocked',
+  description: 'You earned 500 points.',
+  backgroundColor: ChameleonColors.yellow900,
+  foregroundColor: ChameleonColors.yellow100,
+  transitionDuration: const Duration(milliseconds: 350),
+  transitionCurve: Curves.easeOutBack,
+);
+```
+
 Flag a non-production build (the app owns the flavor → color/label mapping;
 this package only draws the ribbon):
 

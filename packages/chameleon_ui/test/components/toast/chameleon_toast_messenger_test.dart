@@ -86,4 +86,64 @@ void main() {
 
     expect(ChameleonToastMessenger.isShowing, isFalse);
   });
+
+  testWidgets('show() applies backgroundColor and foregroundColor', (
+    tester,
+  ) async {
+    await pumpHost(tester);
+
+    const background = Color(0xFF123456);
+    const foreground = Color(0xFFABCDEF);
+
+    ChameleonToastMessenger.show(
+      title: 'Title',
+      description: 'Description',
+      backgroundColor: background,
+      foregroundColor: foreground,
+    );
+    await tester.pump();
+
+    final material = tester.widget<Material>(
+      find
+          .descendant(
+            of: find.byType(ChameleonToast),
+            matching: find.byType(Material),
+          )
+          .first,
+    );
+    expect(material.color, background);
+
+    final titleStyle = tester.widget<Text>(find.text('Title')).style;
+    expect(titleStyle?.color, foreground);
+
+    final descriptionStyle = tester
+        .widget<Text>(find.text('Description'))
+        .style;
+    expect(descriptionStyle?.color, foreground.withValues(alpha: 0.7));
+
+    ChameleonToastMessenger.reset();
+  });
+
+  testWidgets(
+    'show() with a shorter transitionDuration animates in faster than the '
+    'default',
+    (tester) async {
+      await pumpHost(tester);
+
+      ChameleonToastMessenger.show(
+        title: 'Title',
+        description: 'Description',
+        transitionDuration: const Duration(milliseconds: 50),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      final fade = tester.widget<FadeTransition>(
+        find.byType(FadeTransition).first,
+      );
+      expect(fade.opacity.value, 1.0);
+
+      ChameleonToastMessenger.reset();
+    },
+  );
 }
