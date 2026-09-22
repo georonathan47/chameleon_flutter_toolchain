@@ -1,8 +1,10 @@
 # chameleon_lints
 
-`custom_lint` rules that turn Chameleon's `tasks/lessons.md` into enforced
-static analysis instead of tribal knowledge — three real bugs found once,
-each turned into a rule so it can't recur.
+`custom_lint` rules that turn Chameleon's `tasks/lessons.md` and
+`docs/architecture.md` into enforced static analysis instead of tribal
+knowledge — the first three started as real bugs found once, each turned
+into a rule so it can't recur; the rest codify style and architecture
+conventions this project already expects.
 
 Every app `chameleon create` generates wires this in as a
 `custom_lint` plugin automatically, gated in `tool/verify.sh` alongside
@@ -15,6 +17,10 @@ Every app `chameleon create` generates wires this in as a
 | `chameleon_no_set_state` | Any bare `setState(...)` call | Widget-local state belongs in a Cubit/Bloc, driven by `BlocBuilder`/`BlocSelector`/`BlocConsumer` — no exceptions, not even for "small" UI state. |
 | `chameleon_bloc_provider_value_for_di` | `BlocProvider(create: (_) => getIt<X>())` where `X` is `@lazySingleton`/`@Singleton` | `create:` closes the bloc on widget dispose. Fine for an `@injectable` factory (a fresh instance every call); wrong for a singleton — the DI container keeps holding that same, now-closed instance, and the next resolver gets a dead bloc. Use `BlocProvider.value(value: getIt<X>())` instead. Resolves the type argument's real DI annotation rather than pattern-matching syntax, so it doesn't flag `chameleon_feature`'s own correct factory-scoped `create:` usage. |
 | `chameleon_no_function_type_in_injectable_ctor` | A function-typed constructor parameter on an `@injectable`/`@lazySingleton`/`@singleton` class's **unnamed** constructor | `injectable` resolves every constructor parameter from the DI container, optional ones included, and fails with "Can not resolve function type" the moment one is function-typed (a clock/test seam like `DateTime Function()? now`). Put the seam on a separate named constructor instead (`MyService.withClock(this._now)`) — named constructors are never auto-resolved, so the rule skips them. |
+| `chameleon_prefer_dot_shorthands` | `Type.member` written where the target type is already known (an explicitly-typed variable, a typed argument, or a declared return position) | Dart's dot-shorthand syntax (`.member`) is shorter and just as clear once the target type is pinned down by context — scoped to those three positions to stay high-confidence rather than guess at inferred context elsewhere. |
+| `chameleon_prefer_barrel_imports` | An import reaching past a feature's barrel file into `data/`/`domain/`/`presentation/`/`di/` from **outside** that feature | Reaching past the barrel defeats the point of having one. Same-feature imports are exempt — those are expected to reach each other directly. |
+| `chameleon_prefer_sealed_class` | A non-sealed `abstract class`/`abstract base class`/`abstract interface class` whose subtypes are **all** declared in the same file | Nothing prevents sealing a genuinely closed hierarchy, and sealing it is what lets the analyzer check a `switch` over it is exhaustive. Suppress a deliberately open hierarchy (like `chameleon_core`'s own `Failure`, meant for external subclassing) with `// ignore: chameleon_prefer_sealed_class`. |
+| `chameleon_task_either_requires_safe_construction` | A method/function returning `TaskEither<Failure, ...>` whose body isn't built from a safe `TaskEither` constructor (`tryCatch`/`of`/`right`/`left`/`fromEither`/`fromTask`/`fromOption`) | A `TaskEither<Failure, ...>` return type promises a `Success` or a `Failure`, never a thrown exception — a plain imperative `async`/`await` block can still throw straight past that contract. Doesn't flag the paired datasource layer for throwing; that's the other, correct half of the handoff this rule guards. |
 
 ## Installation
 

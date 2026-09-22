@@ -1,16 +1,20 @@
 name: chameleon_lints
 description: custom_lint rules enforcing the patterns in chameleon_app's tasks/lessons.md.
-version: 0.1.0
+version: 0.2.0
 publish_to: none
 
 environment:
-  sdk: ^3.9.0
+  # ^3.10.0, not ^3.9.0: PreferDotShorthands' own fixture exercises the
+  # dot-shorthands language feature, which needs 3.10+ to parse at all.
+  sdk: ^3.10.0
 
 dependencies:
   analyzer: ^8.0.0
   custom_lint_builder: ^0.8.0
+  path: ^1.9.0
 
 dev_dependencies:
   custom_lint: ^0.8.0
+  fpdart: ^1.2.0
   test: ^1.25.6
   very_good_analysis: ^10.3.0

@@ -7,6 +7,8 @@
 /// isn't available here regardless. `base` still blocks `implements`, so
 /// every failure remains a genuine subclass that carries this constructor's
 /// fields.
+// ignore: chameleon_prefer_sealed_class — deliberately open to
+// subclassing from outside this package, per the doc comment above.
 abstract base class Failure {
   const Failure(
     this.message, {
