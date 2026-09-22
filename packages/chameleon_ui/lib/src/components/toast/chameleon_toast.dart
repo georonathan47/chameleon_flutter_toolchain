@@ -20,6 +20,8 @@ class ChameleonToast extends StatelessWidget {
     required this.description,
     required this.onDismiss,
     this.type = ChameleonToastType.announcement,
+    this.backgroundColor,
+    this.foregroundColor,
     super.key,
   });
 
@@ -34,6 +36,17 @@ class ChameleonToast extends StatelessWidget {
 
   /// Chooses the leading icon and its tile color.
   final ChameleonToastType type;
+
+  /// Overrides the surface color. Defaults to
+  /// [ChameleonSemanticColors.surfaceInverse].
+  final Color? backgroundColor;
+
+  /// Overrides the title color; the description uses the same color at 70%
+  /// opacity, so one override reads as one coherent recolor rather than
+  /// needing separate title/description params. Defaults to
+  /// [ChameleonSemanticColors.textPrimaryInverse] for the title and
+  /// [ChameleonSemanticColors.textDisabled] for the description.
+  final Color? foregroundColor;
 
   /// Width of the toast in the design.
   ///
@@ -56,7 +69,7 @@ class ChameleonToast extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: maxWidth),
         child: Material(
-          color: ChameleonSemanticColors.surfaceInverse,
+          color: backgroundColor ?? ChameleonSemanticColors.surfaceInverse,
           borderRadius: BorderRadius.circular(ChameleonRadius.xl),
           child: Padding(
             padding: const EdgeInsets.all(ChameleonSpacing.base),
@@ -67,7 +80,11 @@ class ChameleonToast extends StatelessWidget {
                 // Takes the slack so the close button stays pinned right and
                 // long copy wraps instead of overflowing.
                 Expanded(
-                  child: _Copy(title: title, description: description),
+                  child: _Copy(
+                    title: title,
+                    description: description,
+                    foregroundColor: foregroundColor,
+                  ),
                 ),
                 const SizedBox(width: ChameleonSpacing.sm),
                 _CloseButton(onPressed: onDismiss),
@@ -121,13 +138,24 @@ class _IconTile extends StatelessWidget {
 
 /// Title over description.
 class _Copy extends StatelessWidget {
-  const _Copy({required this.title, required this.description});
+  const _Copy({
+    required this.title,
+    required this.description,
+    this.foregroundColor,
+  });
 
   final String title;
   final String description;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
+    final titleColor =
+        foregroundColor ?? ChameleonSemanticColors.textPrimaryInverse;
+    final descriptionColor =
+        foregroundColor?.withValues(alpha: 0.7) ??
+        ChameleonSemanticColors.textDisabled;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +163,7 @@ class _Copy extends StatelessWidget {
         Text(
           title,
           style: ChameleonTypography.subheading3.copyWith(
-            color: ChameleonSemanticColors.textPrimaryInverse,
+            color: titleColor,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.25,
           ),
@@ -147,9 +175,7 @@ class _Copy extends StatelessWidget {
         const SizedBox(height: ChameleonSpacing.xxs),
         Text(
           description,
-          style: ChameleonTypography.body2.copyWith(
-            color: ChameleonSemanticColors.textDisabled,
-          ),
+          style: ChameleonTypography.body2.copyWith(color: descriptionColor),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),

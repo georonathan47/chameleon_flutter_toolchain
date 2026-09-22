@@ -68,6 +68,10 @@ abstract final class ChameleonToastMessenger {
     required String description,
     ChameleonToastType type = ChameleonToastType.announcement,
     Duration duration = visibleDuration,
+    Color? backgroundColor,
+    Color? foregroundColor,
+    Duration transitionDuration = ChameleonMotion.fast,
+    Curve transitionCurve = ChameleonMotion.emphasizedDecelerate,
   }) {
     final overlay = _overlay;
     if (overlay == null) {
@@ -85,7 +89,7 @@ abstract final class ChameleonToastMessenger {
 
     final animation = AnimationController(
       vsync: overlay,
-      duration: ChameleonMotion.fast,
+      duration: transitionDuration,
     );
     _animation = animation;
 
@@ -95,6 +99,9 @@ abstract final class ChameleonToastMessenger {
         title: title,
         description: description,
         type: type,
+        backgroundColor: backgroundColor,
+        foregroundColor: foregroundColor,
+        transitionCurve: transitionCurve,
         onDismiss: dismiss,
       ),
     );
@@ -117,11 +124,19 @@ abstract final class ChameleonToastMessenger {
     String message, {
     String title = 'Something went wrong',
     Duration duration = visibleDuration,
+    Color? backgroundColor,
+    Color? foregroundColor,
+    Duration transitionDuration = ChameleonMotion.fast,
+    Curve transitionCurve = ChameleonMotion.emphasizedDecelerate,
   }) => show(
     title: title,
     description: message,
     type: ChameleonToastType.error,
     duration: duration,
+    backgroundColor: backgroundColor,
+    foregroundColor: foregroundColor,
+    transitionDuration: transitionDuration,
+    transitionCurve: transitionCurve,
   );
 
   /// Confirms something worked.
@@ -129,11 +144,19 @@ abstract final class ChameleonToastMessenger {
     String message, {
     String title = 'Done',
     Duration duration = visibleDuration,
+    Color? backgroundColor,
+    Color? foregroundColor,
+    Duration transitionDuration = ChameleonMotion.fast,
+    Curve transitionCurve = ChameleonMotion.emphasizedDecelerate,
   }) => show(
     title: title,
     description: message,
     type: ChameleonToastType.success,
     duration: duration,
+    backgroundColor: backgroundColor,
+    foregroundColor: foregroundColor,
+    transitionDuration: transitionDuration,
+    transitionCurve: transitionCurve,
   );
 
   /// Removes the toast immediately, cancelling its timer.
@@ -197,27 +220,27 @@ class _ToastOverlay extends StatelessWidget {
     required this.title,
     required this.description,
     required this.type,
+    required this.transitionCurve,
     required this.onDismiss,
+    this.backgroundColor,
+    this.foregroundColor,
   });
 
   final AnimationController animation;
   final String title;
   final String description;
   final ChameleonToastType type;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final Curve transitionCurve;
   final VoidCallback onDismiss;
 
   @override
   Widget build(BuildContext context) {
-    final slide =
-        Tween<Offset>(
-          begin: const Offset(0, -0.4),
-          end: Offset.zero,
-        ).animate(
-          CurvedAnimation(
-            parent: animation,
-            curve: ChameleonMotion.emphasizedDecelerate,
-          ),
-        );
+    final slide = Tween<Offset>(
+      begin: const Offset(0, -0.4),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: animation, curve: transitionCurve));
 
     return SafeArea(
       child: Align(
@@ -238,6 +261,8 @@ class _ToastOverlay extends StatelessWidget {
                   title: title,
                   description: description,
                   type: type,
+                  backgroundColor: backgroundColor,
+                  foregroundColor: foregroundColor,
                   onDismiss: onDismiss,
                 ),
               ),

@@ -1,3 +1,11 @@
+## 0.2.0
+
+- `ChameleonToast`/`ChameleonToastMessenger.show`/`error`/`success` gained
+  optional `backgroundColor`, `foregroundColor`, `transitionDuration`, and
+  `transitionCurve` — the surface color, text color, and entrance/exit
+  animation speed/easing are all overridable now, defaulting to today's
+  fixed look. Visible `duration` was already a parameter.
+
 ## 0.1.0
 
 - Initial release: design tokens (`ChameleonColors`, `ChameleonSemanticColors`,
