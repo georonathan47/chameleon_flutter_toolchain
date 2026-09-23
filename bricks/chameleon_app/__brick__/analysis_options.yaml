@@ -5,7 +5,14 @@ analyzer:
     - custom_lint
   exclude:
     - "build/**"
-    - "lib/l10n/gen/**"
+    # The whole directory, not just gen/**: lib/l10n/l10n.dart itself is
+    # very_good_cli's own generated file too (not brick-templated, so this
+    # toolchain can't patch its content the way it can a __brick__
+    # template) — found for real when chameleon_lints-v0.2.0's
+    # chameleon_prefer_dot_shorthands rule flagged it, which nothing could
+    # ever fix, permanently failing `chameleon create`'s own --verify step
+    # for every generated app.
+    - "lib/l10n/**"
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "**/*.chopper.dart"
