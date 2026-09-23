@@ -58,5 +58,6 @@ enum ChameleonToastType {
   /// Resolved via the `chameleon_ui` package's own asset bundle
   /// (`packages/chameleon_ui/assets/svg/toast/...`) so the host app does not
   /// need to ship these SVGs itself.
-  String get iconPath => 'packages/chameleon_ui/assets/svg/toast/$assetName.svg';
+  String get iconPath =>
+      'packages/chameleon_ui/assets/svg/toast/$assetName.svg';
 }

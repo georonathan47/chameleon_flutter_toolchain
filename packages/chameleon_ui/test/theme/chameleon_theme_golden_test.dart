@@ -47,6 +47,47 @@ void main() {
               name: 'type ramp',
               child: const _Padded(child: _TypeRampSample()),
             ),
+            GoldenTestScenario(
+              name: 'bottom sheet content',
+              // Rendered directly, not via .show() — same reasoning as
+              // _ToastSample above: this stays free of any Navigator/
+              // animation, so it's golden-safe.
+              child: const _Padded(
+                child: ChameleonBottomSheet(child: Text('Filter options')),
+              ),
+            ),
+            GoldenTestScenario(
+              name: 'confirmation dialog',
+              // Dialog (unlike ChameleonToast/ChameleonBottomSheet's own
+              // build()) internally centers itself via Align and carries
+              // its own default insetPadding (40 horizontal / 24
+              // vertical), which needs a wider, bounded box than _Padded's
+              // fixed 320 to lay out without overflowing — normally none
+              // of this matters, since showDialog() renders into the full
+              // viewport.
+              child: const SizedBox(
+                width: 400,
+                height: 320,
+                child: ChameleonConfirmationDialog(
+                  title: 'Delete account?',
+                  message: 'This cannot be undone.',
+                  confirmLabel: 'Delete',
+                  isDestructive: true,
+                ),
+              ),
+            ),
+            GoldenTestScenario(
+              name: 'empty state',
+              child: _Padded(
+                child: ChameleonEmptyState(
+                  title: 'No transactions yet',
+                  description: 'Your activity will show up here.',
+                  icon: const Icon(Icons.receipt_long_outlined, size: 40),
+                  actionLabel: 'Refresh',
+                  onAction: () {},
+                ),
+              ),
+            ),
           ],
         ),
       ),

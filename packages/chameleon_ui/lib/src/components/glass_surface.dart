@@ -68,7 +68,8 @@ class GlobalGlassSurface extends StatelessWidget {
               decoration: BoxDecoration(
                 color: fillColor,
                 border: Border.all(
-                  color: borderColor ??
+                  color:
+                      borderColor ??
                       ChameleonColors.white.withValues(alpha: 0.34),
                   width: borderWidth,
                 ),

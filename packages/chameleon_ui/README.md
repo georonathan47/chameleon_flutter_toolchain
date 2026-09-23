@@ -36,7 +36,12 @@ package ships with zero logos, brand fonts, or brand colors baked in.
 - **Theme** — `ChameleonTheme.light` builds a `ThemeData` from the semantic
   color tokens, so widgets never hardcode a `Color` or `TextStyle` directly.
 - **Components** — `ChameleonToastMessenger`/`ChameleonToastHost` (5 toast
-  types with bundled SVG icons), `ChameleonLoadingDialog`, the loader group
+  types with bundled SVG icons), `ChameleonLoadingDialog`,
+  [`ChameleonBottomSheet`](lib/src/components/chameleon_bottom_sheet.dart),
+  [`ChameleonConfirmationDialog`](lib/src/components/chameleon_confirmation_dialog.dart),
+  [`ChameleonEmptyState`](lib/src/components/chameleon_empty_state.dart),
+  [`ChameleonSkeleton`](lib/src/components/chameleon_skeleton.dart) (rect/
+  circle/text-line shimmering placeholders), the loader group
   (`ChameleonMark`, `ChameleonSpinner`, `ChameleonLoaderCubit`),
   `FlavorBanner`, `ActivityDetector` (idle/foreground/background detection
   via `Listener`, not `GestureDetector`, so it never steals gestures from
@@ -122,6 +127,50 @@ switch (ChameleonBreakpoints.of(context)) {
   ChameleonWindowSizeClass.tablet => const TwoColumnLayout(),
   ChameleonWindowSizeClass.foldable => const ThreeColumnLayout(),
 }
+```
+
+Ask for confirmation before a destructive action — `show()` resolves to a
+plain `bool`, never `null`, even if the user dismisses via the barrier or
+back gesture:
+
+```dart
+final confirmed = await ChameleonConfirmationDialog.show(
+  context,
+  title: 'Delete account?',
+  message: 'This cannot be undone.',
+  confirmLabel: 'Delete',
+  isDestructive: true,
+);
+if (confirmed) { ... }
+```
+
+Open a bottom sheet — content shifts for the keyboard and a gesture-nav
+safe area automatically:
+
+```dart
+final selected = await ChameleonBottomSheet.show<String>(
+  context,
+  child: const FilterOptions(),
+);
+```
+
+Show an empty state (composes directly as a sealed bloc state's `builder`):
+
+```dart
+ChameleonEmptyState(
+  title: 'No transactions yet',
+  description: 'Your activity will show up here.',
+  actionLabel: 'Refresh',
+  onAction: () => context.read<TransactionsCubit>().refresh(),
+);
+```
+
+Placeholder content that's still loading, in three shapes:
+
+```dart
+ChameleonSkeleton.circle(size: 40),               // an avatar
+ChameleonSkeleton.textLine(width: 120),           // a line of text
+ChameleonSkeleton.rect(width: 200, height: 80),   // a card/image
 ```
 
 ## Requirements

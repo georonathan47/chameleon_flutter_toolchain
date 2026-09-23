@@ -4,7 +4,11 @@
 /// Everything under `src/` is implementation detail and not exported here.
 library;
 
+export 'src/components/chameleon_bottom_sheet.dart';
+export 'src/components/chameleon_confirmation_dialog.dart';
+export 'src/components/chameleon_empty_state.dart';
 export 'src/components/chameleon_loading_dialog.dart';
+export 'src/components/chameleon_skeleton.dart';
 export 'src/components/dismiss_keyboard.dart';
 export 'src/components/flavor_banner.dart';
 export 'src/components/glass_surface.dart';
