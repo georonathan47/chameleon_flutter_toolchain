@@ -24,16 +24,23 @@ dependencies:
       path: packages/chameleon_core
       ref: {{chameleon_core_ref}}
 
-  # Unconditional: Cubit is part of the same `bloc`/`flutter_bloc` package as
-  # Bloc (`state_management: cubit` only changes which base class this
-  # app's own templates use, not which package that needs), and
-  # `chameleon feature` always generates a Bloc regardless of this
-  # app's state_management choice — see that generator's own note.
+  # Unconditional regardless of state_management: chameleon_core's own
+  # ConnectivityBloc is a real Bloc (chameleon_core depends on
+  # flutter_bloc itself), and `chameleon feature` always generates
+  # Bloc-shaped feature code either way — see that generator's own note.
+  # provider/flutter_riverpod below are additive, layered on top when
+  # chosen, not replacements.
   bloc: ^9.2.1
   flutter_bloc: ^9.1.1
   {{#is_bloc}}
   hydrated_bloc: ^11.0.0
   {{/is_bloc}}
+  {{#is_provider}}
+  provider: ^6.1.5+1
+  {{/is_provider}}
+  {{#is_riverpod}}
+  flutter_riverpod: ^3.4.3
+  {{/is_riverpod}}
   equatable: ^2.1.0
   fpdart: ^1.2.0
   chopper: ^8.7.0

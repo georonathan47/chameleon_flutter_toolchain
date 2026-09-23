@@ -10,7 +10,7 @@ root-level CLAUDE.md instructions.
 - **Package name / org:** {{org_name}}.{{project_name.snakeCase()}}
 - **Flutter / Dart versions:** 3.44.0 / 3.12.0 (pinned via `.fvmrc`)
 - **Platforms:** iOS / Android
-- **State management:** {{#is_bloc}}Bloc (`flutter_bloc`){{/is_bloc}}{{^is_bloc}}Cubit (`flutter_bloc`){{/is_bloc}} — one bloc/cubit per feature; states are immutable
+- **State management:** {{#is_bloc}}Bloc/Cubit (`flutter_bloc`) — one bloc/cubit per feature, reached via `BlocBuilder`/`context.read`{{/is_bloc}}{{#is_provider}}Provider (`provider`) — `chameleon_core`'s `ConnectivityBloc` is exposed as a `StreamProvider` in `app.dart`, reached via `context.watch`{{/is_provider}}{{#is_riverpod}}Riverpod (`flutter_riverpod`) — providers declared under `lib/core/providers/` (e.g. `connectivityProvider`), reached via `ref.watch`{{/is_riverpod}}; states are immutable. `chameleon feature`'s generated presentation layer is Bloc-shaped either way — see `docs/architecture.md`
 - **Router:** {{#use_go_router}}go_router{{/use_go_router}}{{^use_go_router}}auto_route{{/use_go_router}}
 - **iOS/macOS dependencies:** Swift Package Manager (Flutter 3.44+ default), CocoaPods as automatic fallback for any plugin that hasn't adopted SPM yet — see `docs/architecture.md`
 {{#use_home_widget}}

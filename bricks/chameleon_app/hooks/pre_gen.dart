@@ -87,7 +87,10 @@ void run(HookContext context) {
   }
 
   // Derived vars so templates stay free of logic.
-  context.vars['is_bloc'] = context.vars['state_management'] == 'bloc';
+  final stateManagement = context.vars['state_management'] as String;
+  context.vars['is_bloc'] = stateManagement == 'bloc';
+  context.vars['is_provider'] = stateManagement == 'provider';
+  context.vars['is_riverpod'] = stateManagement == 'riverpod';
 
   final router = context.vars['router'] as String;
   context.vars['use_go_router'] = router == 'go_router';

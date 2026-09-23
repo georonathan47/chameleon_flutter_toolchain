@@ -7,6 +7,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 {{/use_push_notifications}}
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+{{#is_riverpod}}
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+{{/is_riverpod}}
 
 import 'app/app.dart';
 {{#use_push_notifications}}
@@ -66,7 +69,15 @@ Future<void> bootstrap(Widget Function() builder) async {
       // wired in.
       await getIt<FeatureFlags>().initialize();
 
+      {{#is_riverpod}}
+      // ProviderScope must be the outermost ancestor of anything reading a
+      // provider — this is the one shared entrypoint every flavor's
+      // main_*.dart calls into, so it's the right, single place for it.
+      runApp(ProviderScope(child: builder()));
+      {{/is_riverpod}}
+      {{^is_riverpod}}
       runApp(builder());
+      {{/is_riverpod}}
     },
     (error, stackTrace) {
       ChameleonLogger.error(

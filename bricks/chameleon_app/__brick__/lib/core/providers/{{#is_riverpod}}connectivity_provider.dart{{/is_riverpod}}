@@ -1,0 +1,17 @@
+import 'package:chameleon_core/chameleon_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../di/injection_container.dart';
+
+/// Riverpod's own idiom for reaching `chameleon_core`'s
+/// [ConnectivityBloc] — a top-level declared provider, consumed anywhere
+/// via `ref.watch(connectivityProvider)`, rather than `flutter_bloc`'s
+/// `BlocBuilder`/`context.watch<ConnectivityBloc>()`.
+///
+/// `chameleon_core` itself stays Bloc-based regardless of this app's
+/// state_management choice (see `ConnectivityBloc`'s own doc comment);
+/// this only re-exposes its already-running state stream through the
+/// paradigm this app is built around.
+final connectivityProvider = StreamProvider<ConnectivityState>(
+  (ref) => getIt<ConnectivityBloc>().stream,
+);

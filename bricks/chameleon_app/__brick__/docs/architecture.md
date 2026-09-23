@@ -202,6 +202,40 @@ reach for `Theme.of(context).colorScheme` (or `ChameleonSemanticColors`/
 `Theme.of(context).brightness`, for a role `ColorScheme` doesn't cover)
 rather than assuming light.
 
+## State management
+
+`state_management` picks this app's own idiom for reaching cross-cutting,
+app-level state — `chameleon_core`'s `ConnectivityBloc` is the one real
+example today, wired in `app.dart`:
+
+{{#is_bloc}}
+- **Bloc** (default): `app.dart` wraps the app in `MultiBlocProvider`,
+  binding `ConnectivityBloc` directly. Reach it with `BlocBuilder`/
+  `context.read<ConnectivityBloc>()` anywhere below.
+{{/is_bloc}}
+{{#is_provider}}
+- **Provider**: `app.dart` wraps the app in `MultiProvider`, re-exposing
+  `ConnectivityBloc`'s stream as a `StreamProvider<ConnectivityState>`.
+  Reach it with `context.watch<ConnectivityState>()` anywhere below —
+  not `BlocBuilder`, even though the underlying implementation is still a
+  `Bloc`.
+{{/is_provider}}
+{{#is_riverpod}}
+- **Riverpod**: `bootstrap.dart` wraps `runApp` in a `ProviderScope`, and
+  `lib/core/providers/connectivity_provider.dart` declares
+  `connectivityProvider`, a `StreamProvider` re-exposing
+  `ConnectivityBloc`'s stream. Reach it with
+  `ref.watch(connectivityProvider)` — declare new app-level providers
+  alongside it in `lib/core/providers/`.
+{{/is_riverpod}}
+
+This choice does **not** change what `chameleon feature` generates:
+feature-level state is Bloc-shaped either way (see "Data flow" below) —
+`chameleon_core` and `chameleon_feature` are cross-cutting infrastructure
+that stays consistent regardless of which idiom this app's own code
+prefers for its own state. Pick the shape a specific feature's bloc/cubit
+uses independently, per feature, with `chameleon bloc --cubit`.
+
 ## Data flow
 
 `Page` → `BlocBuilder`/`BlocSelector` reads a `Bloc`/`Cubit` → dispatches an
