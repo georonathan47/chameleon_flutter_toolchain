@@ -3,6 +3,21 @@ include: package:very_good_analysis/analysis_options.yaml
 analyzer:
   plugins:
     - custom_lint
+  errors:
+    # bootstrap.dart's Bloc.observer wiring imports flutter_bloc directly,
+    # deliberately, regardless of state_management: it observes
+    # chameleon_core's own ConnectivityBloc, which is Bloc-based
+    # unconditionally, not something this app's own choice governs —
+    # flutter_bloc is only a direct pubspec.yaml dependency when
+    # state_management is bloc (see that file's own comment), so this
+    # otherwise-legitimate diagnostic always fires there for provider/
+    # riverpod choices. A per-line `// ignore:` comment isn't enough:
+    # `dart fix --apply` (unconditional in `chameleon create`'s own
+    # pipeline) doesn't respect it and silently adds flutter_bloc back to
+    # pubspec.yaml as a direct dependency anyway — confirmed by actually
+    # running it. Disabling the diagnostic itself, not just its report,
+    # is the only thing that stops dart fix from "fixing" it too.
+    depend_on_referenced_packages: ignore
   exclude:
     - "build/**"
     # The whole directory, not just gen/**: lib/l10n/l10n.dart itself is

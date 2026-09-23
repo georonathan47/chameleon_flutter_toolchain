@@ -8,7 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 {{/is_provider}}
 
+{{^is_riverpod}}
 import '../../core/di/injection_container.dart';
+{{/is_riverpod}}
 import '../../core/router/app_router.dart';
 
 class App extends StatelessWidget {
