@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../tokens/chameleon_colors.dart';
+import '../theme/chameleon_semantic_colors_extension.dart';
 import '../tokens/chameleon_spacing.dart';
 import '../tokens/chameleon_typography.dart';
 import 'loader/chameleon_mark.dart';
@@ -44,6 +44,11 @@ class ChameleonEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors =
+        Theme.of(
+          context,
+        ).extension<ChameleonSemanticColorsExtension>() ??
+        ChameleonSemanticColorsExtension.light;
     final label = actionLabel;
     final onPressed = onAction;
 
@@ -59,7 +64,9 @@ class ChameleonEmptyState extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: ChameleonTypography.subheading2,
+            style: ChameleonTypography.subheading2.copyWith(
+              color: colors.textPrimary,
+            ),
           ),
           if (description != null) ...[
             const SizedBox(height: ChameleonSpacing.xs),
@@ -67,7 +74,7 @@ class ChameleonEmptyState extends StatelessWidget {
               description!,
               textAlign: TextAlign.center,
               style: ChameleonTypography.body2.copyWith(
-                color: ChameleonSemanticColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ],

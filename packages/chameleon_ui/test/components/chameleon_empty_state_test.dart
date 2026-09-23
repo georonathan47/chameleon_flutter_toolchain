@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  Future<void> pump(WidgetTester tester, Widget child) =>
-      tester.pumpWidget(MaterialApp(home: Material(child: child)));
+  Future<void> pump(WidgetTester tester, Widget child, {ThemeData? theme}) =>
+      tester.pumpWidget(
+        MaterialApp(
+          theme: theme ?? ChameleonTheme.light,
+          home: Material(child: child),
+        ),
+      );
 
   testWidgets('renders title only when nothing else is given', (
     tester,
@@ -64,4 +69,25 @@ void main() {
       expect(tapped, isTrue);
     },
   );
+
+  testWidgets('under ChameleonTheme.dark, title and description resolve dark', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      const ChameleonEmptyState(
+        title: 'No results',
+        description: 'Try a different search.',
+      ),
+      theme: ChameleonTheme.dark,
+    );
+
+    final title = tester.widget<Text>(find.text('No results'));
+    expect(title.style?.color, ChameleonSemanticColorsDark.textPrimary);
+
+    final description = tester.widget<Text>(
+      find.text('Try a different search.'),
+    );
+    expect(description.style?.color, ChameleonSemanticColorsDark.textSecondary);
+  });
 }

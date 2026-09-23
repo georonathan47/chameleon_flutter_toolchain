@@ -93,6 +93,81 @@ void main() {
       ),
     ),
   );
+
+  // Same samples, under ChameleonTheme.dark, against a real dark surface
+  // (not transparent) — proves every existing component and the newer
+  // dialog/sheet/empty-state trio actually look correct on dark, not just
+  // that ChameleonTheme.dark compiles.
+  goldenTest(
+    'ChameleonTheme renders the component gallery in dark mode',
+    fileName: 'chameleon_theme_gallery_dark',
+    builder: () => Theme(
+      data: ChameleonTheme.dark,
+      child: Material(
+        color: ChameleonSemanticColorsDark.surface,
+        child: GoldenTestGroup(
+          columns: 2,
+          children: [
+            GoldenTestScenario(
+              name: 'elevated button',
+              child: const _Padded(child: _ElevatedButtonSample()),
+            ),
+            GoldenTestScenario(
+              name: 'text field',
+              child: const _Padded(child: _TextFieldSample()),
+            ),
+            GoldenTestScenario(
+              name: 'toast — error',
+              child: const _Padded(
+                child: _ToastSample(ChameleonToastType.error),
+              ),
+            ),
+            GoldenTestScenario(
+              name: 'toast — success',
+              child: const _Padded(
+                child: _ToastSample(ChameleonToastType.success),
+              ),
+            ),
+            GoldenTestScenario(
+              name: 'type ramp',
+              child: const _Padded(child: _TypeRampSample()),
+            ),
+            GoldenTestScenario(
+              name: 'bottom sheet content',
+              child: const _Padded(
+                child: ChameleonBottomSheet(child: Text('Filter options')),
+              ),
+            ),
+            GoldenTestScenario(
+              name: 'confirmation dialog',
+              child: const SizedBox(
+                width: 400,
+                height: 320,
+                child: ChameleonConfirmationDialog(
+                  title: 'Delete account?',
+                  message: 'This cannot be undone.',
+                  confirmLabel: 'Delete',
+                  isDestructive: true,
+                ),
+              ),
+            ),
+            GoldenTestScenario(
+              name: 'empty state',
+              child: _Padded(
+                child: ChameleonEmptyState(
+                  title: 'No transactions yet',
+                  description: 'Your activity will show up here.',
+                  icon: const Icon(Icons.receipt_long_outlined, size: 40),
+                  actionLabel: 'Refresh',
+                  onAction: () {},
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 class _Padded extends StatelessWidget {

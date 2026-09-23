@@ -87,7 +87,13 @@ vars:
     description: >-
       Pinned git tag of chameleon_ui to depend on, from the toolchain repo
       (https://github.com/georonathan47/chameleon_flutter_toolchain).
-    default: chameleon_ui-v0.1.0
+      v0.5.0, not v0.1.0: this had gone stale across three prior chameleon_ui
+      releases (toast customization, breakpoints, the bottom
+      sheet/confirmation dialog/empty state/skeleton components) — none of
+      that ever reached a generated app until now. ChameleonTheme.dark
+      (this brick's dark-mode wiring) only exists from chameleon_ui-v0.5.0
+      on.
+    default: chameleon_ui-v0.5.0
   chameleon_core_ref:
     type: string
     description: >-
@@ -97,5 +103,8 @@ vars:
     default: chameleon_core-v0.3.0
   chameleon_lints_ref:
     type: string
-    description: Same as chameleon_ui_ref, for chameleon_lints.
-    default: chameleon_lints-v0.1.0
+    description: >-
+      Same as chameleon_ui_ref, for chameleon_lints. v0.2.0, not v0.1.0:
+      also gone stale — the 4 style/architecture guardrail rules added in
+      chameleon_lints-v0.2.0 never reached a generated app until now.
+    default: chameleon_lints-v0.2.0

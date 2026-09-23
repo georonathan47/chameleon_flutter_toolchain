@@ -18,6 +18,8 @@ class App extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: FlavorConfig.instance.isDev,
         theme: ChameleonTheme.light,
+        darkTheme: ChameleonTheme.dark,
+        themeMode: ThemeMode.system,
         routerConfig: {{#use_go_router}}appRouter{{/use_go_router}}{{^use_go_router}}appRouter.config(){{/use_go_router}},
         // ChameleonToastHost's Overlay (and FlavorBanner) need a
         // Directionality ancestor, which MaterialApp itself provides — they

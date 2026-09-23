@@ -7,8 +7,10 @@ void main() {
     bool isDismissible = true,
     bool enableDrag = true,
     void Function(Future<String?> result)? onResult,
+    ThemeData? theme,
   }) {
     return MaterialApp(
+      theme: theme ?? ChameleonTheme.light,
       home: Builder(
         builder: (context) {
           return ElevatedButton(
@@ -83,4 +85,26 @@ void main() {
 
     expect(await result, 'picked-value');
   });
+
+  testWidgets(
+    'under ChameleonTheme.dark, the drag handle resolves dark',
+    (tester) async {
+      await tester.pumpWidget(appWithTrigger(theme: ChameleonTheme.dark));
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      // The drag handle is the only 36x4 Container this widget renders —
+      // matching on its exact size avoids depending on which Container in
+      // the wider widget tree find.byType(Container).first would happen
+      // to hit.
+      final handle = tester.widget<Container>(
+        find.byWidgetPredicate(
+          (widget) => widget is Container && widget.constraints?.maxWidth == 36,
+        ),
+      );
+      final decoration = handle.decoration! as BoxDecoration;
+      expect(decoration.color, ChameleonSemanticColorsDark.outlineVariant);
+    },
+  );
 }

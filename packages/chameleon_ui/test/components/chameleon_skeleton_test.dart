@@ -5,9 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   // Never pumpAndSettle here — the shimmer's AnimationController repeats
   // indefinitely and pumpAndSettle would hang waiting for it to stop.
-  Future<void> pump(WidgetTester tester, Widget child) async {
+  Future<void> pump(
+    WidgetTester tester,
+    Widget child, {
+    ThemeData? theme,
+  }) async {
     await tester.pumpWidget(
       MaterialApp(
+        theme: theme ?? ChameleonTheme.light,
         home: Material(child: Center(child: child)),
       ),
     );
@@ -52,5 +57,27 @@ void main() {
     }
 
     expect(find.byType(ChameleonSkeleton), findsOneWidget);
+  });
+
+  testWidgets('under ChameleonTheme.dark, the base color resolves dark', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      const ChameleonSkeleton.rect(width: 100),
+      theme: ChameleonTheme.dark,
+    );
+
+    final container = tester.widget<Container>(
+      find.descendant(
+        of: find.byType(ChameleonSkeleton),
+        matching: find.byType(Container),
+      ),
+    );
+    final decoration = container.decoration! as BoxDecoration;
+    expect(
+      decoration.color,
+      ChameleonSemanticColorsExtension.dark.skeletonBase,
+    );
   });
 }

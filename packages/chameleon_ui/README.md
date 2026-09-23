@@ -33,8 +33,13 @@ package ships with zero logos, brand fonts, or brand colors baked in.
   fixed to Inter), `ChameleonMotion` (durations and curves), and
   [`ChameleonBreakpoints`](lib/src/tokens/chameleon_breakpoints.dart) /
   `ChameleonWindowSizeClass` (phone/tablet/foldable responsive tiers).
-- **Theme** — `ChameleonTheme.light` builds a `ThemeData` from the semantic
-  color tokens, so widgets never hardcode a `Color` or `TextStyle` directly.
+- **Theme** — `ChameleonTheme.light`/`.dark` build a `ThemeData` from the
+  semantic color tokens (`ChameleonSemanticColors`/`ChameleonSemanticColorsDark`),
+  so widgets never hardcode a `Color` or `TextStyle` directly. A
+  `ChameleonSemanticColorsExtension` (a `ThemeExtension`) carries the
+  handful of roles `chameleon_ui`'s own bespoke components need that
+  `ColorScheme` doesn't cover, so those components render correctly under
+  both themes too.
 - **Components** — `ChameleonToastMessenger`/`ChameleonToastHost` (5 toast
   types with bundled SVG icons), `ChameleonLoadingDialog`,
   [`ChameleonBottomSheet`](lib/src/components/chameleon_bottom_sheet.dart),
@@ -53,14 +58,22 @@ package ships with zero logos, brand fonts, or brand colors baked in.
 
 ## Usage
 
-Apply the theme once, at boot:
+Apply the theme once, at boot — `darkTheme`/`themeMode: ThemeMode.system`
+gets you system dark mode with no other wiring:
 
 ```dart
 import 'package:chameleon_ui/chameleon_ui.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MaterialApp(theme: ChameleonTheme.light, home: const HomePage()));
+  runApp(
+    MaterialApp(
+      theme: ChameleonTheme.light,
+      darkTheme: ChameleonTheme.dark,
+      themeMode: ThemeMode.system,
+      home: const HomePage(),
+    ),
+  );
 }
 ```
 

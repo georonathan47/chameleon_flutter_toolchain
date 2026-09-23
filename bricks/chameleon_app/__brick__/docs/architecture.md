@@ -187,6 +187,21 @@ switch (ChameleonBreakpoints.of(context)) {
 }
 ```
 
+## Dark mode
+
+Unconditional, no flag required: `app.dart` wires `darkTheme:
+ChameleonTheme.dark` and `themeMode: ThemeMode.system` alongside `theme:
+ChameleonTheme.light`, so this app follows the device's system setting out
+of the box. `chameleon_ui`'s own components (dialogs, the bottom sheet, the
+empty state, the skeleton) resolve their colors through a
+`ChameleonSemanticColorsExtension` that flips with the active theme, not a
+fixed light value, so they render correctly in both modes — not just
+Material's own buttons/inputs/app bar. A feature's own screens should
+reach for `Theme.of(context).colorScheme` (or `ChameleonSemanticColors`/
+`ChameleonSemanticColorsDark` directly, branching on
+`Theme.of(context).brightness`, for a role `ColorScheme` doesn't cover)
+rather than assuming light.
+
 ## Data flow
 
 `Page` → `BlocBuilder`/`BlocSelector` reads a `Bloc`/`Cubit` → dispatches an

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../tokens/chameleon_colors.dart';
+import '../theme/chameleon_semantic_colors_extension.dart';
 import '../tokens/chameleon_motion.dart';
 import '../tokens/chameleon_spacing.dart';
 import 'loader/chameleon_spinner.dart';
@@ -65,6 +65,12 @@ class _ChameleonSkeletonState extends State<ChameleonSkeleton>
 
   @override
   Widget build(BuildContext context) {
+    final colors =
+        Theme.of(
+          context,
+        ).extension<ChameleonSemanticColorsExtension>() ??
+        ChameleonSemanticColorsExtension.light;
+
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
@@ -72,10 +78,10 @@ class _ChameleonSkeletonState extends State<ChameleonSkeleton>
           blendMode: BlendMode.srcATop,
           shaderCallback: (bounds) {
             return LinearGradient(
-              colors: const [
-                ChameleonColors.grey200,
-                ChameleonColors.grey150,
-                ChameleonColors.grey200,
+              colors: [
+                colors.skeletonBase,
+                colors.skeletonHighlight,
+                colors.skeletonBase,
               ],
               stops: const [0.35, 0.5, 0.65],
               // Slides the highlight band from fully off-screen-left to
@@ -96,7 +102,7 @@ class _ChameleonSkeletonState extends State<ChameleonSkeleton>
         width: widget.width,
         height: widget.height,
         decoration: BoxDecoration(
-          color: ChameleonColors.grey200,
+          color: colors.skeletonBase,
           shape: widget.shape,
           borderRadius: widget.shape == BoxShape.rectangle
               ? BorderRadius.circular(widget.borderRadius)

@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import 'injection_container.config.dart';
 
-final GetIt getIt = GetIt.instance;
+final GetIt getIt = .instance;
 
 // injectable's "automatic" microPackage discovery (the `includeMicroPackages`
 // default) does a plain filesystem glob rooted at this app's own directory —
