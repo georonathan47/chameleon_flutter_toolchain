@@ -255,3 +255,105 @@ abstract final class ChameleonSemanticColors {
   static const Color iconAction = ChameleonColors.yellow500;
   static const Color iconDisabled = ChameleonColors.grey600;
 }
+
+/// Dark-mode counterpart to [ChameleonSemanticColors] — the same roles,
+/// built from the same [ChameleonColors] primitive ramps rather than a
+/// parallel hardcoded palette, per one consistent rule instead of a
+/// field-by-field justification:
+///
+/// * Brand/feedback hues (`primary`, `secondary`, `error`, `success`,
+///   `warning`, `info`) stay the same — only their *container* pairing
+///   flips (a darker container, a lighter on-container text), standard
+///   Material dark-theme practice.
+/// * Neutrals invert: `surface*` moves to the dark end of the grey ramp,
+///   `text*` moves to the light end, `outline*` sits mid-dark.
+/// * [amountNegative] (neutral text on a light background in the light
+///   palette) becomes a light grey to keep the same contrast intent on a
+///   dark one.
+///
+/// Kept in step with [ChameleonSemanticColors]: every field there has a
+/// counterpart here, even a couple ([surfaceInverse], [textPrimaryInverse])
+/// nothing currently reads — `ChameleonToastMessenger` is deliberately
+/// brightness-invariant (see its own doc comment) and never consults this
+/// class, but a future dark-aware "inverse surface" consumer should still
+/// find a correctly-mirrored value waiting here.
+abstract final class ChameleonSemanticColorsDark {
+  // Brand / primary action.
+  static const Color primary = ChameleonColors.yellow500;
+  static const Color primaryHover = ChameleonColors.yellow400;
+  static const Color onPrimary = ChameleonColors.yellow1000;
+  static const Color primaryContainer = ChameleonColors.yellow900;
+  static const Color onPrimaryContainer = ChameleonColors.yellow200;
+
+  // Secondary (muted brand).
+  static const Color secondary = ChameleonColors.orange500;
+  static const Color onSecondary = ChameleonColors.yellow800;
+
+  // Surfaces & scaffolding.
+  static const Color surface = ChameleonColors.grey900;
+  static const Color surfaceBright = ChameleonColors.grey850;
+  static const Color surfaceContainer = ChameleonColors.grey800;
+  static const Color surfaceDim = ChameleonColors.grey1000;
+  static const Color scrim = ChameleonColors.grey850Alpha20;
+
+  /// See [ChameleonSemanticColors.surfaceInverse] — unused today (the
+  /// toast never consults this class), kept as a correct mirror.
+  static const Color surfaceInverse = ChameleonColors.grey100;
+
+  /// A translucent white wash instead of light's grey one — over a dark
+  /// base surface, a mid-grey wash would read as unintentionally bright.
+  static const Color surfaceChoiceCard = Color(0x33FFFFFF);
+
+  /// A deep brand yellow instead of light's cream — trades the wash for
+  /// an opaque brand fill either way, just picked from the dark end.
+  static const Color surfaceChoiceCardSelected = ChameleonColors.yellow900;
+
+  // Typography / content.
+  static const Color textPrimary = ChameleonColors.grey100;
+  static const Color textPrimaryInverse = ChameleonColors.grey900;
+  static const Color textSecondary = ChameleonColors.grey400;
+  static const Color textHelper = ChameleonColors.grey500;
+  static const Color textDisabled = ChameleonColors.grey600;
+  static const Color textStepIndicator = ChameleonColors.grey450;
+  static const Color textLink = ChameleonColors.blue400;
+  static const Color textBrandBold = ChameleonColors.yellow400;
+
+  // Borders / outlines.
+  static const Color outline = ChameleonColors.grey600;
+  static const Color outlineVariant = ChameleonColors.grey700;
+  static const Color outlineChoiceCard = ChameleonColors.grey550;
+
+  // Feedback states.
+  static const Color success = ChameleonColors.green600;
+  static const Color onSuccessContainer = ChameleonColors.green200;
+  static const Color successContainer = ChameleonColors.green900;
+  static const Color error = ChameleonColors.red600;
+  static const Color onErrorContainer = ChameleonColors.red200;
+  static const Color errorContainer = ChameleonColors.red900;
+  static const Color warning = ChameleonColors.yellow700;
+  static const Color onWarningContainer = ChameleonColors.orange200;
+  static const Color warningContainer = ChameleonColors.orange900;
+  static const Color info = ChameleonColors.blue600;
+  static const Color infoContainer = ChameleonColors.blue900;
+
+  // Financial data (money in / money out).
+  static const Color amountPositive = ChameleonColors.green600;
+  static const Color amountNegative = ChameleonColors.grey200;
+
+  // Inputs.
+  static const Color inputBorderDefault = ChameleonColors.grey600;
+  static const Color inputBorderFocus = ChameleonColors.yellow500;
+  static const Color inputContainer = ChameleonColors.grey850;
+  static const Color inputLabel = ChameleonColors.grey400;
+
+  // Navigation.
+  static const Color navBarIconActive = ChameleonColors.grey100;
+  static const Color navBarIconInactive = ChameleonColors.grey500;
+  static const Color navBarContainer = ChameleonColors.grey850;
+  static const Color tabIndicatorActive = ChameleonColors.yellow500;
+
+  // Icons.
+  static const Color iconDefault = ChameleonColors.grey300;
+  static const Color iconAction = ChameleonColors.yellow500;
+  static const Color iconDisabled = ChameleonColors.grey700;
+}

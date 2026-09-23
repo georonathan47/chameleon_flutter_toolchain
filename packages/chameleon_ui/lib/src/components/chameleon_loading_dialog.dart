@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../tokens/chameleon_colors.dart';
+import '../theme/chameleon_semantic_colors_extension.dart';
 import '../tokens/chameleon_spacing.dart';
 import '../tokens/chameleon_typography.dart';
 import 'loader/chameleon_spinner.dart';
@@ -45,6 +45,11 @@ class ChameleonLoadingDialog extends StatelessWidget {
     String? message,
   }) {
     final navigator = Navigator.of(context, rootNavigator: true);
+    final colors =
+        Theme.of(
+          context,
+        ).extension<ChameleonSemanticColorsExtension>() ??
+        ChameleonSemanticColorsExtension.light;
 
     // Not awaited: the route's future completes when the dialog closes, which
     // is the *result* of the work finishing — awaiting it here would deadlock.
@@ -54,7 +59,7 @@ class ChameleonLoadingDialog extends StatelessWidget {
         // The work owns this dialog's lifetime; a stray tap must not strand a
         // request that is still in flight.
         barrierDismissible: false,
-        barrierColor: ChameleonSemanticColors.scrim,
+        barrierColor: colors.scrim,
         builder: (_) => ChameleonLoadingDialog(message: message),
       ),
     );
@@ -64,12 +69,18 @@ class ChameleonLoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors =
+        Theme.of(
+          context,
+        ).extension<ChameleonSemanticColorsExtension>() ??
+        ChameleonSemanticColorsExtension.light;
+
     // Traps the OS back gesture: this dialog closes when the work finishes,
     // not before.
     return PopScope(
       canPop: false,
       child: Dialog(
-        backgroundColor: ChameleonSemanticColors.surface,
+        backgroundColor: colors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(ChameleonRadius.xl3),
         ),
@@ -85,7 +96,7 @@ class ChameleonLoadingDialog extends StatelessWidget {
                   message!,
                   textAlign: TextAlign.center,
                   style: ChameleonTypography.body2.copyWith(
-                    color: ChameleonSemanticColors.textSecondary,
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

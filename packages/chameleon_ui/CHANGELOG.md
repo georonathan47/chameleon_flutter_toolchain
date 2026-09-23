@@ -1,3 +1,21 @@
+## 0.5.0
+
+- Added `ChameleonTheme.dark`, built from a new `ChameleonSemanticColorsDark`
+  — a full field-for-field dark counterpart to `ChameleonSemanticColors`,
+  built from the same `ChameleonColors` primitive ramps. `light` and `dark`
+  are structurally identical (same `ColorScheme` shape, same theme blocks).
+- Added `ChameleonSemanticColorsExtension`, a `ThemeExtension` carrying the
+  handful of roles `chameleon_ui`'s own bespoke components need that
+  `ColorScheme` doesn't cover (`surface`, `textPrimary`, `textSecondary`,
+  `textDisabled`, `outlineVariant`, `scrim`, plus two new roles for
+  `ChameleonSkeleton`'s shimmer). `ChameleonLoadingDialog`,
+  `ChameleonBottomSheet`, `ChameleonConfirmationDialog`,
+  `ChameleonEmptyState`, and `ChameleonSkeleton` now resolve their chrome
+  through it instead of a static, always-light color reference, so they
+  render correctly under both themes — not just Material's own buttons/
+  inputs/app bar.
+- Dark-mode goldens added alongside every existing light scenario.
+
 ## 0.4.0
 
 - Added `ChameleonBottomSheet`: a themed `showModalBottomSheet` wrapper —

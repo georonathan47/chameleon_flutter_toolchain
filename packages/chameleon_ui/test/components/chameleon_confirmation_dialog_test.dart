@@ -6,8 +6,10 @@ void main() {
   Widget appWithTrigger({
     required void Function(Future<bool> result) onResult,
     bool isDestructive = false,
+    ThemeData? theme,
   }) {
     return MaterialApp(
+      theme: theme ?? ChameleonTheme.light,
       home: Builder(
         builder: (context) {
           return ElevatedButton(
@@ -106,6 +108,23 @@ void main() {
     final button = tester.widget<FilledButton>(find.byType(FilledButton));
     final resolvedColor = button.style?.backgroundColor?.resolve({});
 
-    expect(resolvedColor, ChameleonSemanticColors.error);
+    expect(resolvedColor, ChameleonTheme.light.colorScheme.error);
+  });
+
+  testWidgets('under ChameleonTheme.dark, surface and text resolve dark', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      appWithTrigger(onResult: (_) {}, theme: ChameleonTheme.dark),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    final dialog = tester.widget<Dialog>(find.byType(Dialog));
+    expect(dialog.backgroundColor, ChameleonSemanticColorsDark.surface);
+
+    final title = tester.widget<Text>(find.text('Delete account?'));
+    expect(title.style?.color, ChameleonSemanticColorsDark.textPrimary);
   });
 }

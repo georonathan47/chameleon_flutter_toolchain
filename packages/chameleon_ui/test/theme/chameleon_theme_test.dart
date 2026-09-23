@@ -20,4 +20,34 @@ void main() {
       );
     },
   );
+
+  test('ChameleonTheme.dark builds without throwing', () {
+    expect(ChameleonTheme.dark, isA<ThemeData>());
+  });
+
+  test(
+    'the dark theme uses the brand primary but a dark surface/scaffold',
+    () {
+      expect(
+        ChameleonTheme.dark.colorScheme.primary,
+        ChameleonSemanticColorsDark.primary,
+      );
+      expect(
+        ChameleonTheme.dark.scaffoldBackgroundColor,
+        ChameleonSemanticColorsDark.surface,
+      );
+      expect(ChameleonTheme.dark.brightness, Brightness.dark);
+    },
+  );
+
+  test('both themes register ChameleonSemanticColorsExtension', () {
+    expect(
+      ChameleonTheme.light.extension<ChameleonSemanticColorsExtension>(),
+      ChameleonSemanticColorsExtension.light,
+    );
+    expect(
+      ChameleonTheme.dark.extension<ChameleonSemanticColorsExtension>(),
+      ChameleonSemanticColorsExtension.dark,
+    );
+  });
 }

@@ -139,7 +139,9 @@ wires `PushNotificationService` to `firebase_messaging` (Dart-side wiring is
 automatic, a real Firebase project via `flutterfire configure` and the iOS
 capabilities are one-time manual steps). Every generated app also gets a
 registered deep-link URL scheme and a placeholder App Link host
-automatically, no flag required. Every generated app is verified with
+automatically, no flag required, and follows the system light/dark theme
+setting out of the box (`ChameleonTheme.light`/`.dark`, both built from the
+same semantic-token layer). Every generated app is verified with
 `flutter analyze` + `flutter test` +
 `dart run custom_lint` (`chameleon_lints`' seven rules — see
 [`packages/chameleon_lints/README.md`](packages/chameleon_lints/README.md)

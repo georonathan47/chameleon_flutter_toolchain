@@ -16,6 +16,7 @@ export 'src/components/global_glass_surface.dart';
 export 'src/components/loader/loader.dart';
 export 'src/components/toast/toast.dart';
 export 'src/gestures/activity_detector.dart';
+export 'src/theme/chameleon_semantic_colors_extension.dart';
 export 'src/theme/chameleon_theme.dart';
 export 'src/tokens/chameleon_breakpoints.dart';
 export 'src/tokens/chameleon_colors.dart';

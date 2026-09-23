@@ -202,11 +202,20 @@ class CreateCommand extends Command<int> with PipelineSteps {
       // bundled generator does raw mustache substitution with no fallback
       // to a brick.yaml default for a var it isn't given, so these must be
       // supplied explicitly rather than left for the brick to default.
-      'chameleon_ui_ref': 'chameleon_ui-v0.1.0',
+      //
+      // v0.1.0 sat here through three chameleon_ui releases (toast
+      // customization, breakpoints, the bottom sheet/confirmation dialog/
+      // empty state/skeleton components) that consequently never reached a
+      // generated app — found while wiring ChameleonTheme.dark, which
+      // itself only exists from chameleon_ui-v0.5.0 on.
+      'chameleon_ui_ref': 'chameleon_ui-v0.5.0',
       // v0.3.0, not v0.2.0: PushNotificationService only exists from
       // chameleon_core-v0.3.0 on.
       'chameleon_core_ref': 'chameleon_core-v0.3.0',
-      'chameleon_lints_ref': 'chameleon_lints-v0.1.0',
+      // v0.2.0, not v0.1.0: same staleness bug as chameleon_ui_ref above —
+      // the 4 guardrail rules added in chameleon_lints-v0.2.0 never reached
+      // a generated app either.
+      'chameleon_lints_ref': 'chameleon_lints-v0.2.0',
     };
 
     final overlaid = await step('Applying Chameleon template', () async {

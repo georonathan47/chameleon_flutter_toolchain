@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../tokens/chameleon_colors.dart';
+import '../theme/chameleon_semantic_colors_extension.dart';
 import '../tokens/chameleon_spacing.dart';
 import '../tokens/chameleon_typography.dart';
 import 'chameleon_loading_dialog.dart';
@@ -41,7 +41,7 @@ class ChameleonConfirmationDialog extends StatelessWidget {
   final String confirmLabel;
   final String cancelLabel;
 
-  /// Recolors the confirm button to [ChameleonSemanticColors.error] — a
+  /// Recolors the confirm button to the theme's `colorScheme.error` — a
   /// delete/remove/sign-out action, not an ordinary confirmation.
   final bool isDestructive;
 
@@ -69,8 +69,13 @@ class ChameleonConfirmationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors =
+        theme.extension<ChameleonSemanticColorsExtension>() ??
+        ChameleonSemanticColorsExtension.light;
+
     return Dialog(
-      backgroundColor: ChameleonSemanticColors.surface,
+      backgroundColor: colors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ChameleonRadius.xl3),
       ),
@@ -80,12 +85,17 @@ class ChameleonConfirmationDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: ChameleonTypography.subheading2),
+            Text(
+              title,
+              style: ChameleonTypography.subheading2.copyWith(
+                color: colors.textPrimary,
+              ),
+            ),
             const SizedBox(height: ChameleonSpacing.xs),
             Text(
               message,
               style: ChameleonTypography.body2.copyWith(
-                color: ChameleonSemanticColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
             const SizedBox(height: ChameleonSpacing.lg),
@@ -111,10 +121,10 @@ class ChameleonConfirmationDialog extends StatelessWidget {
                       vertical: ChameleonSpacing.sm,
                     ),
                     backgroundColor: isDestructive
-                        ? ChameleonSemanticColors.error
+                        ? theme.colorScheme.error
                         : null,
                     foregroundColor: isDestructive
-                        ? ChameleonColors.white
+                        ? theme.colorScheme.onError
                         : null,
                   ),
                   onPressed: () => Navigator.of(context).pop(true),

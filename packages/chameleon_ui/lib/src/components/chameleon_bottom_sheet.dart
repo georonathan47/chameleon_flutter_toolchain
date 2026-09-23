@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../tokens/chameleon_colors.dart';
+import '../theme/chameleon_semantic_colors_extension.dart';
 import '../tokens/chameleon_spacing.dart';
 
 /// A themed modal bottom sheet — a rounded top edge, a drag handle, and
@@ -29,6 +29,12 @@ class ChameleonBottomSheet extends StatelessWidget {
     bool isDismissible = true,
     bool enableDrag = true,
   }) {
+    final colors =
+        Theme.of(
+          context,
+        ).extension<ChameleonSemanticColorsExtension>() ??
+        ChameleonSemanticColorsExtension.light;
+
     return showModalBottomSheet<T>(
       context: context,
       // Content is arbitrary — a tall form, say — so the sheet has to be
@@ -37,7 +43,7 @@ class ChameleonBottomSheet extends StatelessWidget {
       isScrollControlled: true,
       isDismissible: isDismissible,
       enableDrag: enableDrag,
-      backgroundColor: ChameleonSemanticColors.surface,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         // Matches CardThemeData's own radius — this reads as a raised
         // surface, not a floating dialog (that's ChameleonRadius.xl3, see
@@ -52,6 +58,11 @@ class ChameleonBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors =
+        Theme.of(
+          context,
+        ).extension<ChameleonSemanticColorsExtension>() ??
+        ChameleonSemanticColorsExtension.light;
     final bottomInset =
         MediaQuery.viewInsetsOf(context).bottom +
         MediaQuery.paddingOf(context).bottom;
@@ -70,7 +81,7 @@ class ChameleonBottomSheet extends StatelessWidget {
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: ChameleonSemanticColors.outlineVariant,
+              color: colors.outlineVariant,
               borderRadius: BorderRadius.circular(ChameleonRadius.full),
             ),
           ),
