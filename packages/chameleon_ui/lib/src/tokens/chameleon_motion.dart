@@ -51,4 +51,7 @@ abstract final class ChameleonMotion {
 
   /// One cycle of a card-stack fan animation.
   static const Duration cardStackCycle = Duration(milliseconds: 3915);
+
+  /// One sweep of a `ChameleonSkeleton`'s shimmer highlight.
+  static const Duration shimmerSweep = Duration(milliseconds: 1200);
 }

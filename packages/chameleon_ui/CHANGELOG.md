@@ -1,3 +1,21 @@
+## 0.4.0
+
+- Added `ChameleonBottomSheet`: a themed `showModalBottomSheet` wrapper —
+  rounded top corners, a drag handle, and padding that shifts for the
+  keyboard and a gesture-nav safe area automatically.
+- Added `ChameleonConfirmationDialog`: a themed "are you sure?" dialog.
+  `show()` always resolves to a plain, non-nullable `bool` — a barrier tap
+  or back gesture counts as cancelling, same as tapping the cancel button.
+  `isDestructive` recolors the confirm button to the error color.
+- Added `ChameleonEmptyState`: an icon/title/description/action placeholder
+  for an empty list or collection screen, composable directly as a sealed
+  bloc state's `builder`.
+- Added `ChameleonSkeleton`: a self-contained shimmering placeholder (no
+  third-party shimmer package) in three shapes — `.rect`, `.circle`,
+  `.textLine`.
+- `ChameleonMotion` gained `shimmerSweep` (1200ms), `ChameleonSkeleton`'s
+  sweep cycle.
+
 ## 0.3.0
 
 - Added `ChameleonBreakpoints`/`ChameleonWindowSizeClass`: a three-tier
