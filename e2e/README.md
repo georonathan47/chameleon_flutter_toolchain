@@ -11,6 +11,14 @@ home-widget variant gets one extra gate step — `flutter build apk
 (`ChameleonHomeWidgetProvider.kt`), and `flutter analyze` never touches
 non-Dart files.
 
+A ninth, separately-structured check (`e2e_feature_riverpod`) chains
+`chameleon create --state riverpod` → `chameleon feature` (no `--state`,
+exercising the default read from `.chameleon/template.yaml`) →
+`chameleon state --state provider` (an explicit override, nested inside
+that feature) — the only coverage of `chameleon feature`/`chameleon
+state` in this matrix, since no other row invokes either. Each command's
+own default `--verify` already gates the same way as `create`'s.
+
 ```bash
 bash e2e/run_matrix.sh
 ```

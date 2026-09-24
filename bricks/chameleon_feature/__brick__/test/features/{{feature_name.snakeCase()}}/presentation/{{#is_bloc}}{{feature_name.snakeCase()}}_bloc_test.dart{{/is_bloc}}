@@ -6,9 +6,9 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/domain/entities/{{feature_name.snakeCase()}}.dart';
 import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/domain/usecases/get_{{feature_name.snakeCase()}}.dart';
-import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/bloc/{{feature_name.snakeCase()}}_bloc.dart';
-import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/bloc/{{feature_name.snakeCase()}}_event.dart';
-import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/bloc/{{feature_name.snakeCase()}}_state.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{feature_name.snakeCase()}}_bloc.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{feature_name.snakeCase()}}_event.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{feature_name.snakeCase()}}_state.dart';
 
 class _MockGet{{feature_name.pascalCase()}} extends Mock implements Get{{feature_name.pascalCase()}} {}
 

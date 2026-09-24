@@ -30,7 +30,7 @@
 - [ ] `melos run analyze` and `melos run test` pass locally
 - [ ] `packages/chameleon_lints`: `dart pub get && dart analyze && dart test` pass (outside the melos workspace)
 - [ ] `cli/chameleon_cli`: `dart analyze` and `dart test -j 1` pass
-- [ ] If `bricks/chameleon_app`/`chameleon_feature`/`chameleon_bloc` changed: re-ran `mason bundle`, bundle diff included
+- [ ] If `bricks/chameleon_app`/`chameleon_feature`/`chameleon_state` changed: re-ran `mason bundle`, bundle diff included
 - [ ] If `chameleon_ui`/`chameleon_core`/`chameleon_lints`/`chameleon_cli` need a new tag for this to reach users: noted below
 
 ## Related issues

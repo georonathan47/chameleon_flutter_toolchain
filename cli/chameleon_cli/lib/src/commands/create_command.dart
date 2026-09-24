@@ -54,10 +54,11 @@ class CreateCommand extends Command<int> with PipelineSteps {
         help:
             'State-management package. bloc covers both Bloc and Cubit '
             '(same package — pick the shape per feature later with '
-            '`chameleon bloc --cubit`); provider and riverpod pull in '
+            '`chameleon state --cubit`); provider and riverpod pull in '
             'their own package and expose ConnectivityBloc through it '
             "(context.watch/ref.watch) instead of flutter_bloc's own "
-            'widgets.',
+            'widgets. chameleon feature/chameleon state default to this '
+            'same choice.',
       )
       ..addOption(
         'router',

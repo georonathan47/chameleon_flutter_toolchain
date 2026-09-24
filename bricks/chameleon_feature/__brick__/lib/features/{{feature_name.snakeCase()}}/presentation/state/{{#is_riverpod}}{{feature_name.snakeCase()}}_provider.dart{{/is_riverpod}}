@@ -1,3 +1,4 @@
+import 'package:chameleon_core/chameleon_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/injection_container.dart';
@@ -8,20 +9,46 @@ final {{feature_name.camelCase()}}Provider =
     AsyncNotifierProvider<
       {{feature_name.pascalCase()}}Notifier,
       List<{{feature_name.pascalCase()}}>
-    >({{feature_name.pascalCase()}}Notifier.new);
+    >(
+      {{feature_name.pascalCase()}}Notifier.new,
+      // riverpod retries a failed build() with backoff by default (its own
+      // default `retry` treats anything that isn't already a
+      // ProviderException/Error as transient) — wrong here:
+      // {{feature_name.pascalCase()}}FailureException wraps a Failure the
+      // repository has already definitively classified (not-found,
+      // validation, etc.), so silently retrying it up to 10 times before
+      // ever reaching the page is never the right call. Surface it once.
+      retry: (retryCount, error) => null,
+    );
 
 /// Bridges `Get{{feature_name.pascalCase()}}`'s
 /// `TaskEither<Failure, List<{{feature_name.pascalCase()}}>>` into riverpod's
-/// own `AsyncValue`: throwing the `Failure` on the left branch is
-/// deliberate, not a shortcut — `AsyncNotifier.build()` already catches
-/// whatever `build()` throws into `AsyncError(error, stackTrace)`, so this
-/// reuses that machinery instead of inventing a parallel one. Read it back
-/// with `error as Failure` wherever a page needs `.message`.
+/// own `AsyncValue`: throwing on the left branch is deliberate, not a
+/// shortcut — `AsyncNotifier.build()` already catches whatever `build()`
+/// throws into `AsyncError(error, stackTrace)`, so this reuses that
+/// machinery instead of inventing a parallel one. Throws
+/// [{{feature_name.pascalCase()}}FailureException], not [Failure] itself:
+/// `Failure` deliberately doesn't extend `Exception`/`Error` (see its own
+/// doc comment in chameleon_core), so throwing it directly trips
+/// `only_throw_errors`.
 class {{feature_name.pascalCase()}}Notifier
     extends AsyncNotifier<List<{{feature_name.pascalCase()}}>> {
   @override
   Future<List<{{feature_name.pascalCase()}}>> build() async {
-    final result = await getIt<Get{{feature_name.pascalCase()}}>().run();
-    return result.match((failure) => throw failure, (items) => items);
+    final result = await getIt<Get{{feature_name.pascalCase()}}>()().run();
+    return result.match(
+      (failure) => throw {{feature_name.pascalCase()}}FailureException(failure),
+      (items) => items,
+    );
   }
+}
+
+/// Wraps a domain [Failure] so [{{feature_name.pascalCase()}}Notifier.build]
+/// can throw it — unwrap with `(error as
+/// {{feature_name.pascalCase()}}FailureException).failure` wherever a page
+/// needs the message.
+class {{feature_name.pascalCase()}}FailureException implements Exception {
+  const {{feature_name.pascalCase()}}FailureException(this.failure);
+
+  final Failure failure;
 }

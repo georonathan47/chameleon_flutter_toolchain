@@ -229,12 +229,15 @@ example today, wired in `app.dart`:
   alongside it in `lib/core/providers/`.
 {{/is_riverpod}}
 
-This choice does **not** change what `chameleon feature` generates:
-feature-level state is Bloc-shaped either way (see "Data flow" below) —
-`chameleon_core` and `chameleon_feature` are cross-cutting infrastructure
-that stays consistent regardless of which idiom this app's own code
-prefers for its own state. Pick the shape a specific feature's bloc/cubit
-uses independently, per feature, with `chameleon bloc --cubit`.
+`chameleon feature`/`chameleon state` (see "Data flow" below) default to
+this same choice — read from `.chameleon/template.yaml`, the provenance
+file this app was generated with — so a feature added later matches this
+app's own idiom without re-specifying it every time. Either command still
+accepts an explicit `--state bloc|provider|riverpod` override for an app
+that deliberately mixes paradigms across features, and `chameleon create`'s
+own "bloc folds cubit" convention carries through: pick Bloc vs. Cubit for
+a specific feature's state independently, per feature, with `chameleon
+state --cubit`.
 
 ## Data flow
 

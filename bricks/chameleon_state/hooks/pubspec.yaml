@@ -1,5 +1,5 @@
-name: chameleon_bloc_hooks
-description: Pre/post-generation hooks for the chameleon_bloc brick.
+name: chameleon_state_hooks
+description: Pre/post-generation hooks for the chameleon_state brick.
 version: 1.0.0
 publish_to: none
 

@@ -1,0 +1,51 @@
+import 'package:chameleon_core/chameleon_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/domain/entities/{{feature_name.snakeCase()}}.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{feature_name.snakeCase()}}_provider.dart';
+
+class _FakeLoaded{{feature_name.pascalCase()}}Notifier extends {{feature_name.pascalCase()}}Notifier {
+  @override
+  Future<List<{{feature_name.pascalCase()}}>> build() async =>
+      const [{{feature_name.pascalCase()}}(id: '1', name: 'Alex')];
+}
+
+class _FakeFailing{{feature_name.pascalCase()}}Notifier extends {{feature_name.pascalCase()}}Notifier {
+  @override
+  Future<List<{{feature_name.pascalCase()}}>> build() async =>
+      throw const {{feature_name.pascalCase()}}FailureException(ServerFailure());
+}
+
+void main() {
+  test('exposes the fetched items as AsyncData', () async {
+    final container = ProviderContainer(
+      overrides: [
+        {{feature_name.camelCase()}}Provider.overrideWith(
+          _FakeLoaded{{feature_name.pascalCase()}}Notifier.new,
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final result = await container.read({{feature_name.camelCase()}}Provider.future);
+
+    expect(result, const [{{feature_name.pascalCase()}}(id: '1', name: 'Alex')]);
+  });
+
+  test('exposes a repository failure as AsyncError', () async {
+    final container = ProviderContainer(
+      overrides: [
+        {{feature_name.camelCase()}}Provider.overrideWith(
+          _FakeFailing{{feature_name.pascalCase()}}Notifier.new,
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await expectLater(
+      container.read({{feature_name.camelCase()}}Provider.future),
+      throwsA(isA<{{feature_name.pascalCase()}}FailureException>()),
+    );
+  });
+}

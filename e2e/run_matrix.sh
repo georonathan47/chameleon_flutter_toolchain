@@ -20,8 +20,10 @@ TOOLCHAIN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRATCH_ROOT="$(dirname "$TOOLCHAIN_ROOT")"
 CLI_DIR="$TOOLCHAIN_ROOT/cli/chameleon_cli"
 
-echo "Bundling the brick and activating chameleon_cli from $CLI_DIR ..."
+echo "Bundling the bricks and activating chameleon_cli from $CLI_DIR ..."
 mason bundle "$TOOLCHAIN_ROOT/bricks/chameleon_app" -t dart -o "$CLI_DIR/lib/src/bundles/" >/dev/null
+mason bundle "$TOOLCHAIN_ROOT/bricks/chameleon_feature" -t dart -o "$CLI_DIR/lib/src/bundles/" >/dev/null
+mason bundle "$TOOLCHAIN_ROOT/bricks/chameleon_state" -t dart -o "$CLI_DIR/lib/src/bundles/" >/dev/null
 dart pub global activate --source path "$CLI_DIR" >/dev/null
 
 declare -a NAMES=()
@@ -89,11 +91,50 @@ for i in "${!NAMES[@]}"; do
   rm -rf "$project_dir"
 done
 
+# A separate chained check, not another NAMES/FLAGS row: it exercises
+# `chameleon feature`/`chameleon state` (never invoked by any row above),
+# specifically the state_management default-from-template.yaml path (no
+# --state passed to `feature`) and the explicit --state override path
+# (passed to `state`), in one non-default (riverpod) app. Each command's
+# own default --verify already gates on analyze+test+custom_lint, so there
+# is nothing extra to re-run here.
+variant_count=$((${#NAMES[@]} + 1))
+chain_name="e2e_feature_riverpod"
+chain_dir="$SCRATCH_ROOT/$chain_name"
+
+echo ""
+echo "=== $chain_name (create --state riverpod -> feature -> state) ==="
+rm -rf "$chain_dir"
+
+chain_ok=true
+if ! chameleon create "$chain_name" -o "$SCRATCH_ROOT" --no-git --state riverpod; then
+  echo "✗ $chain_name: chameleon create failed"
+  chain_ok=false
+fi
+
+if $chain_ok && ! (cd "$chain_dir" && chameleon feature widgets); then
+  echo "✗ $chain_name: chameleon feature widgets failed (expected to default to riverpod)"
+  chain_ok=false
+fi
+
+if $chain_ok && ! (cd "$chain_dir" && chameleon state counter --feature widgets --state provider); then
+  echo "✗ $chain_name: chameleon state counter --state provider failed (explicit override)"
+  chain_ok=false
+fi
+
+if $chain_ok; then
+  echo "✓ $chain_name passed"
+  rm -rf "$chain_dir"
+else
+  fail_count=$((fail_count + 1))
+  echo "  left at $chain_dir for inspection"
+fi
+
 echo ""
 if [ "$fail_count" -eq 0 ]; then
-  echo "All ${#NAMES[@]} e2e variants passed."
+  echo "All $variant_count e2e variants passed."
   exit 0
 else
-  echo "$fail_count of ${#NAMES[@]} e2e variants failed."
+  echo "$fail_count of $variant_count e2e variants failed."
   exit 1
 fi

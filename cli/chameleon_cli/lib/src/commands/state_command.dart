@@ -6,18 +6,20 @@ import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
-import '../bundles/chameleon_bloc_bundle.dart';
+import '../bundles/chameleon_state_bundle.dart';
 import '../doctor.dart';
 import '../pascal_case.dart';
 import '../process_runner.dart';
+import '../template_provenance.dart';
 import 'pipeline_steps.dart';
 
-/// `chameleon bloc <name>` — adds a bloc/cubit + sealed states + tests
-/// inside an existing feature of a Chameleon app. Not wired to a repository
-/// (that's `chameleon feature`'s job) — this is for a second piece of state
-/// management a feature's main bloc doesn't cover.
-class BlocCommand extends Command<int> with PipelineSteps {
-  BlocCommand({required this.logger, ProcessRunner? runner})
+/// `chameleon state <name>` — adds a second piece of feature-local state
+/// (Bloc/Cubit, a Provider `ChangeNotifier`, or a riverpod `Notifier`) +
+/// sealed states + tests inside an existing feature of a Chameleon app. Not
+/// wired to a repository (that's `chameleon feature`'s job) — this is for a
+/// piece of state a feature's main bloc/controller/provider doesn't cover.
+class StateCommand extends Command<int> with PipelineSteps {
+  StateCommand({required this.logger, ProcessRunner? runner})
     : processRunner = runner ?? const SystemProcessRunner() {
     argParser
       ..addOption(
@@ -25,7 +27,19 @@ class BlocCommand extends Command<int> with PipelineSteps {
         mandatory: true,
         help: 'The existing feature (under lib/features/) to nest this in.',
       )
-      ..addFlag('cubit', help: 'Generate a Cubit instead of a Bloc.')
+      ..addOption(
+        'state',
+        allowed: ['bloc', 'provider', 'riverpod'],
+        help:
+            'State-management shape to generate. Defaults to the target '
+            "app's own choice, read from .chameleon/template.yaml.",
+      )
+      ..addFlag(
+        'cubit',
+        help:
+            'When --state is bloc (the default), generate a Cubit '
+            'instead of a Bloc. Ignored for provider/riverpod.',
+      )
       ..addFlag('codegen', defaultsTo: true, help: 'Run build_runner.')
       ..addFlag(
         'verify',
@@ -44,26 +58,25 @@ class BlocCommand extends Command<int> with PipelineSteps {
   final ProcessRunner processRunner;
 
   @override
-  String get name => 'bloc';
+  String get name => 'state';
 
   @override
   String get description =>
-      'Add a bloc/cubit to an existing feature of a Chameleon app.';
+      'Add a second piece of feature-local state to an existing feature '
+      'of a Chameleon app.';
 
   @override
   Future<int> run() async {
     final results = argResults!;
     if (results.rest.isEmpty) {
-      logger.err(
-        'Usage: chameleon bloc <bloc_name> --feature <feature_name>',
-      );
+      logger.err('Usage: chameleon state <name> --feature <feature_name>');
       return ExitCode.usage.code;
     }
     final blocName = results.rest.first;
 
     if (!RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(blocName)) {
       logger.err(
-        '"$blocName" is not a valid bloc/cubit name '
+        '"$blocName" is not a valid name '
         '(snake_case, must start with a lowercase letter).',
       );
       return ExitCode.usage.code;
@@ -74,9 +87,7 @@ class BlocCommand extends Command<int> with PipelineSteps {
     // explicitly so a missing --feature fails the same clean way every
     // other validation error here does, rather than an uncaught exception.
     if (!results.wasParsed('feature')) {
-      logger.err(
-        'Usage: chameleon bloc <bloc_name> --feature <feature_name>',
-      );
+      logger.err('Usage: chameleon state <name> --feature <feature_name>');
       return ExitCode.usage.code;
     }
     final featureName = results['feature'] as String;
@@ -89,11 +100,15 @@ class BlocCommand extends Command<int> with PipelineSteps {
     if (!provenance.existsSync()) {
       logger.err(
         'No .chameleon/template.yaml found in ${projectRoot.path}.\n'
-        'Run `chameleon bloc` from the root of a Chameleon app generated '
+        'Run `chameleon state` from the root of a Chameleon app generated '
         'by `chameleon create`.',
       );
       return ExitCode.usage.code;
     }
+
+    final stateManagement = results.wasParsed('state')
+        ? results['state'] as String
+        : readStateManagementDefault(projectRoot);
 
     final featureDir = Directory(
       p.join(projectRoot.path, 'lib', 'features', featureName),
@@ -107,16 +122,19 @@ class BlocCommand extends Command<int> with PipelineSteps {
       return ExitCode.usage.code;
     }
 
-    final blocFileName = useCubit
-        ? '${blocName}_cubit.dart'
-        : '${blocName}_bloc.dart';
-    final blocFile = File(
-      p.join(featureDir.path, 'presentation', 'bloc', blocFileName),
+    final stateFileName = switch (stateManagement) {
+      'bloc' => '${blocName}_${useCubit ? 'cubit' : 'bloc'}.dart',
+      'provider' => '${blocName}_controller.dart',
+      'riverpod' => '${blocName}_provider.dart',
+      _ => throw StateError('unreachable: $stateManagement'),
+    };
+    final stateFile = File(
+      p.join(featureDir.path, 'presentation', 'state', stateFileName),
     );
-    if (blocFile.existsSync()) {
+    if (stateFile.existsSync()) {
       logger.err(
-        '${blocFile.path} already exists. chameleon_bloc does not overwrite '
-        'an existing bloc/cubit.',
+        '${stateFile.path} already exists. chameleon_state does not '
+        'overwrite existing state.',
       );
       return ExitCode.usage.code;
     }
@@ -143,14 +161,15 @@ class BlocCommand extends Command<int> with PipelineSteps {
     final vars = <String, dynamic>{
       'feature_name': featureName,
       'bloc_name': blocName,
+      'state_management': stateManagement,
       'cubit': useCubit,
       'project_name': projectName,
     };
 
-    final kind = useCubit ? 'cubit' : 'bloc';
-    final generated = await step('Generating $kind "$blocName"', () async {
+    final generationLabel = 'Generating $stateManagement "$blocName"';
+    final generated = await step(generationLabel, () async {
       final generator = await mason.MasonGenerator.fromBundle(
-        chameleonBlocBundle,
+        chameleonStateBundle,
       );
       Map<String, dynamic>? updatedVars;
       await generator.hooks.preGen(
@@ -193,17 +212,29 @@ class BlocCommand extends Command<int> with PipelineSteps {
       if (!verified) return ExitCode.software.code;
     }
 
+    final className = switch (stateManagement) {
+      'bloc' => '${pascalCase(blocName)}${useCubit ? 'Cubit' : 'Bloc'}',
+      'provider' => '${pascalCase(blocName)}Controller',
+      'riverpod' => '${pascalCase(blocName)}Notifier',
+      _ => throw StateError('unreachable: $stateManagement'),
+    };
+    final nextStep = switch (stateManagement) {
+      'bloc' => useCubit ? 'start()' : '_onStarted',
+      'provider' => 'start()',
+      'riverpod' => 'start()',
+      _ => throw StateError('unreachable: $stateManagement'),
+    };
+
     logger
       ..info('')
       ..success(
-        'lib/features/$featureName/presentation/bloc/$blocFileName is ready.',
+        'lib/features/$featureName/presentation/state/$stateFileName is ready.',
       )
       ..info('')
       ..info('Next:')
       ..info(
-        '  Replace the placeholder ${useCubit ? 'start()' : '_onStarted'} '
-        'body with the real work ${pascalCase(blocName)}'
-        '${useCubit ? 'Cubit' : 'Bloc'} should do.',
+        '  Replace the placeholder $nextStep body with the real work '
+        '$className should do.',
       );
     return ExitCode.success.code;
   }

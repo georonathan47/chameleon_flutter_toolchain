@@ -28,7 +28,7 @@ packages/
 bricks/
   chameleon_app/     Mason brick — the app skeleton
   chameleon_feature/  Mason brick — a feature slice
-  chameleon_bloc/     Mason brick — a bloc/cubit slice
+  chameleon_state/    Mason brick — a second piece of feature-local state
 cli/
   chameleon_cli/      the `chameleon` executable
 ```
@@ -51,7 +51,7 @@ melos run test
 ```bash
 mason bundle bricks/chameleon_app -t dart -o cli/chameleon_cli/lib/src/bundles/
 mason bundle bricks/chameleon_feature -t dart -o cli/chameleon_cli/lib/src/bundles/
-mason bundle bricks/chameleon_bloc -t dart -o cli/chameleon_cli/lib/src/bundles/
+mason bundle bricks/chameleon_state -t dart -o cli/chameleon_cli/lib/src/bundles/
 dart pub global activate --source path cli/chameleon_cli
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 
@@ -90,15 +90,20 @@ chameleon feature beneficiaries
 ```
 
 Generates `lib/features/beneficiaries/` (entity, model, chopper api client,
-isolate-wrapped datasource, repository, a bloc, a page) and matching tests,
-then runs the same verification gate `create` does.
+isolate-wrapped datasource, repository, a presentation layer, a page) and
+matching tests, then runs the same verification gate `create` does. The
+presentation layer's shape defaults to the app's own `--state` choice (read
+from `.chameleon/template.yaml`) — pass `--state bloc|provider|riverpod` to
+override it for a specific feature.
 
-To add a second piece of state management inside a feature that already
-exists (a filter, a form, a toggle — not a new repository call):
+To add a second piece of state inside a feature that already exists (a
+filter, a form, a toggle — not a new repository call), same default/override
+behavior:
 
 ```bash
-chameleon bloc filters --feature beneficiaries
-chameleon bloc search --feature beneficiaries --cubit
+chameleon state filters --feature beneficiaries
+chameleon state search --feature beneficiaries --cubit
+chameleon state sort_order --feature beneficiaries --state riverpod
 ```
 
 ## Keeping the CLI up to date
@@ -129,15 +134,17 @@ regardless of how it's installed.
 ## Status
 
 `chameleon_core`, `chameleon_ui`, `chameleon_lints`, the three Mason bricks,
-and a CLI with `doctor` / `create` / `feature` / `bloc` / `update` /
+and a CLI with `doctor` / `create` / `feature` / `state` / `update` /
 `firebase verify` all ship today. `chameleon create` supports both
 `go_router` and `auto_route`, and three state-management choices via
 `--state`: `bloc` (default — covers both Bloc and Cubit, one package
-either way; pick the shape per feature later with `chameleon bloc
+either way; pick the shape per feature later with `chameleon state
 --cubit`), `provider`, and `riverpod` — each exposes `chameleon_core`'s
 `ConnectivityBloc` through that paradigm's own idiom
-(`context.read`/`context.watch`/`ref.watch`); `--home-widget` generates a
-fully working
+(`context.read`/`context.watch`/`ref.watch`). `chameleon feature` and
+`chameleon state` honor the same choice for a feature's own presentation
+layer — defaulted from the app's own `.chameleon/template.yaml`, or
+overridable per invocation. `--home-widget` generates a fully working
 Android home-screen widget plus iOS Swift starter source (the Widget
 Extension target itself needs one manual Xcode step — see
 `ios/HomeWidgetExtension/README.md` in a generated app); `--push-notifications`
@@ -151,14 +158,17 @@ same semantic-token layer). Every generated app is verified with
 `flutter analyze` + `flutter test` +
 `dart run custom_lint` (`chameleon_lints`' seven rules — see
 [`packages/chameleon_lints/README.md`](packages/chameleon_lints/README.md)
-for the full list) before `create`/`feature`/`bloc` report success.
+for the full list) before `create`/`feature`/`state` report success.
 
 A generate-and-verify e2e matrix (`e2e/run_matrix.sh`, see `e2e/README.md`)
 generates a real app for each of eight flag combinations (defaults,
 auto_route, biometrics, with-permissions, home-widget,
 push-notifications, provider, riverpod) and gates on `flutter analyze` +
-`flutter test` + `dart run custom_lint` for each; it runs in CI as the
-`e2e` job in `.github/workflows/ci.yml`.
+`flutter test` + `dart run custom_lint` for each, plus a ninth chained
+check covering `chameleon feature`/`chameleon state` (create → feature →
+state, exercising both the state_management default-from-template.yaml
+path and an explicit override); it runs in CI as the `e2e` job in
+`.github/workflows/ci.yml`.
 
 No Firebase (or any other vendor) dependency is required anywhere in this
 toolchain by default — crash reporting, analytics, feature flags,
