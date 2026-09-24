@@ -24,16 +24,26 @@ dependencies:
       path: packages/chameleon_core
       ref: {{chameleon_core_ref}}
 
-  # Unconditional: Cubit is part of the same `bloc`/`flutter_bloc` package as
-  # Bloc (`state_management: cubit` only changes which base class this
-  # app's own templates use, not which package that needs), and
-  # `chameleon feature` always generates a Bloc regardless of this
-  # app's state_management choice — see that generator's own note.
+  # One block per state_management choice, all mutually exclusive — a
+  # provider/riverpod app no longer lists flutter_bloc as its own direct
+  # dependency, matching what the app's own code actually reaches for.
+  # Note this doesn't remove flutter_bloc from the resolved dependency
+  # graph either way: chameleon_core's own ConnectivityBloc is a real
+  # Bloc, so chameleon_core (a direct dependency itself) pulls
+  # bloc/flutter_bloc in transitively regardless of this choice — that's
+  # an internal implementation detail of chameleon_core, not something
+  # this app's own pubspec needs to declare.
+  {{#is_bloc}}
   bloc: ^9.2.1
   flutter_bloc: ^9.1.1
-  {{#is_bloc}}
   hydrated_bloc: ^11.0.0
   {{/is_bloc}}
+  {{#is_provider}}
+  provider: ^6.1.5+1
+  {{/is_provider}}
+  {{#is_riverpod}}
+  flutter_riverpod: ^3.4.3
+  {{/is_riverpod}}
   equatable: ^2.1.0
   fpdart: ^1.2.0
   chopper: ^8.7.0
@@ -82,7 +92,10 @@ dev_dependencies:
   # For building real chopper Response fixtures in datasource tests
   # (chameleon_core's own auth_interceptor_test.dart does the same).
   http: ^1.6.0
-  # Unconditional for the same reason flutter_bloc is above.
+  # Unconditional regardless of state_management (unlike flutter_bloc
+  # above): `chameleon feature` always generates Bloc-shaped feature code
+  # either way — see that generator's own note — so even a provider/
+  # riverpod app needs bloc_test to test a feature it adds later.
   bloc_test: ^10.0.0
   custom_lint: ^0.8.0
   chameleon_lints:

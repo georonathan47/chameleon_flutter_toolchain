@@ -6,7 +6,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 {{/use_push_notifications}}
 import 'package:flutter/material.dart';
+// Unconditional regardless of state_management, and not declared as a
+// direct dependency in pubspec.yaml when a provider/riverpod choice
+// means flutter_bloc isn't listed there (see that file's own comment) —
+// this observer covers chameleon_core's own ConnectivityBloc, which is
+// Bloc-based unconditionally, not the app's own paradigm choice.
+// depend_on_referenced_packages is disabled project-wide for exactly
+// this (see analysis_options.yaml) rather than ignored per-line here —
+// dart fix --apply doesn't respect a line-level ignore for this
+// diagnostic and silently re-adds flutter_bloc to pubspec.yaml anyway.
 import 'package:flutter_bloc/flutter_bloc.dart';
+{{#is_riverpod}}
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+{{/is_riverpod}}
 
 import 'app/app.dart';
 {{#use_push_notifications}}
@@ -66,7 +78,15 @@ Future<void> bootstrap(Widget Function() builder) async {
       // wired in.
       await getIt<FeatureFlags>().initialize();
 
+      {{#is_riverpod}}
+      // ProviderScope must be the outermost ancestor of anything reading a
+      // provider — this is the one shared entrypoint every flavor's
+      // main_*.dart calls into, so it's the right, single place for it.
+      runApp(ProviderScope(child: builder()));
+      {{/is_riverpod}}
+      {{^is_riverpod}}
       runApp(builder());
+      {{/is_riverpod}}
     },
     (error, stackTrace) {
       ChameleonLogger.error(

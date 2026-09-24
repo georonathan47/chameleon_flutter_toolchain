@@ -131,7 +131,13 @@ regardless of how it's installed.
 `chameleon_core`, `chameleon_ui`, `chameleon_lints`, the three Mason bricks,
 and a CLI with `doctor` / `create` / `feature` / `bloc` / `update` /
 `firebase verify` all ship today. `chameleon create` supports both
-`go_router` and `auto_route`; `--home-widget` generates a fully working
+`go_router` and `auto_route`, and three state-management choices via
+`--state`: `bloc` (default — covers both Bloc and Cubit, one package
+either way; pick the shape per feature later with `chameleon bloc
+--cubit`), `provider`, and `riverpod` — each exposes `chameleon_core`'s
+`ConnectivityBloc` through that paradigm's own idiom
+(`context.read`/`context.watch`/`ref.watch`); `--home-widget` generates a
+fully working
 Android home-screen widget plus iOS Swift starter source (the Widget
 Extension target itself needs one manual Xcode step — see
 `ios/HomeWidgetExtension/README.md` in a generated app); `--push-notifications`
@@ -148,11 +154,11 @@ same semantic-token layer). Every generated app is verified with
 for the full list) before `create`/`feature`/`bloc` report success.
 
 A generate-and-verify e2e matrix (`e2e/run_matrix.sh`, see `e2e/README.md`)
-generates a real app for each of six flag combinations (defaults,
-cubit+auto_route, biometrics, with-permissions, home-widget,
-push-notifications) and gates on `flutter analyze` + `flutter test` +
-`dart run custom_lint` for each; it runs in CI as the `e2e` job in
-`.github/workflows/ci.yml`.
+generates a real app for each of eight flag combinations (defaults,
+auto_route, biometrics, with-permissions, home-widget,
+push-notifications, provider, riverpod) and gates on `flutter analyze` +
+`flutter test` + `dart run custom_lint` for each; it runs in CI as the
+`e2e` job in `.github/workflows/ci.yml`.
 
 No Firebase (or any other vendor) dependency is required anywhere in this
 toolchain by default — crash reporting, analytics, feature flags,

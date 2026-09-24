@@ -28,11 +28,16 @@ declare -a NAMES=()
 declare -a FLAGS=()
 
 NAMES+=("e2e_defaults"); FLAGS+=("")
-NAMES+=("e2e_cubit_auto_route"); FLAGS+=("--state cubit --router auto_route")
+# --state cubit was removed (folded into the single "bloc" choice — see
+# issue #10); this variant's real purpose was always exercising a
+# non-default router alongside state management, not cubit specifically.
+NAMES+=("e2e_auto_route"); FLAGS+=("--router auto_route")
 NAMES+=("e2e_biometrics"); FLAGS+=("--biometrics")
 NAMES+=("e2e_with_permissions"); FLAGS+=("--permissions camera,notification")
 NAMES+=("e2e_home_widget"); FLAGS+=("--home-widget")
 NAMES+=("e2e_push_notifications"); FLAGS+=("--push-notifications")
+NAMES+=("e2e_provider"); FLAGS+=("--state provider")
+NAMES+=("e2e_riverpod"); FLAGS+=("--state riverpod")
 
 fail_count=0
 

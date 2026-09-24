@@ -1,14 +1,15 @@
 # e2e — generate-and-verify matrix
 
 `run_matrix.sh` generates a Chameleon app with each brick-flag combination
-that matters (defaults, cubit+auto_route, biometrics, with-permissions,
-home-widget) via the real `chameleon` CLI, and gates on `flutter analyze` +
-`flutter test` + `dart run custom_lint` against each. See the script's own
-header comment for why `tool/checks.sh` is shown but not part of the
-pass/fail gate. The home-widget variant gets one extra gate step —
-`flutter build apk --debug` — since it's the only variant that generates
-native Kotlin (`ChameleonHomeWidgetProvider.kt`), and `flutter analyze`
-never touches non-Dart files.
+that matters (defaults, auto_route, biometrics, with-permissions,
+home-widget, push-notifications, provider, riverpod) via the real
+`chameleon` CLI, and gates on `flutter analyze` + `flutter test` +
+`dart run custom_lint` against each. See the script's own header comment
+for why `tool/checks.sh` is shown but not part of the pass/fail gate. The
+home-widget variant gets one extra gate step — `flutter build apk
+--debug` — since it's the only variant that generates native Kotlin
+(`ChameleonHomeWidgetProvider.kt`), and `flutter analyze` never touches
+non-Dart files.
 
 ```bash
 bash e2e/run_matrix.sh

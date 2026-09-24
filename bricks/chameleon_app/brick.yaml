@@ -21,10 +21,19 @@ vars:
 
   state_management:
     type: enum
-    description: Bloc vs Cubit as the project's default state-management shape.
+    description: >-
+      State-management package this app is built around. `bloc` covers
+      both Bloc and Cubit (same flutter_bloc package — which specific
+      shape a feature uses is a separate, finer-grained choice made later
+      via `chameleon bloc --cubit`). `chameleon_core`'s ConnectivityBloc
+      and `chameleon_feature`'s generated feature code stay Bloc-based
+      unconditionally either way; this choice controls the app's own
+      exposed idiom for reaching that state (BlocBuilder vs.
+      context.watch vs. ref.watch) and pulls in the matching package.
     values:
       - bloc
-      - cubit
+      - provider
+      - riverpod
     default: bloc
 
   router:

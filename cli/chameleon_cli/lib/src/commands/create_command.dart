@@ -47,7 +47,18 @@ class CreateCommand extends Command<int> with PipelineSteps {
         defaultsTo: '.',
         help: 'Directory the project is created in.',
       )
-      ..addOption('state', allowed: ['bloc', 'cubit'], defaultsTo: 'bloc')
+      ..addOption(
+        'state',
+        allowed: ['bloc', 'provider', 'riverpod'],
+        defaultsTo: 'bloc',
+        help:
+            'State-management package. bloc covers both Bloc and Cubit '
+            '(same package — pick the shape per feature later with '
+            '`chameleon bloc --cubit`); provider and riverpod pull in '
+            'their own package and expose ConnectivityBloc through it '
+            "(context.watch/ref.watch) instead of flutter_bloc's own "
+            'widgets.',
+      )
       ..addOption(
         'router',
         allowed: ['go_router', 'auto_route'],
