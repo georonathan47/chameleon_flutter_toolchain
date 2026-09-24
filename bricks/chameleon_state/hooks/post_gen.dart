@@ -5,17 +5,24 @@ import 'package:mason/mason.dart';
 Future<void> run(HookContext context) async {
   final featureName = context.vars['feature_name'] as String;
   final blocName = context.vars['bloc_name'] as String;
+  final stateManagement = context.vars['state_management'] as String;
   final useCubit = context.vars['use_cubit'] as bool;
   final root = Directory.current;
 
-  final libDir = 'lib/features/$featureName/presentation/bloc';
+  final libDir = 'lib/features/$featureName/presentation/state';
   final testDir = 'test/features/$featureName/presentation';
-  final suffix = useCubit ? 'cubit' : 'bloc';
+
+  final suffix = switch (stateManagement) {
+    'bloc' => useCubit ? 'cubit' : 'bloc',
+    'provider' => 'controller',
+    'riverpod' => 'provider',
+    _ => throw StateError('unreachable: $stateManagement'),
+  };
 
   final targets = <String>[
     '$libDir/${blocName}_$suffix.dart',
     '$libDir/${blocName}_state.dart',
-    if (!useCubit) '$libDir/${blocName}_event.dart',
+    if (stateManagement == 'bloc' && !useCubit) '$libDir/${blocName}_event.dart',
     '$testDir/${blocName}_${suffix}_test.dart',
   ].where((path) => File('${root.path}/$path').existsSync()).toList();
 
@@ -30,7 +37,8 @@ Future<void> run(HookContext context) async {
   }
 
   context.logger.success(
-    'chameleon_bloc "$blocName" (${useCubit ? 'cubit' : 'bloc'}) applied to '
-    '$featureName.',
+    'chameleon_state "$blocName" ($stateManagement'
+    '${stateManagement == 'bloc' ? (useCubit ? '/cubit' : '/bloc') : ''}) '
+    'applied to $featureName.',
   );
 }

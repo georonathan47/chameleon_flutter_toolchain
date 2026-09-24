@@ -1,0 +1,26 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '{{bloc_name.snakeCase()}}_state.dart';
+
+final {{bloc_name.camelCase()}}Provider =
+    NotifierProvider<{{bloc_name.pascalCase()}}Notifier, {{bloc_name.pascalCase()}}State>(
+      {{bloc_name.pascalCase()}}Notifier.new,
+    );
+
+// Scaffolded, not wired to a repository — chameleon_state doesn't know one.
+// Replace the body of start() with the real work this notifier should do;
+// the Initial/InProgress/Success/Failure shape is the part worth keeping
+// (guardrail #14: sealed states, fully exhausted by callers). Plain
+// Notifier, not AsyncNotifier: this is manually-triggered local state, not
+// state derived from a Future/Stream, so there's no async-fetch idiom
+// pulling it toward AsyncValue the way chameleon_feature's riverpod
+// notifier is.
+class {{bloc_name.pascalCase()}}Notifier extends Notifier<{{bloc_name.pascalCase()}}State> {
+  @override
+  {{bloc_name.pascalCase()}}State build() => const {{bloc_name.pascalCase()}}Initial();
+
+  Future<void> start() async {
+    state = const {{bloc_name.pascalCase()}}InProgress();
+    state = const {{bloc_name.pascalCase()}}Success();
+  }
+}

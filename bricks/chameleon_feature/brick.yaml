@@ -20,3 +20,18 @@ vars:
       test files import the app's lib code via `package:<project_name>/...`.
       Supplied by the CLI, not prompted for.
     default: ""
+
+  state_management:
+    type: enum
+    description: >-
+      State-management shape for this feature's presentation layer. Same
+      three values and bloc-folds-cubit convention as `chameleon create`'s
+      own choice (see chameleon_app/brick.yaml) — the CLI defaults this to
+      the target app's own choice (read from .chameleon/template.yaml)
+      rather than prompting for it every time, but it can be overridden per
+      feature for an app that deliberately mixes paradigms.
+    values:
+      - bloc
+      - provider
+      - riverpod
+    default: bloc

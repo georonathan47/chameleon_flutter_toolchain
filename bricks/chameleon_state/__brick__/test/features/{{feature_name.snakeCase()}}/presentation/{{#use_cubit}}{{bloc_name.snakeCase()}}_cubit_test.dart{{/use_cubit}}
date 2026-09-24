@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 
-import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/bloc/{{bloc_name.snakeCase()}}_cubit.dart';
-import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/bloc/{{bloc_name.snakeCase()}}_state.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{bloc_name.snakeCase()}}_cubit.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{bloc_name.snakeCase()}}_state.dart';
 
 void main() {
   blocTest<{{bloc_name.pascalCase()}}Cubit, {{bloc_name.pascalCase()}}State>(

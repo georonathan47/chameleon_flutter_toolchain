@@ -1,0 +1,31 @@
+import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
+
+import '../../domain/usecases/get_{{feature_name.snakeCase()}}.dart';
+import '{{feature_name.snakeCase()}}_state.dart';
+
+@injectable
+class {{feature_name.pascalCase()}}Controller extends ChangeNotifier {
+  {{feature_name.pascalCase()}}Controller(this._get{{feature_name.pascalCase()}});
+
+  final Get{{feature_name.pascalCase()}} _get{{feature_name.pascalCase()}};
+
+  {{feature_name.pascalCase()}}State _state = const {{feature_name.pascalCase()}}Initial();
+  {{feature_name.pascalCase()}}State get state => _state;
+
+  Future<void> load() async {
+    _state = const {{feature_name.pascalCase()}}Loading();
+    notifyListeners();
+    final result = await _get{{feature_name.pascalCase()}}().run();
+    result.match(
+      (failure) {
+        _state = {{feature_name.pascalCase()}}LoadError(failure);
+        notifyListeners();
+      },
+      (items) {
+        _state = {{feature_name.pascalCase()}}Loaded(items);
+        notifyListeners();
+      },
+    );
+  }
+}

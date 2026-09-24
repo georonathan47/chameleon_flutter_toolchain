@@ -1,0 +1,27 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/di/injection_container.dart';
+import '../../domain/entities/{{feature_name.snakeCase()}}.dart';
+import '../../domain/usecases/get_{{feature_name.snakeCase()}}.dart';
+
+final {{feature_name.camelCase()}}Provider =
+    AsyncNotifierProvider<
+      {{feature_name.pascalCase()}}Notifier,
+      List<{{feature_name.pascalCase()}}>
+    >({{feature_name.pascalCase()}}Notifier.new);
+
+/// Bridges `Get{{feature_name.pascalCase()}}`'s
+/// `TaskEither<Failure, List<{{feature_name.pascalCase()}}>>` into riverpod's
+/// own `AsyncValue`: throwing the `Failure` on the left branch is
+/// deliberate, not a shortcut — `AsyncNotifier.build()` already catches
+/// whatever `build()` throws into `AsyncError(error, stackTrace)`, so this
+/// reuses that machinery instead of inventing a parallel one. Read it back
+/// with `error as Failure` wherever a page needs `.message`.
+class {{feature_name.pascalCase()}}Notifier
+    extends AsyncNotifier<List<{{feature_name.pascalCase()}}>> {
+  @override
+  Future<List<{{feature_name.pascalCase()}}>> build() async {
+    final result = await getIt<Get{{feature_name.pascalCase()}}>().run();
+    return result.match((failure) => throw failure, (items) => items);
+  }
+}

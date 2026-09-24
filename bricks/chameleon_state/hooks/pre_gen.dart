@@ -12,11 +12,12 @@ const _dartReservedWords = <String>{
 void run(HookContext context) {
   final blocName = context.vars['bloc_name'] as String;
   final featureName = context.vars['feature_name'] as String;
+  final stateManagement = context.vars['state_management'] as String;
   final cubit = context.vars['cubit'] as bool;
 
   if (!RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(blocName)) {
     context.logger.err(
-      '"$blocName" is not a valid bloc/cubit name '
+      '"$blocName" is not a valid name '
       '(snake_case, must start with a lowercase letter).',
     );
     throw Exception('invalid bloc_name');
@@ -37,21 +38,33 @@ void run(HookContext context) {
     throw Exception('feature does not exist');
   }
 
-  final blocFileName = cubit ? '${blocName}_cubit.dart' : '${blocName}_bloc.dart';
-  final existing = File('lib/features/$featureName/presentation/bloc/$blocFileName');
+  final isBloc = stateManagement == 'bloc';
+  final isProvider = stateManagement == 'provider';
+  final isRiverpod = stateManagement == 'riverpod';
+  context.vars['is_bloc'] = isBloc;
+  context.vars['is_provider'] = isProvider;
+  context.vars['is_riverpod'] = isRiverpod;
+
+  // `cubit` only chooses a shape within `bloc` — same "bloc folds cubit"
+  // convention `chameleon create`/`chameleon feature` use, so it's ignored
+  // outright rather than erroring when state_management is provider/riverpod.
+  context.vars['use_cubit'] = isBloc && cubit;
+  context.vars['use_bloc'] = isBloc && !cubit;
+
+  final fileName = switch (stateManagement) {
+    'bloc' => '${blocName}_${cubit ? 'cubit' : 'bloc'}.dart',
+    'provider' => '${blocName}_controller.dart',
+    'riverpod' => '${blocName}_provider.dart',
+    _ => throw StateError('unreachable: $stateManagement'),
+  };
+  final existing = File(
+    'lib/features/$featureName/presentation/state/$fileName',
+  );
   if (existing.existsSync()) {
     context.logger.err(
-      '${existing.path} already exists. chameleon_bloc does not overwrite an '
-      'existing bloc/cubit.',
+      '${existing.path} already exists. chameleon_state does not overwrite '
+      'existing state.',
     );
-    throw Exception('bloc already exists');
+    throw Exception('state already exists');
   }
-
-  // File-path conditionals in this brick's templates use positive sections
-  // only (verified pattern already used by chameleon_app's own
-  // {{#use_biometrics}}file{{/use_biometrics}} paths) — deriving both
-  // booleans here avoids depending on an untested {{^cond}}
-  // path-conditional.
-  context.vars['use_cubit'] = cubit;
-  context.vars['use_bloc'] = !cubit;
 }

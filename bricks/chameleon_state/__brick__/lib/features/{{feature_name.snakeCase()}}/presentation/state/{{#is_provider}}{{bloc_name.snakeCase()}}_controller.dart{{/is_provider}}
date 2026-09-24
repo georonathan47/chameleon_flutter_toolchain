@@ -1,0 +1,21 @@
+import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
+
+import '{{bloc_name.snakeCase()}}_state.dart';
+
+// Scaffolded, not wired to a repository — chameleon_state doesn't know one.
+// Replace the body of start() with the real work this controller should do;
+// the Initial/InProgress/Success/Failure shape is the part worth keeping
+// (guardrail #14: sealed states, fully exhausted by callers).
+@injectable
+class {{bloc_name.pascalCase()}}Controller extends ChangeNotifier {
+  {{bloc_name.pascalCase()}}State _state = const {{bloc_name.pascalCase()}}Initial();
+  {{bloc_name.pascalCase()}}State get state => _state;
+
+  Future<void> start() async {
+    _state = const {{bloc_name.pascalCase()}}InProgress();
+    notifyListeners();
+    _state = const {{bloc_name.pascalCase()}}Success();
+    notifyListeners();
+  }
+}

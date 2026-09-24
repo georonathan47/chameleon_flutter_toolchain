@@ -1,0 +1,38 @@
+name: chameleon_state
+description: >-
+  A second piece of feature-local state — Bloc/Cubit, a Provider
+  ChangeNotifier, or a riverpod Notifier — nested inside an existing feature
+  of a Chameleon app.
+version: 1.0.0
+
+environment:
+  mason: ">=0.1.0 <0.2.0"
+
+vars:
+  feature_name:
+    type: string
+    description: >-
+      The existing feature (under lib/features/) this state nests inside.
+      Must already exist — this brick does not create a feature.
+    prompt: Which feature does this belong to?
+  bloc_name:
+    type: string
+    description: The state's name, in snake_case (e.g. filters).
+    prompt: Name?
+  state_management:
+    type: enum
+    description: >-
+      Same three values and bloc-folds-cubit convention as `chameleon
+      create`/`chameleon feature`. The CLI defaults this to the target
+      app's own choice (read from .chameleon/template.yaml).
+    values:
+      - bloc
+      - provider
+      - riverpod
+    default: bloc
+  cubit:
+    type: boolean
+    description: >-
+      When state_management is bloc, generate a Cubit instead of a Bloc.
+      Meaningless for provider/riverpod.
+    default: false

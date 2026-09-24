@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import '{{bloc_name.snakeCase()}}_event.dart';
 import '{{bloc_name.snakeCase()}}_state.dart';
 
-// Scaffolded, not wired to a repository — chameleon_bloc doesn't know one.
+// Scaffolded, not wired to a repository — chameleon_state doesn't know one.
 // Replace the body of _onStarted with the real work this bloc/cubit
 // should do; the Initial/InProgress/Success/Failure shape is the part
 // worth keeping (guardrail #14: sealed states, fully exhausted by callers).

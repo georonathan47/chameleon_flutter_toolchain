@@ -44,3 +44,12 @@ TaskEither<Failure, int> unsafeArrowDelegatesToHelper() => _safeHelper();
 
 TaskEither<Failure, int> _safeHelper() =>
     TaskEither.tryCatch(() async => 1, _toFailure);
+
+// Good: an abstract interface method has no body to construct unsafely —
+// found for real against chameleon_feature's own generated
+// `WidgetsRepository.getWidgets()`, which this rule flagged before this
+// case was handled.
+// ignore: one_member_abstracts
+abstract interface class SafeRepository {
+  TaskEither<Failure, int> fetch();
+}
