@@ -224,10 +224,11 @@ class CreateCommand extends Command<int> with PipelineSteps {
       // v0.3.0, not v0.2.0: PushNotificationService only exists from
       // chameleon_core-v0.3.0 on.
       'chameleon_core_ref': 'chameleon_core-v0.3.0',
-      // v0.2.0, not v0.1.0: same staleness bug as chameleon_ui_ref above —
-      // the 4 guardrail rules added in chameleon_lints-v0.2.0 never reached
-      // a generated app either.
-      'chameleon_lints_ref': 'chameleon_lints-v0.2.0',
+      // v0.2.1, not v0.2.0: chameleon_task_either_requires_safe_construction
+      // flagged an abstract interface method in every generated app until
+      // this fix — same staleness bug as chameleon_ui_ref above, caught
+      // this time by e2e/run_matrix.sh's new chameleon-feature check.
+      'chameleon_lints_ref': 'chameleon_lints-v0.2.1',
     };
 
     final overlaid = await step('Applying Chameleon template', () async {
