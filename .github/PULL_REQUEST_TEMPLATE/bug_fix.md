@@ -25,7 +25,7 @@
 - [ ] `melos run analyze` and `melos run test` pass locally (covers `packages/chameleon_ui` and `packages/chameleon_core`)
 - [ ] `packages/chameleon_lints`: `dart pub get && dart analyze && dart test` pass (outside the melos workspace — see the [Contributing wiki page](https://github.com/georonathan47/chameleon_flutter_toolchain/wiki/Contributing))
 - [ ] `cli/chameleon_cli`: `dart analyze` and `dart test -j 1` pass
-- [ ] If `bricks/chameleon_app`/`chameleon_feature`/`chameleon_bloc` changed: re-ran `mason bundle` for the affected brick(s), bundle diff included
+- [ ] If `bricks/chameleon_app`/`chameleon_feature`/`chameleon_state` changed: re-ran `mason bundle` for the affected brick(s), bundle diff included
 - [ ] If the brick(s) or CLI changed: `bash e2e/run_matrix.sh` passes
 - [ ] If this fix needs a new tag for consuming apps/CLI users to actually get it: noted below
 

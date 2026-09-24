@@ -160,6 +160,7 @@ generated_with:
   chameleon_app_brick: ${context.vars['_brick_version'] ?? '1.0.0'}
   chameleon_ui_ref: ${context.vars['chameleon_ui_ref']}
   chameleon_core_ref: ${context.vars['chameleon_core_ref']}
+  state_management: ${context.vars['state_management']}
   generated_at: ${DateTime.now().toUtc().toIso8601String()}
 ''');
 

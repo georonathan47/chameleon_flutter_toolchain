@@ -1,0 +1,60 @@
+import 'package:chameleon_core/chameleon_core.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:mocktail/mocktail.dart';
+
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/domain/entities/{{feature_name.snakeCase()}}.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/domain/usecases/get_{{feature_name.snakeCase()}}.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{feature_name.snakeCase()}}_controller.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{feature_name.snakeCase()}}_state.dart';
+
+class _MockGet{{feature_name.pascalCase()}} extends Mock implements Get{{feature_name.pascalCase()}} {}
+
+void main() {
+  late _MockGet{{feature_name.pascalCase()}} useCase;
+  late {{feature_name.pascalCase()}}Controller controller;
+
+  setUp(() {
+    useCase = _MockGet{{feature_name.pascalCase()}}();
+    controller = {{feature_name.pascalCase()}}Controller(useCase);
+  });
+
+  test('starts in the Initial state', () {
+    expect(controller.state, const {{feature_name.pascalCase()}}Initial());
+  });
+
+  test('load() transitions to Loaded on a successful fetch', () async {
+    when(() => useCase()).thenReturn(
+      TaskEither.right(const [{{feature_name.pascalCase()}}(id: '1', name: 'Alex')]),
+    );
+
+    await controller.load();
+
+    expect(
+      controller.state,
+      const {{feature_name.pascalCase()}}Loaded([
+        {{feature_name.pascalCase()}}(id: '1', name: 'Alex'),
+      ]),
+    );
+  });
+
+  test('load() transitions to LoadError when the repository fails', () async {
+    when(() => useCase()).thenReturn(TaskEither.left(const ServerFailure()));
+
+    await controller.load();
+
+    expect(controller.state, isA<{{feature_name.pascalCase()}}LoadError>());
+  });
+
+  test('load() notifies listeners on each state change', () async {
+    when(() => useCase()).thenReturn(
+      TaskEither.right(const [{{feature_name.pascalCase()}}(id: '1', name: 'Alex')]),
+    );
+    var notifications = 0;
+    controller.addListener(() => notifications++);
+
+    await controller.load();
+
+    expect(notifications, 2);
+  });
+}

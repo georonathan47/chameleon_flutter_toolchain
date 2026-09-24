@@ -10,6 +10,7 @@ import '../bundles/chameleon_feature_bundle.dart';
 import '../doctor.dart';
 import '../pascal_case.dart';
 import '../process_runner.dart';
+import '../template_provenance.dart';
 import 'pipeline_steps.dart';
 
 /// `chameleon feature <name>` — adds one clean-architecture feature
@@ -19,6 +20,14 @@ class FeatureCommand extends Command<int> with PipelineSteps {
   FeatureCommand({required this.logger, ProcessRunner? runner})
     : processRunner = runner ?? const SystemProcessRunner() {
     argParser
+      ..addOption(
+        'state',
+        allowed: ['bloc', 'provider', 'riverpod'],
+        help:
+            "State-management shape for this feature's presentation layer. "
+            "Defaults to the target app's own choice, read from "
+            '.chameleon/template.yaml.',
+      )
       ..addFlag('codegen', defaultsTo: true, help: 'Run build_runner.')
       ..addFlag(
         'verify',
@@ -79,6 +88,10 @@ class FeatureCommand extends Command<int> with PipelineSteps {
       return ExitCode.usage.code;
     }
 
+    final stateManagement = results.wasParsed('state')
+        ? results['state'] as String
+        : readStateManagementDefault(projectRoot);
+
     final featureDir = Directory(
       p.join(projectRoot.path, 'lib', 'features', featureName),
     );
@@ -116,6 +129,7 @@ class FeatureCommand extends Command<int> with PipelineSteps {
     final vars = <String, dynamic>{
       'feature_name': featureName,
       'project_name': projectName,
+      'state_management': stateManagement,
     };
 
     final generated = await step('Generating feature "$featureName"', () async {

@@ -1,3 +1,12 @@
+## 0.2.1
+
+- Fixed `chameleon_task_either_requires_safe_construction` flagging an
+  abstract interface method (no body to construct unsafely) — found
+  against `chameleon_feature`'s own generated
+  `WidgetsRepository.getWidgets()`, the first time this rule ever ran
+  against real generated output (e2e coverage for `chameleon feature`
+  didn't exist until now).
+
 ## 0.2.0
 
 - Added `chameleon_prefer_dot_shorthands`: flags a qualified `Type.member`

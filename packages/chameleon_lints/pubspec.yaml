@@ -1,6 +1,6 @@
 name: chameleon_lints
 description: custom_lint rules enforcing the patterns in chameleon_app's tasks/lessons.md.
-version: 0.2.0
+version: 0.2.1
 publish_to: none
 
 environment:

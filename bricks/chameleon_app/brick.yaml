@@ -25,11 +25,12 @@ vars:
       State-management package this app is built around. `bloc` covers
       both Bloc and Cubit (same flutter_bloc package — which specific
       shape a feature uses is a separate, finer-grained choice made later
-      via `chameleon bloc --cubit`). `chameleon_core`'s ConnectivityBloc
-      and `chameleon_feature`'s generated feature code stay Bloc-based
-      unconditionally either way; this choice controls the app's own
-      exposed idiom for reaching that state (BlocBuilder vs.
-      context.watch vs. ref.watch) and pulls in the matching package.
+      via `chameleon state --cubit`). `chameleon_core`'s ConnectivityBloc
+      stays Bloc-based unconditionally either way; this choice controls
+      the app's own exposed idiom for reaching that state (BlocBuilder
+      vs. context.watch vs. ref.watch) and pulls in the matching
+      package. `chameleon feature`/`chameleon state` default to this
+      same choice for a feature's own presentation layer.
     values:
       - bloc
       - provider
@@ -113,7 +114,10 @@ vars:
   chameleon_lints_ref:
     type: string
     description: >-
-      Same as chameleon_ui_ref, for chameleon_lints. v0.2.0, not v0.1.0:
-      also gone stale — the 4 style/architecture guardrail rules added in
-      chameleon_lints-v0.2.0 never reached a generated app until now.
-    default: chameleon_lints-v0.2.0
+      Same as chameleon_ui_ref, for chameleon_lints. v0.2.1, not v0.2.0:
+      chameleon_task_either_requires_safe_construction flagged an abstract
+      interface method (no body to construct unsafely) in every app —
+      found against chameleon_feature's own generated
+      WidgetsRepository.getWidgets(), the first time e2e ever exercised
+      `chameleon feature`'s output through this rule.
+    default: chameleon_lints-v0.2.1

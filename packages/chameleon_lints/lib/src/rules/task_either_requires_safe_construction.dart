@@ -95,6 +95,13 @@ class TaskEitherRequiresSafeConstruction extends DartLintRule {
   }
 
   bool _isSafelyConstructed(FunctionBody body) {
+    // An abstract method/interface signature (no body at all — the `;`
+    // after the declaration) has nothing to construct unsafely; found for
+    // real against chameleon_feature's own generated
+    // `WidgetsRepository.getWidgets()` abstract interface method, which
+    // this rule flagged despite having no body to check.
+    if (body is EmptyFunctionBody) return true;
+
     if (body is ExpressionFunctionBody) {
       return _isSafeTaskEitherConstruction(body.expression);
     }

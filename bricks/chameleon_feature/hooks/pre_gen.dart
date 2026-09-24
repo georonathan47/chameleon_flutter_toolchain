@@ -36,4 +36,9 @@ void run(HookContext context) {
     );
     throw Exception('feature already exists');
   }
+
+  final stateManagement = context.vars['state_management'] as String;
+  context.vars['is_bloc'] = stateManagement == 'bloc';
+  context.vars['is_provider'] = stateManagement == 'provider';
+  context.vars['is_riverpod'] = stateManagement == 'riverpod';
 }

@@ -5,7 +5,16 @@ export 'di/{{feature_name.snakeCase()}}_module.dart';
 export 'domain/entities/{{feature_name.snakeCase()}}.dart';
 export 'domain/repositories/{{feature_name.snakeCase()}}_repository.dart';
 export 'domain/usecases/get_{{feature_name.snakeCase()}}.dart';
-export 'presentation/bloc/{{feature_name.snakeCase()}}_bloc.dart';
-export 'presentation/bloc/{{feature_name.snakeCase()}}_event.dart';
-export 'presentation/bloc/{{feature_name.snakeCase()}}_state.dart';
+{{#is_bloc}}
+export 'presentation/state/{{feature_name.snakeCase()}}_bloc.dart';
+export 'presentation/state/{{feature_name.snakeCase()}}_event.dart';
+export 'presentation/state/{{feature_name.snakeCase()}}_state.dart';
+{{/is_bloc}}
+{{#is_provider}}
+export 'presentation/state/{{feature_name.snakeCase()}}_controller.dart';
+export 'presentation/state/{{feature_name.snakeCase()}}_state.dart';
+{{/is_provider}}
+{{#is_riverpod}}
+export 'presentation/state/{{feature_name.snakeCase()}}_provider.dart';
+{{/is_riverpod}}
 export 'presentation/pages/{{feature_name.snakeCase()}}_page.dart';

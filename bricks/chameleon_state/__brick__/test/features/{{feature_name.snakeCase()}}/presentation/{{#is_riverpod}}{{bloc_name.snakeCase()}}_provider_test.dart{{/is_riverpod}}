@@ -1,0 +1,35 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{bloc_name.snakeCase()}}_provider.dart';
+import 'package:{{project_name.snakeCase()}}/features/{{feature_name.snakeCase()}}/presentation/state/{{bloc_name.snakeCase()}}_state.dart';
+
+void main() {
+  test('starts in the Initial state', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    expect(
+      container.read({{bloc_name.camelCase()}}Provider),
+      const {{bloc_name.pascalCase()}}Initial(),
+    );
+  });
+
+  test('start() transitions [InProgress, Success]', () async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final seen = <{{bloc_name.pascalCase()}}State>[];
+    container.listen(
+      {{bloc_name.camelCase()}}Provider,
+      (previous, next) => seen.add(next),
+      fireImmediately: false,
+    );
+
+    await container.read({{bloc_name.camelCase()}}Provider.notifier).start();
+
+    expect(seen, const [
+      {{bloc_name.pascalCase()}}InProgress(),
+      {{bloc_name.pascalCase()}}Success(),
+    ]);
+  });
+}

@@ -3,5 +3,5 @@ bricks:
     path: bricks/chameleon_app
   chameleon_feature:
     path: bricks/chameleon_feature
-  chameleon_bloc:
-    path: bricks/chameleon_bloc
+  chameleon_state:
+    path: bricks/chameleon_state
