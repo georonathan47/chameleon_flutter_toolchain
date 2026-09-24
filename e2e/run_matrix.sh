@@ -69,6 +69,30 @@ for i in "${!NAMES[@]}"; do
     continue
   fi
 
+  # A freshly generated app must report no drift (the deliberate leftover
+  # TODO is only a warning there). Compares against real remote tags, so it
+  # also catches a hardcoded ref in create_command.dart going stale.
+  echo "--- extra gate: chameleon audit ---"
+  if [ "$name" = "e2e_biometrics" ]; then
+    # --biometrics apps intentionally fail tool/checks.sh until the developer
+    # adds NSFaceIDUsageDescription/USE_BIOMETRIC by hand (documented in
+    # brick.yaml), so audit must fail here — on exactly those two checks.
+    audit_output="$(cd "$project_dir" && chameleon audit 2>&1)"
+    audit_exit=$?
+    echo "$audit_output"
+    if [ "$audit_exit" -eq 0 ] \
+      || ! grep -q "NSFaceIDUsageDescription" <<<"$audit_output" \
+      || ! grep -q "USE_BIOMETRIC" <<<"$audit_output"; then
+      echo "✗ $name: chameleon audit should fail on the two missing biometric declarations"
+      fail_count=$((fail_count + 1))
+      continue
+    fi
+  elif ! (cd "$project_dir" && chameleon audit); then
+    echo "✗ $name failed chameleon audit — left at $project_dir for inspection"
+    fail_count=$((fail_count + 1))
+    continue
+  fi
+
   # flutter analyze/test only ever touch Dart — the home-widget variant is
   # the only one that also generates a native Kotlin file
   # (ChameleonHomeWidgetProvider.kt), and nothing above would notice if it

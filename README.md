@@ -106,6 +106,22 @@ chameleon state search --feature beneficiaries --cubit
 chameleon state sort_order --feature beneficiaries --state riverpod
 ```
 
+## Auditing an app for drift
+
+From a generated app's root:
+
+```bash
+chameleon audit
+```
+
+Reports whether the app has drifted from the toolchain's current guardrails:
+pinned `chameleon_core`/`chameleon_ui`/`chameleon_lints` refs behind the
+latest release tags, `chameleon_lints`/`custom_lint` not wired up, and
+anything the app's own `tool/checks.sh` flags. Exits non-zero on any failure,
+so it works as a CI gate. See [`docs/audit.md`](docs/audit.md) for what each
+check means and how to fix it. (`chameleon doctor` is separate: it checks the
+tools on your machine, not an app.)
+
 ## Keeping the CLI up to date
 
 ```bash
@@ -134,7 +150,7 @@ regardless of how it's installed.
 ## Status
 
 `chameleon_core`, `chameleon_ui`, `chameleon_lints`, the three Mason bricks,
-and a CLI with `doctor` / `create` / `feature` / `state` / `update` /
+and a CLI with `doctor` / `audit` / `create` / `feature` / `state` / `update` /
 `firebase verify` all ship today. `chameleon create` supports both
 `go_router` and `auto_route`, and three state-management choices via
 `--state`: `bloc` (default — covers both Bloc and Cubit, one package
