@@ -2,4 +2,4 @@
 /// hand, the same pattern `package:mason` itself uses for `packageVersion`.
 /// Avoids fragile runtime probing (parsing `dart pub global list` output,
 /// `Platform.script`) to find "my own version" once globally activated.
-const packageVersion = '0.3.0';
+const packageVersion = '0.4.0';

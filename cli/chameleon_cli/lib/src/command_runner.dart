@@ -1,6 +1,7 @@
 import 'package:args/command_runner.dart';
 import 'package:mason_logger/mason_logger.dart';
 
+import 'commands/audit_command.dart';
 import 'commands/create_command.dart';
 import 'commands/doctor_command.dart';
 import 'commands/feature_command.dart';
@@ -17,6 +18,7 @@ class ChameleonCommandRunner extends CommandRunner<int> {
   ChameleonCommandRunner({Logger? logger, ProcessRunner? runner})
     : _logger = logger ?? Logger(),
       super('chameleon', 'Chameleon project scaffolding.') {
+    addCommand(AuditCommand(logger: _logger, runner: runner));
     addCommand(CreateCommand(logger: _logger, runner: runner));
     addCommand(DoctorCommand(logger: _logger, runner: runner));
     addCommand(FeatureCommand(logger: _logger, runner: runner));
