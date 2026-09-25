@@ -26,6 +26,7 @@ behind each.
 | Prefer `sealed class` for a hierarchy whose subtypes are all declared in the same file | `chameleon_lints` (`dart run custom_lint`) — `chameleon_prefer_sealed_class`; suppress a deliberately open hierarchy with `// ignore: chameleon_prefer_sealed_class` |
 | A `TaskEither<Failure, ...>` method must be built from a safe `TaskEither` constructor, never a raw `async`/`await` block that can throw past its own contract | `chameleon_lints` (`dart run custom_lint`) — `chameleon_task_either_requires_safe_construction` |
 | No raw `print`/`debugPrint` — log through `ChameleonLogger` | `chameleon_lints` (`dart run custom_lint`) — `chameleon_no_print` |
+| Datasource methods (`data/datasources/`) must run their work in an isolate (`runApiCall`/`runInIsolate`/`compute`) | `chameleon_lints` (`dart run custom_lint`) — `chameleon_datasource_requires_isolate`; a datasource that can't leave the root isolate suppresses with `// ignore: chameleon_datasource_requires_isolate` |
 
 ## `@visibleForTesting` vs. a debug hook
 
