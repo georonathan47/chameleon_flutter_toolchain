@@ -25,6 +25,7 @@ behind each.
 | Prefer a feature's barrel file over reaching into its internal `data`/`domain`/`presentation`/`di` layers from outside that feature | `chameleon_lints` (`dart run custom_lint`) — `chameleon_prefer_barrel_imports` |
 | Prefer `sealed class` for a hierarchy whose subtypes are all declared in the same file | `chameleon_lints` (`dart run custom_lint`) — `chameleon_prefer_sealed_class`; suppress a deliberately open hierarchy with `// ignore: chameleon_prefer_sealed_class` |
 | A `TaskEither<Failure, ...>` method must be built from a safe `TaskEither` constructor, never a raw `async`/`await` block that can throw past its own contract | `chameleon_lints` (`dart run custom_lint`) — `chameleon_task_either_requires_safe_construction` |
+| No raw `print`/`debugPrint` — log through `ChameleonLogger` | `chameleon_lints` (`dart run custom_lint`) — `chameleon_no_print` |
 
 ## `@visibleForTesting` vs. a debug hook
 
