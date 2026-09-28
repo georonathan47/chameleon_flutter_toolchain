@@ -1,3 +1,16 @@
+## 0.3.0
+
+- Added `chameleon_no_print`: flags a bare `print(...)`/`debugPrint(...)`
+  call — output belongs in the logging service (`ChameleonLogger`). A
+  user-defined function of the same name and a file named
+  `logging_service.dart` are exempt.
+- Added `chameleon_datasource_requires_isolate`: flags a public datasource
+  method (files under `data/datasources/`) whose body doesn't route through
+  `runApiCall`/`runInIsolate`/`compute`/`Isolate.run`/`Isolate.spawn`.
+- Added `chameleon_chopper_requires_error_check`: flags a chopper
+  `Response.body` read where the same variable's `.isSuccessful`/`.error` is
+  never checked in that function.
+
 ## 0.2.1
 
 - Fixed `chameleon_task_either_requires_safe_construction` flagging an

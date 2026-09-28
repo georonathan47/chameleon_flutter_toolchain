@@ -172,7 +172,7 @@ automatically, no flag required, and follows the system light/dark theme
 setting out of the box (`ChameleonTheme.light`/`.dark`, both built from the
 same semantic-token layer). Every generated app is verified with
 `flutter analyze` + `flutter test` +
-`dart run custom_lint` (`chameleon_lints`' seven rules — see
+`dart run custom_lint` (`chameleon_lints`' ten rules — see
 [`packages/chameleon_lints/README.md`](packages/chameleon_lints/README.md)
 for the full list) before `create`/`feature`/`state` report success.
 
