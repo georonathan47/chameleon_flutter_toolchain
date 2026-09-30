@@ -114,10 +114,9 @@ vars:
   chameleon_lints_ref:
     type: string
     description: >-
-      Same as chameleon_ui_ref, for chameleon_lints. v0.2.1, not v0.2.0:
-      chameleon_task_either_requires_safe_construction flagged an abstract
-      interface method (no body to construct unsafely) in every app —
-      found against chameleon_feature's own generated
-      WidgetsRepository.getWidgets(), the first time e2e ever exercised
-      `chameleon feature`'s output through this rule.
-    default: chameleon_lints-v0.2.1
+      Same as chameleon_ui_ref, for chameleon_lints. v0.3.0, not v0.2.1:
+      the three new guardrail rules (chameleon_no_print,
+      chameleon_datasource_requires_isolate,
+      chameleon_chopper_requires_error_check) never reached a generated
+      app until now.
+    default: chameleon_lints-v0.3.0
